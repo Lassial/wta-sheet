@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лист персонажа — Werewolf: The Apocalypse</title>
+<style>
+  :root {
+    --bg: #0e0b08; --panel: #1b1610; --panel-2: #221b14;
+    --border: #3a2e21; --text: #e8ddc9; --muted: #968772;
+    --gold: #c9a227; --gold-bright: #f2cd52; --red: #8b2a2a; --green: #6b8f4e;
+    --blue: #4a7fa5; --purple: #8b6bb0;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: radial-gradient(ellipse at top, #1c1610 0%, #0e0b08 70%) #0e0b08;
+    background-attachment: fixed; color: var(--text);
+    line-height: 1.4; min-height: 100vh; padding-bottom: 60px; font-size: 13px;
+  }
+  button, input, textarea, select { font-family: inherit; }
+
+  .toolbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 18px; background: rgba(14, 11, 8, 0.94);
+    backdrop-filter: blur(6px); border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .brand { font-weight: bold; letter-spacing: 1px; color: var(--gold); font-size: 14px; text-transform: uppercase; white-space: nowrap; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tabs button {
+    background: transparent; color: var(--muted); border: 1px solid var(--border);
+    padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;
+    letter-spacing: 0.5px; transition: all .15s;
+  }
+  .tabs button.active { background: var(--gold); color: #1a1209; border-color: var(--gold-bright); font-weight: bold; }
+  .tabs button:hover:not(.active) { color: var(--gold-bright); }
+  .tools { display: flex; gap: 6px; margin-left: auto; }
+  .tools button {
+    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    padding: 5px 11px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all .15s;
+  }
+  .tools button:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .tools button.danger:hover { border-color: var(--red); color: #ff7a7a; }
+  .tools button.pdf:hover { border-color: var(--blue); color: #7db8e0; }
+  #save-indicator { color: var(--gold); font-size: 11px; opacity: 0; transition: opacity .3s; white-space: nowrap; }
+  #save-indicator.show { opacity: 1; }
+
+  .sheet { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
+  .page { display: none; flex-direction: column; gap: 14px; }
+  .page.active { display: flex; }
+
+  .panel {
+    background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+    border: 1px solid var(--border); border-radius: 5px;
+    padding: 14px 16px 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.02);
+  }
+  .panel > h2 {
+    margin: 0 0 12px; font-size: 15px; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold);
+    border-bottom: 1px solid var(--border); padding-bottom: 6px;
+    text-align: center; font-variant: small-caps;
+  }
+  .panel h3 { margin: 10px 0 6px; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); text-align: center; font-variant: small-caps; }
+  .panel h3:first-child { margin-top: 0; }
+
+  .id-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 20px; }
+  .id-grid > div { display: flex; flex-direction: column; gap: 2px; }
+  label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  input[type=text], input[type=number], textarea, select {
+    background: rgba(0,0,0,0.3); border: none; border-bottom: 1px solid var(--border);
+    border-radius: 0; color: var(--text); padding: 3px 4px; outline: none;
+    font-size: 13px; transition: border-color .15s; width: 100%;
+  }
+  input[type=text]:focus, textarea:focus, select:focus { border-bottom-color: var(--gold); background: rgba(201, 162, 39, 0.06); }
+  textarea { border: 1px solid var(--border); border-radius: 3px; min-height: 60px; resize: vertical; font-family: inherit; line-height: 1.4; }
+
+  .triple { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .col { display: flex; flex-direction: column; gap: 3px; }
+  .col h3 { margin: 0 0 6px; padding-bottom: 4px; border-bottom: 1px dashed var(--border); font-size: 12px; color: var(--gold); letter-spacing: 1.5px; text-align: center; font-variant: small-caps; }
+
+  .stat { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 1px 0; min-height: 18px; }
+  .stat-name { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .dots { display: flex; gap: 3px; flex-shrink: 0; cursor: pointer; user-select: none; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1.4px solid #6b5a44; background: rgba(0,0,0,0.4); transition: all .1s; }
+  .dot:hover { border-color: var(--gold-bright); transform: scale(1.15); }
+  .dot.filled { background: radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold) 65%, #86690f); border-color: var(--gold-bright); box-shadow: 0 0 5px rgba(201,162,39,0.55); }
+  .dot.locked { cursor: not-allowed; opacity: 0.85; }
+  .dot.auto { background: radial-gradient(circle at 35% 30%, #8fc260, #4a6b2f 65%, #2b401a); border-color: #8fc260; box-shadow: 0 0 5px rgba(140, 194, 96, 0.6); }
+  .squares { display: flex; gap: 3px; flex-shrink: 0; cursor: pointer; user-select: none; margin-top: 2px; }
+  .sq { width: 12px; height: 12px; border: 1.4px solid #6b5a44; border-radius: 2px; background: rgba(0,0,0,0.4); transition: all .1s; }
+  .sq:hover { border-color: var(--gold-bright); }
+  .sq.filled { background: linear-gradient(135deg, #d4ad34, #8a6f14); border-color: var(--gold-bright); box-shadow: 0 0 4px rgba(201,162,39,0.5); }
+
+  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+  .pool-block { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
+  .pool-block .stat-name { text-align: center; font-size: 12px; color: var(--gold); letter-spacing: 1px; margin-bottom: 2px; font-variant: small-caps; }
+  .pool-block .dots, .pool-block .squares { justify-content: center; }
+  .pool-block .auto-hint { text-align: center; font-size: 10px; color: var(--green); font-style: italic; min-height: 12px; }
+
+  .health { display: flex; flex-direction: column; gap: 3px; }
+  .health-row { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 1px 0; user-select: none; }
+  .health-row:hover .health-box { border-color: var(--gold-bright); }
+  .health-box { width: 15px; height: 15px; border: 1.4px solid #6b5a44; border-radius: 2px; background: rgba(0,0,0,0.4); flex-shrink: 0; transition: all .12s; }
+  .health-box.filled { background: linear-gradient(135deg, #b03030, #6b1a1a); border-color: #e05050; box-shadow: 0 0 6px rgba(200,50,50,0.5); }
+  .health-name { flex: 1; font-size: 12.5px; }
+  .health-pen { color: var(--muted); font-size: 12px; font-family: 'Consolas', monospace; min-width: 24px; text-align: right; }
+
+  .list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+  .list-row { display: flex; align-items: center; gap: 6px; }
+  .list-row input[type=text] { flex: 1; min-width: 0; }
+  .list-row .rm { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 2px; cursor: pointer; width: 22px; height: 22px; font-size: 14px; line-height: 1; flex-shrink: 0; padding: 0; transition: all .15s; }
+  .list-row .rm:hover { border-color: var(--red); color: #ff7a7a; }
+  .add-btn { background: transparent; border: 1px dashed var(--border); color: var(--muted); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all .15s; }
+  .add-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
+
+  .forms-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .form-card { border: 1px solid var(--border); border-radius: 4px; padding: 10px; background: rgba(0,0,0,0.2); }
+  .form-card h4 { margin: 0 0 8px; text-align: center; color: var(--gold); letter-spacing: 1.5px; font-variant: small-caps; font-size: 13px; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
+  .form-mod { display: flex; justify-content: space-between; font-size: 11px; padding: 1px 0; gap: 4px; }
+  .form-mod .mod-label { color: var(--muted); }
+  .form-mod .mod-value { color: var(--gold-bright); font-family: 'Consolas', monospace; font-weight: bold; }
+  .form-diff { margin-top: 8px; text-align: center; font-size: 11px; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 6px; }
+  .form-diff b { color: var(--gold); }
+
+  .combat-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+  table.combat { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.combat th { color: var(--gold); font-weight: normal; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; padding: 4px 2px; border-bottom: 1px solid var(--border); text-align: center; }
+  table.combat td { padding: 1px; border-bottom: 1px solid rgba(58,46,33,0.5); }
+  table.combat td input { background: transparent; border: none; color: var(--text); width: 100%; padding: 3px 4px; font-size: 12px; outline: none; }
+  table.combat td input:focus { background: rgba(201,162,39,0.08); }
+
+  .fetish-row { display: grid; grid-template-columns: 2fr 30px 40px 40px 30px; gap: 6px; align-items: center; padding: 2px 0; border-bottom: 1px dashed rgba(58,46,33,0.4); font-size: 11px; }
+  .fetish-row input[type=text] { padding: 2px 4px; }
+  .fetish-row label { font-size: 10px; display: flex; align-items: center; gap: 3px; color: var(--muted); }
+  .fetish-row input[type=number] { padding: 2px 4px; text-align: center; }
+
+  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .misc-block { display: flex; flex-direction: column; gap: 6px; }
+  .misc-block > label { color: var(--gold); font-size: 11px; letter-spacing: 1px; border-bottom: 1px dashed var(--border); padding-bottom: 3px; font-variant: small-caps; }
+
+  .autofill-banner { display: none; background: linear-gradient(90deg, rgba(107,143,78,0.15), rgba(107,143,78,0.05)); border-left: 3px solid var(--green); padding: 8px 12px; border-radius: 0 4px 4px 0; font-size: 12px; color: var(--text); margin-bottom: 10px; }
+  .autofill-banner.show { display: block; }
+  .autofill-banner strong { color: var(--green); }
+  .autofill-banner .gift-list { margin-top: 4px; padding-left: 16px; font-size: 11px; color: var(--muted); }
+  .autofill-banner .gift-list li { margin: 1px 0; }
+  .autofill-banner .reset-auto { background: transparent; border: 1px solid var(--green); color: var(--green); padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; margin-top: 4px; }
+  .autofill-banner .reset-auto:hover { background: rgba(107,143,78,0.15); }
+
+  .gift-filters { display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 10px; margin-bottom: 10px; }
+  .gift-filters select, .gift-filters input { border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: var(--text); padding: 6px 8px; border-radius: 3px; font-size: 12px; }
+  .gift-filters select:focus, .gift-filters input:focus { border-color: var(--gold); outline: none; }
+  .gift-only-mine { display: flex; align-items: center; gap: 8px; padding: 8px 12px; margin-bottom: 14px; background: linear-gradient(90deg, rgba(201,162,39,0.08), rgba(201,162,39,0.02)); border: 1px solid var(--border); border-radius: 4px; font-size: 12px; cursor: pointer; user-select: none; transition: all .15s; }
+  .gift-only-mine:hover { border-color: var(--gold); }
+  .gift-only-mine input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+  .gift-only-mine .hint { color: var(--muted); font-size: 11px; margin-left: auto; font-style: italic; }
+  .gift-only-mine .hint.ok { color: var(--green); }
+  .gift-stats { font-size: 11px; color: var(--muted); margin-bottom: 10px; text-align: right; }
+  .gift-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; max-height: 72vh; overflow-y: auto; padding-right: 6px; }
+  .gift-card { border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 8px 10px; background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.05)); transition: all .15s; display: flex; flex-direction: column; gap: 4px; }
+  .gift-card:hover { border-left-color: var(--gold-bright); background: linear-gradient(180deg, rgba(201,162,39,0.08), rgba(0,0,0,0.05)); }
+  .gift-card.mine { box-shadow: 0 0 0 1px rgba(201,162,39,0.35), 0 0 12px rgba(201,162,39,0.12); }
+  .gift-card .gift-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+  .gift-card .gift-name { font-weight: bold; color: var(--gold-bright); font-size: 13px; line-height: 1.2; }
+  .gift-card .gift-level { font-size: 10px; color: var(--muted); letter-spacing: 1px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 1px 5px; border-radius: 2px; white-space: nowrap; }
+  .gift-card .gift-source { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .gift-card .gift-desc { font-size: 11.5px; color: var(--text); line-height: 1.4; }
+  .gift-card .gift-system { font-size: 10.5px; color: var(--muted); font-style: italic; border-top: 1px dashed rgba(58,46,33,0.5); padding-top: 3px; margin-top: 2px; }
+  .gift-card .gift-actions { display: flex; justify-content: flex-end; margin-top: 4px; gap: 6px; }
+  .gift-card .add-gift-btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; letter-spacing: 0.5px; transition: all .15s; }
+  .gift-card .add-gift-btn:hover { background: var(--gold); color: #1a1209; }
+  .gift-card .add-gift-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--muted); color: var(--muted); }
+  .gift-empty { text-align: center; color: var(--muted); padding: 30px 10px; font-style: italic; }
+
+  .rite-info { background: linear-gradient(90deg, rgba(139,107,176,0.12), rgba(139,107,176,0.02)); border-left: 3px solid var(--purple); padding: 10px 14px; border-radius: 0 4px 4px 0; font-size: 12px; margin-bottom: 14px; line-height: 1.55; }
+  .rite-info strong { color: var(--purple); }
+  .rite-info code { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 0 5px; border-radius: 2px; font-family: 'Consolas', monospace; font-size: 11.5px; color: var(--gold-bright); }
+  .rite-info ul { margin: 4px 0; padding-left: 20px; }
+  .rite-info ul li::marker { color: var(--purple); }
+  .rite-info .rolls-table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 11.5px; }
+  .rite-info .rolls-table th { background: rgba(139,107,176,0.15); color: var(--purple); font-weight: normal; text-align: left; padding: 3px 8px; border-bottom: 1px solid var(--border); font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .rite-info .rolls-table td { padding: 3px 8px; border-bottom: 1px dashed rgba(58,46,33,0.4); }
+
+  .rite-filters { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; margin-bottom: 12px; }
+  .rite-filters select, .rite-filters input { border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: var(--text); padding: 6px 8px; border-radius: 3px; font-size: 12px; }
+  .rite-filters select:focus, .rite-filters input:focus { border-color: var(--purple); outline: none; }
+  .rite-stats { font-size: 11px; color: var(--muted); margin-bottom: 10px; text-align: right; }
+  .rite-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; max-height: 72vh; overflow-y: auto; padding-right: 6px; }
+  .rite-card { border: 1px solid var(--border); border-left: 3px solid var(--purple); border-radius: 4px; padding: 8px 10px; background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.05)); transition: all .15s; display: flex; flex-direction: column; gap: 4px; }
+  .rite-card:hover { border-left-color: #c09be0; background: linear-gradient(180deg, rgba(139,107,176,0.1), rgba(0,0,0,0.05)); }
+  .rite-card .rite-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+  .rite-card .rite-name { font-weight: bold; color: #d4b8f0; font-size: 13px; line-height: 1.2; }
+  .rite-card .rite-level { font-size: 10px; color: var(--muted); letter-spacing: 1px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 1px 5px; border-radius: 2px; white-space: nowrap; }
+  .rite-card .rite-type { font-size: 10px; color: var(--purple); text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
+  .rite-card .rite-desc { font-size: 11.5px; color: var(--text); line-height: 1.4; }
+  .rite-card .rite-system { font-size: 10.5px; color: var(--muted); font-style: italic; border-top: 1px dashed rgba(58,46,33,0.5); padding-top: 3px; margin-top: 2px; }
+  .rite-card .add-rite-btn { background: transparent; border: 1px solid var(--purple); color: var(--purple); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; letter-spacing: 0.5px; transition: all .15s; margin-top: 4px; align-self: flex-end; }
+  .rite-card .add-rite-btn:hover { background: var(--purple); color: #fff; }
+
+  .cheat-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
+  .cheat-nav button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all .15s; }
+  .cheat-nav button:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .cheat-accordion { display: flex; flex-direction: column; gap: 8px; }
+  .cheat-section { border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.15); overflow: hidden; transition: all .2s; }
+  .cheat-section[data-open="true"] { border-color: rgba(201,162,39,0.4); background: rgba(0,0,0,0.25); }
+  .cheat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; user-select: none; background: linear-gradient(180deg, rgba(201,162,39,0.06), transparent); transition: all .15s; }
+  .cheat-header:hover { background: linear-gradient(180deg, rgba(201,162,39,0.12), transparent); }
+  .cheat-title { font-size: 14px; color: var(--gold-bright); letter-spacing: 1px; font-variant: small-caps; font-weight: bold; }
+  .cheat-title .emoji { margin-right: 8px; font-size: 16px; }
+  .cheat-toggle { color: var(--muted); font-size: 16px; transition: transform .2s; }
+  .cheat-section[data-open="true"] .cheat-toggle { transform: rotate(90deg); color: var(--gold); }
+  .cheat-body { display: none; padding: 4px 16px 14px 16px; font-size: 12.5px; line-height: 1.55; }
+  .cheat-section[data-open="true"] .cheat-body { display: block; }
+  .cheat-body h4 { margin: 12px 0 6px; font-size: 12px; letter-spacing: 1.5px; color: var(--gold); text-transform: uppercase; border-bottom: 1px dashed var(--border); padding-bottom: 3px; }
+  .cheat-body h4:first-child { margin-top: 4px; }
+  .cheat-body p { margin: 4px 0; }
+  .cheat-body ul, .cheat-body ol { margin: 4px 0; padding-left: 22px; }
+  .cheat-body li { margin: 2px 0; }
+  .cheat-body ul li::marker { color: var(--gold); }
+  .cheat-body strong { color: var(--gold-bright); }
+  .cheat-body em { color: var(--muted); font-style: italic; }
+  .cheat-body code { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 0 5px; border-radius: 2px; font-family: 'Consolas', monospace; font-size: 11.5px; color: var(--gold-bright); }
+  .cheat-body table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 11.5px; }
+  .cheat-body table th { background: rgba(201,162,39,0.1); color: var(--gold); font-weight: normal; text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border); font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .cheat-body table td { padding: 3px 8px; border-bottom: 1px dashed rgba(58,46,33,0.4); }
+  .cheat-body table tr:last-child td { border-bottom: none; }
+  .cheat-body .pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10.5px; letter-spacing: 0.5px; margin-right: 4px; }
+  .cheat-body .pill.rage { background: rgba(200,50,50,0.2); color: #ff8080; border: 1px solid rgba(200,50,50,0.4); }
+  .cheat-body .pill.wp { background: rgba(80,140,200,0.2); color: #80b8ff; border: 1px solid rgba(80,140,200,0.4); }
+  .cheat-body .pill.gnosis { background: rgba(140,200,90,0.15); color: #a0d670; border: 1px solid rgba(140,200,90,0.4); }
+  .cheat-body .note { background: rgba(74,127,165,0.08); border-left: 3px solid var(--blue); padding: 6px 10px; margin: 8px 0; font-size: 11.5px; border-radius: 0 3px 3px 0; }
+  .cheat-body .warn { background: rgba(139,42,42,0.1); border-left: 3px solid var(--red); padding: 6px 10px; margin: 8px 0; font-size: 11.5px; border-radius: 0 3px 3px 0; }
+
+  @media (max-width: 900px) {
+    .triple, .id-grid { grid-template-columns: 1fr; }
+    .bottom-grid { grid-template-columns: 1fr; }
+    .forms-grid { grid-template-columns: repeat(2, 1fr); }
+    .grid-2col { grid-template-columns: 1fr; }
+    .combat-wrap { grid-template-columns: 1fr; }
+    .gift-filters, .rite-filters { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) {
+    .forms-grid { grid-template-columns: 1fr; }
+    .gift-filters, .rite-filters { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    @page { size: A4; margin: 8mm; }
+    .toolbar, .add-btn, .rm, #save-indicator, .autofill-banner, .gift-filters, .gift-actions, .gift-only-mine, .cheat-nav, .cheat-toggle, .toast, .rite-filters, .add-rite-btn { display: none !important; }
+    body { background: #fff; color: #000; padding: 0; font-size: 10px; }
+    .sheet { margin: 0; padding: 0; max-width: 100%; }
+    .page { display: none; gap: 6px; page-break-after: always; }
+    .page.active { display: flex !important; }
+    .page:last-child { page-break-after: auto; }
+    .panel { background: #fff; border: 1px solid #666; box-shadow: none; page-break-inside: avoid; padding: 6px 10px; }
+    .panel > h2 { color: #000; border-bottom-color: #666; font-size: 12px; }
+    .col h3 { color: #000; border-bottom-color: #999; }
+    label { color: #444; }
+    input, textarea, select { background: #fff !important; color: #000; border-color: #999; }
+    .dot { border-color: #333; background: #fff; }
+    .dot.filled, .dot.auto { background: #333; border-color: #333; box-shadow: none; }
+    .sq { border-color: #333; background: #fff; }
+    .sq.filled { background: #333; border-color: #333; box-shadow: none; }
+    .health-box { border-color: #333; background: #fff; }
+    .health-box.filled { background: #333; border-color: #333; box-shadow: none; }
+    .form-card { background: #fff; border-color: #666; }
+    .form-card h4 { color: #000; }
+    table.combat th { color: #000; }
+  }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(107,143,78,0.95); color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 13px; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.4); opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.info { background: rgba(74,127,165,0.95); }
+  .toast.purple { background: rgba(139,107,176,0.95); }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="brand">🐺 Werewolf: The Apocalypse</span>
+  <div class="tabs">
+    <button data-tab="page1" class="active">Основное</button>
+    <button data-tab="page2">Формы и Бой</button>
+    <button data-tab="page3">Дополнения</button>
+    <button data-tab="page4">📖 Дары</button>
+    <button data-tab="page6">📿 Обряды</button>
+    <button data-tab="page5">📋 Шпаргалки</button>
+  </div>
+  <span id="save-indicator">✓ Сохранено</span>
+  <div class="tools">
+    <button id="btn-pdf" class="pdf" title="Сохранить как PDF">📄 PDF</button>
+    <button id="btn-export" title="Экспорт JSON">📤</button>
+    <button id="btn-import" title="Импорт JSON">📥</button>
+    <button id="btn-print" title="Печать">🖨️</button>
+    <button id="btn-reset" class="danger" title="Сброс">🗑</button>
+  </div>
+  <input type="file" id="file-input" accept="application/json" hidden>
+</div>
+
+<main class="sheet">
+
+  <div class="page active" id="page1">
+    <div class="autofill-banner" id="autofill-banner"></div>
+
+    <section class="panel">
+      <div class="id-grid">
+        <div><label>Имя</label><input type="text" id="f_name" autocomplete="off"></div>
+        <div><label>Рождение</label><input type="text" id="f_birth" autocomplete="off"></div>
+        <div><label>Имя Стаи</label><input type="text" id="f_pack" autocomplete="off"></div>
+        <div><label>Игрок</label><input type="text" id="f_player" autocomplete="off"></div>
+        <div><label>Предварительные</label><input type="text" id="f_prelude" autocomplete="off"></div>
+        <div><label>Тотем Стаи</label><input type="text" id="f_totem" autocomplete="off"></div>
+        <div><label>Хроника</label><input type="text" id="f_chronicle" autocomplete="off"></div>
+        <div><label>Племя</label><input type="text" id="f_tribe" list="dl_tribes" autocomplete="off"></div>
+        <div><label>Концепция</label><input type="text" id="f_concept" autocomplete="off"></div>
+        <div><label>Покровительство (Аспект)</label><input type="text" id="f_auspice" list="dl_auspices" autocomplete="off"></div>
+        <div><label>Порода</label><input type="text" id="f_breed" list="dl_breeds" autocomplete="off"></div>
+        <div><label>Ранг</label><input type="text" id="f_rank" autocomplete="off" placeholder="Клиат (1)"></div>
+      </div>
+    </section>
+
+    <section class="panel"><h2>Атрибуты</h2><div class="triple" id="attrs"></div></section>
+    <section class="panel"><h2>Способности</h2><div class="triple" id="abilities"></div></section>
+
+    <section class="panel">
+      <h2>Преимущества</h2>
+      <div class="triple">
+        <div class="col"><h3>Дополнения</h3><div class="list" id="list_backgrounds"></div><button class="add-btn" data-add="backgrounds">+ Добавить</button></div>
+        <div class="col"><h3>Дары I</h3><div class="list" id="list_gifts1"></div><button class="add-btn" data-add="gifts1">+ Добавить</button></div>
+        <div class="col"><h3>Дары II</h3><div class="list" id="list_gifts2"></div><button class="add-btn" data-add="gifts2">+ Добавить</button></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="bottom-grid">
+        <div>
+          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;color:var(--gold);margin:0 0 10px;font-variant:small-caps;">Известность</h2>
+          <div class="pool-block"><div class="stat-name">Слава</div><div class="dots" data-key="glory" data-max="10"></div><div class="squares" data-key="glory" data-max="10"></div></div>
+          <div class="pool-block"><div class="stat-name">Честь</div><div class="dots" data-key="honor" data-max="10"></div><div class="squares" data-key="honor" data-max="10"></div></div>
+          <div class="pool-block"><div class="stat-name">Мудрость</div><div class="dots" data-key="wisdom" data-max="10"></div><div class="squares" data-key="wisdom" data-max="10"></div></div>
+        </div>
+        <div>
+          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;color:var(--gold);margin:0 0 10px;font-variant:small-caps;">Пулы</h2>
+          <div class="pool-block"><div class="stat-name">Ярость</div><div class="dots" data-key="rage" data-max="10"></div><div class="squares" data-key="rage" data-max="10"></div><div class="auto-hint" id="hint-rage"></div></div>
+          <div class="pool-block"><div class="stat-name">Гносис</div><div class="dots" data-key="gnosis" data-max="10"></div><div class="squares" data-key="gnosis" data-max="10"></div><div class="auto-hint" id="hint-gnosis"></div></div>
+          <div class="pool-block"><div class="stat-name">Сила Воли</div><div class="dots" data-key="willpower" data-max="10"></div><div class="squares" data-key="willpower" data-max="10"></div><div class="auto-hint" id="hint-willpower"></div></div>
+        </div>
+        <div>
+          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;color:var(--gold);margin:0 0 10px;font-variant:small-caps;">Здоровье</h2>
+          <div class="health" id="health"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="page" id="page2">
+    <section class="panel"><h2>Формы</h2><div class="forms-grid" id="forms"></div></section>
+    <section class="panel"><h2>Другие Трейты</h2><div class="triple" id="other-traits"></div></section>
+    <section class="panel">
+      <h2>Фетиши и Ритуалы</h2>
+      <div class="grid-2col">
+        <div><h3>Фетиши</h3><div id="fetishes"></div><button class="add-btn" data-add="fetishes" style="margin-top:8px;">+ Добавить фетиш</button></div>
+        <div><h3>Ритуалы</h3><div class="list" id="list_rites"></div><button class="add-btn" data-add="rites">+ Добавить ритуал</button></div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Бой и Броня</h2>
+      <div class="combat-wrap">
+        <div>
+          <table class="combat">
+            <thead><tr><th style="width:28%">Оружие</th><th>Слж</th><th>Унр</th><th>Тгн</th><th>Скр</th><th>Обм</th><th>Длн</th><th>Инц</th></tr></thead>
+            <tbody id="combat-rows"></tbody>
+          </table>
+          <button class="add-btn" data-add="combat" style="margin-top:8px;">+ Добавить оружие</button>
+        </div>
+        <div>
+          <h3>Броня</h3>
+          <div class="misc-block">
+            <div><label>Класс</label><input type="text" id="armor_class" autocomplete="off"></div>
+            <div><label>Рейтинг</label><input type="text" id="armor_rating" autocomplete="off"></div>
+            <div><label>Штраф</label><input type="text" id="armor_penalty" autocomplete="off"></div>
+            <div><label>Описание</label><textarea id="armor_desc" rows="4"></textarea></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="page" id="page3">
+    <section class="panel">
+      <div class="id-grid" style="grid-template-columns: 1fr 1fr;">
+        <div><label>Натура</label><input type="text" id="f_nature" list="dl_natures" autocomplete="off"></div>
+        <div><label>Маска</label><input type="text" id="f_demeanor" list="dl_natures" autocomplete="off"></div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Добродетели и Пороки</h2>
+      <div class="grid-2col">
+        <div><h3>Добродетели</h3><table class="combat"><thead><tr><th style="width:50%">Название</th><th>Тип</th><th>Цена</th></tr></thead><tbody id="merits-rows"></tbody></table><button class="add-btn" data-add="merits" style="margin-top:6px;">+ Добавить</button></div>
+        <div><h3>Пороки</h3><table class="combat"><thead><tr><th style="width:50%">Название</th><th>Тип</th><th>Цена</th></tr></thead><tbody id="flaws-rows"></tbody></table><button class="add-btn" data-add="flaws" style="margin-top:6px;">+ Добавить</button></div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Расширенные Дополнения</h2>
+      <div class="grid-2col">
+        <div class="misc-block">
+          <label>Контакты</label><textarea id="bg_contacts" rows="3"></textarea>
+          <label>Ментор</label><textarea id="bg_mentor" rows="3"></textarea>
+          <label>Ресурсы</label><textarea id="bg_resources" rows="3"></textarea>
+          <label>Гориги</label><textarea id="bg_gorge" rows="3"></textarea>
+        </div>
+        <div class="misc-block">
+          <label>Союзники</label><textarea id="bg_allies" rows="3"></textarea>
+          <label>Тотем Стаи</label><textarea id="bg_totem" rows="3"></textarea>
+          <label>Чистая Кровь</label><textarea id="bg_purebreed" rows="3"></textarea>
+          <label>Прагес / Прочее</label><textarea id="bg_other" rows="3"></textarea>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="grid-2col">
+        <div class="misc-block">
+          <label>Экипировка</label><textarea id="possessions" rows="5"></textarea>
+          <label>Обмундирование</label><textarea id="outfit" rows="3"></textarea>
+        </div>
+        <div class="misc-block">
+          <label>Полный опыт</label><input type="text" id="exp_total" autocomplete="off">
+          <label>Полный потраченный</label><input type="text" id="exp_spent" autocomplete="off">
+          <label>Потраченный на…</label><textarea id="exp_notes" rows="6"></textarea>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Септ</h2>
+      <div class="id-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+        <div><label>Имя</label><input type="text" id="sept_name" autocomplete="off"></div>
+        <div><label>Расположение Кэрна</label><input type="text" id="sept_location" autocomplete="off"></div>
+        <div><label>Тип</label><input type="text" id="sept_type" autocomplete="off"></div>
+        <div><label>Ур.</label><input type="text" id="sept_level" autocomplete="off"></div>
+        <div><label>Тотем</label><input type="text" id="sept_totem" autocomplete="off"></div>
+        <div><label>Лидер</label><input type="text" id="sept_leader" autocomplete="off"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="page" id="page4">
+    <section class="panel">
+      <h2>Справочник Даров</h2>
+      <div class="gift-filters">
+        <select id="gift-source-type">
+          <option value="all">Все источники</option>
+          <option value="breeds">Дары пород</option>
+          <option value="auspices">Дары покровительств</option>
+          <option value="tribes">Дары племён</option>
+        </select>
+        <select id="gift-source"><option value="all">Все</option></select>
+        <select id="gift-level">
+          <option value="all">Все уровни</option>
+          <option value="1">Уровень 1</option><option value="2">Уровень 2</option>
+          <option value="3">Уровень 3</option><option value="4">Уровень 4</option>
+          <option value="5">Уровень 5</option>
+        </select>
+        <input type="text" id="gift-search" placeholder="Поиск по названию или описанию…">
+      </div>
+      <label class="gift-only-mine" id="gift-only-mine-label">
+        <input type="checkbox" id="gift-only-mine">
+        <span>🎯 Показывать только мои (по выбранным в листе Породе / Покровительству / Племени)</span>
+        <span class="hint" id="gift-only-mine-hint"></span>
+      </label>
+      <div class="gift-stats" id="gift-stats">Загрузка…</div>
+      <div class="gift-list" id="gift-list"></div>
+    </section>
+  </div>
+
+  <div class="page" id="page6">
+    <section class="panel">
+      <h2>Справочник Обрядов</h2>
+      <div class="rite-info">
+        <strong>📖 Краткий гайд по обрядам</strong><br>
+        Обряды — священные ритуалы Гару. Все делятся на 8 типов:
+        <table class="rolls-table">
+          <tr><th>Тип</th><th>Бросок</th><th>Сложность</th></tr>
+          <tr><td>🕊️ Гармония</td><td>Обаяние + Ритуалы</td><td>7</td></tr>
+          <tr><td>🏛️ Каэрн</td><td>Разный (макс. Гнозис)</td><td>7</td></tr>
+          <tr><td>⚰️ Смерть</td><td>Обаяние + Ритуалы</td><td>8 − Ранг</td></tr>
+          <tr><td>✨ Мистический</td><td>Сообразительность + Ритуалы</td><td>7</td></tr>
+          <tr><td>⚖️ Наказание</td><td>Обаяние + Ритуалы</td><td>7</td></tr>
+          <tr><td>🏆 Известность</td><td>Обаяние + Ритуалы</td><td>6</td></tr>
+          <tr><td>🍂 Сезонный</td><td>Выносливость + Ритуалы</td><td>8 − ур. каэрна</td></tr>
+          <tr><td>🌿 Малые</td><td>Без броска</td><td>—</td></tr>
+        </table>
+        <strong>📚 Как учиться:</strong>
+        <ul>
+          <li>Нужно познание <code>Ритуалы ≥ уровень обряда</code></li>
+          <li>Учитель — старейшина, просит плату или услугу</li>
+          <li>Время: <strong>1 неделя на уровень</strong> (3 дня — для малых)</li>
+          <li>Бросок: <code>Интеллект + Ритуалы</code>, сложность <code>10 − Интеллект</code></li>
+          <li>При провале — ждать 3 лунных цикла</li>
+          <li><strong>+5 участников</strong> снижают сложность на 1 (минимум 3)</li>
+        </ul>
+      </div>
+      <div class="rite-filters">
+        <select id="rite-type-filter"><option value="all">Все типы</option></select>
+        <select id="rite-level-filter">
+          <option value="all">Все уровни</option>
+          <option value="1">Уровень 1</option><option value="2">Уровень 2</option>
+          <option value="3">Уровень 3</option><option value="4">Уровень 4</option>
+          <option value="5">Уровень 5</option>
+          <option value="0">Малые (без уровня)</option>
+        </select>
+        <input type="text" id="rite-search" placeholder="Поиск по названию или описанию…">
+      </div>
+      <div class="rite-stats" id="rite-stats">Загрузка…</div>
+      <div class="rite-list" id="rite-list"></div>
+    </section>
+  </div>
+
+  <div class="page" id="page5">
+    <section class="panel">
+      <h2>Шпаргалки Мастера и Игрока</h2>
+      <div class="cheat-nav">
+        <button data-jump="cheat-umbra">🌀 Умбра</button>
+        <button data-jump="cheat-combat">⚔️ Бой</button>
+        <button data-jump="cheat-rage">🔥 Ярость</button>
+        <button data-jump="cheat-wp">💪 Сила Воли</button>
+        <button data-jump="cheat-gnosis">✨ Гнозис</button>
+        <button data-jump="cheat-frenzy">🩸 Бешенство</button>
+      </div>
+      <div class="cheat-accordion" id="cheat-accordion">
+
+        <div class="cheat-section" id="cheat-umbra" data-open="false">
+          <div class="cheat-header"><span class="cheat-title"><span class="emoji">🌀</span>Шаг за грань — Вход в Умбру</span><span class="cheat-toggle">▶</span></div>
+          <div class="cheat-body">
+            <h4>Основной механизм</h4>
+            <p>Гару бросает <strong>Гнозис</strong> против уровня местного <strong>Барьера</strong>.</p>
+            <table>
+              <tr><th>Успехи</th><th>Время перехода</th></tr>
+              <tr><td>0</td><td>Неудача. Повтор через час, сложность +2</td></tr>
+              <tr><td>1</td><td>5 минут</td></tr>
+              <tr><td>2</td><td>30 секунд</td></tr>
+              <tr><td>3+</td><td>Мгновенно</td></tr>
+            </table>
+            <h4>Уровни Барьера</h4>
+            <table>
+              <tr><th>Место</th><th>Барьер</th></tr>
+              <tr><td>Научная лаборатория</td><td>9</td></tr>
+              <tr><td>Центр города</td><td>8</td></tr>
+              <tr><td>Большинство мест</td><td>7</td></tr>
+              <tr><td>Деревня</td><td>6</td></tr>
+              <tr><td>Дикая местность</td><td>5</td></tr>
+              <tr><td>Обычный каэрн</td><td>4</td></tr>
+              <tr><td>Мощный каэрн</td><td>3</td></tr>
+              <tr><td>Величайший каэрн</td><td>2</td></tr>
+            </table>
+            <h4>Отражающие поверхности</h4>
+            <p>Зеркало, серебро, тихий бассейн:</p>
+            <ul>
+              <li>−1 к сложности</li>
+              <li>При неудаче сложность <em>не растёт</em></li>
+              <li>При провале поверхность тускнеет (но не гибнешь)</li>
+            </ul>
+            <div class="warn"><strong>Провал:</strong> ловушка Узорной Паутины (Вивер).</div>
+            <div class="note">Нельзя тратить Ярость в тот же ход, что и делать Шаг за грань.</div>
+          </div>
+        </div>
+
+        <div class="cheat-section" id="cheat-combat" data-open="false">
+          <div class="cheat-header"><span class="cheat-title"><span class="emoji">⚔️</span>Бой — Действия и броски</span><span class="cheat-toggle">▶</span></div>
+          <div class="cheat-body">
+            <h4>Акты боевого хода</h4>
+            <ol>
+              <li><strong>Описание сцены</strong></li>
+              <li><strong>Инициатива</strong> — Ловкость + Сообразительность + d10</li>
+              <li><strong>Заявка действий</strong> — в обратном порядке</li>
+              <li><strong>Разрешение</strong> — броски</li>
+            </ol>
+            <h4>Броски атаки</h4>
+            <table>
+              <tr><th>Тип</th><th>Бросок</th><th>Слж</th></tr>
+              <tr><td>Огнестрел</td><td>Ловк + Огнестрельное</td><td>6</td></tr>
+              <tr><td>Метательное</td><td>Ловк + Атлетика</td><td>5–7</td></tr>
+              <tr><td>Холодное</td><td>Ловк + Холодное</td><td>по оружию</td></tr>
+              <tr><td>Кулаки/когти</td><td>Ловк + Рукопашный</td><td>5–7</td></tr>
+            </table>
+            <h4>Маневры</h4>
+            <table>
+              <tr><th>Маневр</th><th>Бросок</th><th>Слж</th><th>Урон</th></tr>
+              <tr><td>Укус</td><td>Ловк+Рукоп</td><td>5</td><td>Сила+1 (А)</td></tr>
+              <tr><td>Когти</td><td>Ловк+Рукоп</td><td>6</td><td>Сила+1 (А)</td></tr>
+              <tr><td>Удар рукой</td><td>Ловк+Рукоп</td><td>6</td><td>Сила (У)</td></tr>
+              <tr><td>Удар ногой</td><td>Ловк+Рукоп</td><td>7</td><td>Сила+1 (У)</td></tr>
+              <tr><td>Захват/Борьба</td><td>Сила+Рукоп</td><td>6</td><td>Сила/Удерж.</td></tr>
+              <tr><td>Подножка</td><td>Ловк+Рукоп</td><td>8</td><td>Сбивает</td></tr>
+              <tr><td>Разоружение</td><td>Ловк+Холод</td><td>+1</td><td>Успехи ≥ Сила</td></tr>
+              <tr><td>Уворот</td><td>Сообр+Уклон</td><td>6</td><td>Нет</td></tr>
+            </table>
+            <h4>Урон</h4>
+            <ol>
+              <li>Бросок атаки, сложность <strong>6</strong></li>
+              <li>Каждый успех = 1 уровень</li>
+              <li>Каждый успех <em>сверх первого</em> = +1 кубик урона</li>
+              <li>Урон: <strong>Сила + успехи − 1</strong></li>
+              <li>Поглощение: <strong>Выносливость</strong> (слж 6)</li>
+            </ol>
+            <h4>Типы урона</h4>
+            <ul>
+              <li><strong>Ударный</strong> — тупое</li>
+              <li><strong>Летальный</strong> — ножи, пули</li>
+              <li><strong>Агравированный</strong> — когти Гару, серебро, огонь</li>
+            </ul>
+            <h4>Поглощение Гару</h4>
+            <ul>
+              <li>Ударный/летальный: <strong>слж 6</strong>, кроме натуральной формы</li>
+              <li>Агравированный: только в форме, отличной от натуральной</li>
+              <li><strong>Серебро:</strong> нельзя поглощать, кроме натуральной формы (метисы — никогда)</li>
+            </ul>
+            <h4>Множественные действия</h4>
+            <p>1-е −N кубиков, 2-е −(N+1), 3-е −(N+2).</p>
+            <div class="note"><strong>Ярость:</strong> 1 пункт = 1 доп. атака без штрафов.</div>
+          </div>
+        </div>
+
+        <div class="cheat-section" id="cheat-rage" data-open="false">
+          <div class="cheat-header"><span class="cheat-title"><span class="emoji">🔥</span>Траты Ярости <span class="pill rage">Rage</span></span><span class="cheat-toggle">▶</span></div>
+          <div class="cheat-body">
+            <h4>На что потратить</h4>
+            <table>
+              <tr><th>Действие</th><th>Цена</th><th>Эффект</th></tr>
+              <tr><td>Доп. действия</td><td>1</td><td>+1 атака. Лимит: ½ Ярости</td></tr>
+              <tr><td>Смена формы</td><td>1</td><td>Мгновенно</td></tr>
+              <tr><td>Игнор оглушения</td><td>1</td><td>Продолжает действовать</td></tr>
+              <tr><td>Игнор боли</td><td>1</td><td>Снять штрафы на 1 ход</td></tr>
+              <tr><td>Возврат при Нокауте</td><td>Бросок</td><td>+1 уровень здоровья, но Бешенство</td></tr>
+            </table>
+            <h4>Восстановление</h4>
+            <table>
+              <tr><th>Фаза</th><th>Пункты</th></tr>
+              <tr><td>Новолуние</td><td>+1</td></tr>
+              <tr><td>Серповидная</td><td>+2</td></tr>
+              <tr><td>Полулуние/горбатая</td><td>+3</td></tr>
+              <tr><td>Полнолуние</td><td>+4</td></tr>
+              <tr><td>Своё покровительство</td><td>Полный</td></tr>
+            </table>
+            <p><strong>Также:</strong> провал броска (+1), унижение (+1), перед боем (+1).</p>
+          </div>
+        </div>
+
+        <div class="cheat-section" id="cheat-wp" data-open="false">
+          <div class="cheat-header"><span class="cheat-title"><span class="emoji">💪</span>Траты Силы Воли <span class="pill wp">Willpower</span></span><span class="cheat-toggle">▶</span></div>
+          <div class="cheat-body">
+            <h4>На что потратить</h4>
+            <table>
+              <tr><th>Действие</th><th>Цена</th><th>Эффект</th></tr>
+              <tr><td>Автоуспех</td><td>1</td><td>+1 успех. Макс 1/ход</td></tr>
+              <tr><td>Прекращение Бешенства</td><td>1</td><td>Предотвратить, но потерять ход</td></tr>
+              <tr><td>Контроль поведения</td><td>1</td><td>Игнорировать первобытные побуждения</td></tr>
+              <tr><td>Сопротивление внушению</td><td>1+</td><td>Против магии, гипноза</td></tr>
+            </table>
+            <h4>Восстановление</h4>
+            <ul>
+              <li>Конец истории — полное</li>
+              <li>Личный успех — 1–3</li>
+              <li>Хорошее исполнение роли — 1–3</li>
+              <li><em>Опц.:</em> +1 после пробуждения</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cheat-section" id="cheat-gnosis" data-open="false">
+          <div class="cheat-header"><span class="cheat-title"><span class="emoji">✨</span>Траты Гнозиса <span class="pill gnosis">Gnosis</span></span><span class="cheat-toggle">▶</span></div>
+          <div class="cheat-body">
+            <h4>На что потратить</h4>
+            <table>
+              <tr><th>Действие</th><th>Цена</th><th>Эффект</th></tr>
+              <tr><td>Дары</td><td>по описанию</td><td>Большинство требует Гнозис</td></tr>
+              <tr><td>Активация фетиша</td><td>1 или бросок</td><td>Слж = уровень Гнозиса</td></tr>
+              <tr><td>Шаг за грань</td><td>—</td><td>Бросок против Барьера</td></tr>
+              <tr><td>Обряд каэрна</td><td>до 5 на ур.</td><td>Святость каэрна</td></tr>
+            </table>
+            <h4>Восстановление</h4>
+            <p><strong>Медитация:</strong> 1 час + <code>Сообр+Загадки (8)</code>, +1 за успех.</p>
+            <p><strong>Священная охота:</strong> полное восстановление.</p>
+            <p><strong>Между историями:</strong> <code>Обаяние+Загадки</code>.</p>
+            <h4>Потеря</h4>
+            <p>Серебро: пули −1/5, клайв −1, великий клайв −2. Восст. за день.</p>
+          </div>
+        </div>
+
+        <div class="cheat-section" id="cheat-frenzy" data-open="false">
+          <div class="cheat-header"><span class="cheat-title"><span class="emoji">🩸</span>Бешенство (Frenzy)</span><span class="cheat-toggle">▶</span></div>
+          <div class="cheat-body">
+            <h4>Когда наступает</h4>
+            <p>При броске Ярости: <strong>4+ успехов</strong> = Бешенство.</p>
+            <h4>Сложность броска</h4>
+            <table>
+              <tr><th>Фаза</th><th>Слж</th></tr>
+              <tr><td>Новолуние (Рагабаш)</td><td>8</td></tr>
+              <tr><td>Серповидная (Теург)</td><td>7</td></tr>
+              <tr><td>Полулуние (Филодокс)</td><td>6</td></tr>
+              <tr><td>Горбатая (Галлиард)</td><td>5</td></tr>
+              <tr><td>Полнолуние (Арун)</td><td>4</td></tr>
+            </table>
+            <p>Если фаза = покровительство: −1.</p>
+            <h4>Типы</h4>
+            <p><strong>Берсерка</strong> — атакует всех.</p>
+            <p><strong>Лисье</strong> — паника, бежит в Люпусе.</p>
+            <p><strong>Рабство Вирма</strong> — 6+ успехов.</p>
+            <h4>Выход</h4>
+            <ul>
+              <li>Стимул пропал</li>
+              <li><code>Воля</code> (слж = Ярость)</li>
+              <li>1 ПСВ — потерять следующий ход</li>
+            </ul>
+            <h4>Что теряется</h4>
+            <ul>
+              <li>Сложные маневры</li>
+              <li>Стайные тактики</li>
+              <li>Дары</li>
+              <li>Все штрафы от ран игнорируются</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<datalist id="dl_tribes">
+  <option value="Черные Фурии"></option><option value="Костегрызы"></option>
+  <option value="Дети Гайи"></option><option value="Фианна"></option>
+  <option value="Потомки Фенрира"></option><option value="Стеклоходы"></option>
+  <option value="Красные Когти"></option><option value="Теневые Владыки"></option>
+  <option value="Безмолвные Странники"></option><option value="Серебряные Клыки"></option>
+  <option value="Уктена"></option><option value="Вендиго"></option>
+  <option value="Звездочеты"></option>
+</datalist>
+<datalist id="dl_auspices">
+  <option value="Рагабаш"></option><option value="Теург"></option>
+  <option value="Филодокс"></option><option value="Галлиард"></option>
+  <option value="Арун"></option>
+</datalist>
+<datalist id="dl_breeds">
+  <option value="Хомид"></option><option value="Метис"></option>
+  <option value="Люпус"></option>
+</datalist>
+<datalist id="dl_natures">
+  <option value="Архитектор"></option><option value="Автократ"></option>
+  <option value="Бонвиван"></option><option value="Хулиган"></option>
+  <option value="Защитник"></option><option value="Мученик"></option>
+  <option value="Судья"></option><option value="Одиночка"></option>
+  <option value="Педант"></option><option value="Бунтарь"></option>
+  <option value="Стоик"></option><option value="Выживший"></option>
+  <option value="Традиционалист"></option><option value="Мечтатель"></option>
+</datalist>
+
+<script>
+const STORAGE_KEY = 'wta_char_sheet_v6';
+
+const BREEDS = {
+  'Хомид': { gnosis: 1, gifts: ['Повелитель огня', 'Убеждение', 'Запах человека'] },
+  'Метис': { gnosis: 3, gifts: ['Создать стихию', 'Первобытный гнев', 'Чутьё Вирма'] },
+  'Люпус': { gnosis: 5, gifts: ['Заячий прыжок', 'Обострённые чувства', 'Чутьё дичи'] }
+};
+const AUSPICES = {
+  'Рагабаш':  { rage: 1, renown: { glory:0, honor:0, wisdom:0, any:3 }, gifts: ['Размывание','Взломанная печать','Запах текущей воды'] },
+  'Теург':    { rage: 2, renown: { glory:0, honor:0, wisdom:3 },        gifts: ['Ласка Матери','Чутьё Вирма','Речь духов'] },
+  'Филодокс': { rage: 3, renown: { glory:0, honor:3, wisdom:0 },        gifts: ['Устойчивость к боли','Чутьё истинной формы','Истина Гайи'] },
+  'Галлиард': { rage: 4, renown: { glory:2, honor:0, wisdom:1 },        gifts: ['Язык зверей','Зов Вильда','Мыслеречь'] },
+  'Арун':     { rage: 5, renown: { glory:2, honor:1, wisdom:0 },        gifts: ['Оглушающее касание','Воодушевление','Заточенные когти'] }
+};
+const TRIBES = {
+  'Черные Фурии':        { willpower:3, gifts:['Дыхание Вильда','Обострённые чувства','Чутьё Вирма'] },
+  'Костегрызы':          { willpower:4, gifts:['Стряпня','Сопротивление ядам','Навязчивое единство'] },
+  'Дети Гайи':           { willpower:4, gifts:['Милосердие','Ласка Матери','Устойчивость к боли'] },
+  'Фианна':              { willpower:3, gifts:['Волшебный огонёк','Убеждение','Сопротивление ядам'] },
+  'Потомки Фенрира':     { willpower:3, gifts:['Заточенные когти','Устойчивость к боли','Облик Фенрира'] },
+  'Стеклоходы':          { willpower:3, gifts:['Контроль простых устройств','Диагностика','Хитрый выстрел'] },
+  'Красные Когти':       { willpower:3, gifts:['Язык зверей','Запах текущей воды','Волк у ворот'] },
+  'Теневые Владыки':     { willpower:3, gifts:['Аура уверенности','Роковой изъян','Перехват преимущества'] },
+  'Безмолвные Странники':{ willpower:3, gifts:['Чутьё Вирма','Тишина','Скорость мысли'] },
+  'Серебряные Клыки':    { willpower:3, gifts:['Соколиная хватка','Сияющее пламя','Чутьё Вирма'] },
+  'Уктена':              { willpower:3, gifts:['Чутьё магии','Пелена','Речь духов'] },
+  'Вендиго':             { willpower:4, gifts:['Призыв ветра','Маскировка','Устойчивость к боли'] },
+  'Звездочеты':          { willpower:5, gifts:['Баланс','Оглушающее касание','Чутьё Вирма'] }
+};
+
+const GIFT_DATA = {
+  breeds: {
+    'Хомид': [
+      { n:'Повелитель огня', l:1, d:'Древнее соглашение с духом огня. Урон от огня лечится как ударный.', s:'1 Гнозис, эффект — сцена.' },
+      { n:'Убеждение', l:1, d:'Аргументы звучат особенно правдоподобно.', s:'Обаяние+Хитрость. −1 сложность соц. бросков на сцену.' },
+      { n:'Запах человека', l:1, d:'Дикие животные боятся, домашние считают хозяином.', s:'Дикие −1 кубик в 6 м; домашние дружелюбны.' },
+      { n:'Неполадки с техникой', l:2, d:'Ломает технику.', s:'Манипул+Ремесла. Слж: комп. 4, нож 10.' },
+      { n:'Пристальный взгляд', l:2, d:'Взглядом заставляет врага бежать.', s:'Обаяние+Запугивание (5+ранг).' },
+      { n:'Смятение', l:3, d:'Депрессия и потеря концентрации.', s:'Манипул+Эмпатия vs Воля. Не восст. Ярость на сцену.' },
+      { n:'Видоизменить объект', l:3, d:'Превращает природный материал в предмет.', s:'Манипул+Ремесло. Слж 5–8.' },
+      { n:'Кокон', l:4, d:'Саркофаг-защита от огня, голода, газов.', s:'1 Гнозис. Поглощает урон < Вынос+Ритуалы.' },
+      { n:'Оберег от духов', l:4, d:'Пиктограмма отпугивает духов.', s:'1 Гнозис + Манипул+Ритуалы (7).' },
+      { n:'Ассимиляция', l:5, d:'Вписывается в любую культуру.', s:'Манипул+Эмпатия. Слж 5–9.' },
+      { n:'Приподнятая Завеса', l:5, d:'Иммунитет к Первобытному Ужасу.', s:'1 Гнозис + Обаяние+Эмпатия.' }
+    ],
+    'Метис': [
+      { n:'Создать стихию', l:1, d:'Создаёт огонь, воздух, землю или воду.', s:'1 Гнозис. Объём 1 фут³, вес 50 кг.' },
+      { n:'Первобытный гнев', l:1, d:'Концентрирует гнев для усиления Ярости.', s:'1 уровень здоровья → 2 Ярости.' },
+      { n:'Чутьё Вирма', l:1, d:'Чувствует присутствие Вирма.', s:'Восприятие+Оккультизм (6 или 8).' },
+      { n:'Рытьё', l:2, d:'Создаёт тоннели.', s:'Сила+Атлетика, слж 4–9.' },
+      { n:'Проклятье ненависти', l:2, d:'Провоцирует ненависть.', s:'2 Ярости + 1 ПСВ. Манипул+Красноречие vs Воля.' },
+      { n:'Глаза кошки', l:3, d:'Видит в полной темноте.', s:'Врождённый.' },
+      { n:'Мысленная беседа', l:3, d:'Телепатия с одним существом.', s:'Обаяние+Эмпатия (8).' },
+      { n:'Дар динозавра', l:4, d:'Превращение в ящера.', s:'1 Гнозис. +2 Сила, +1 Вынос., агграв.' },
+      { n:'Отсохшая конечность', l:4, d:'Иссушает конечность жертвы.', s:'1 Гнозис vs Вынос+4. −2 Ловкости.' },
+      { n:'Безумие', l:5, d:'Показывает демонов разума.', s:'1 Гнозис vs Воля. Длится дни.' },
+      { n:'Дар тотема', l:5, d:'Воззвание к племенному тотему.', s:'1 Гнозис + Обаяние+Ритуалы (7).' }
+    ],
+    'Люпус': [
+      { n:'Заячий прыжок', l:1, d:'Невероятные прыжки.', s:'Вынос+Атлетика (7).' },
+      { n:'Обострённые чувства', l:1, d:'Обостряет все чувства.', s:'1 Гнозис. −2/−3 к сложности Восприятия.' },
+      { n:'Чутьё дичи', l:1, d:'Находит дичь в 50 милях.', s:'Восприятие+Первый инстинкт (7 или 9).' },
+      { n:'Зрительное чутьё', l:2, d:'Ориентируется в темноте.', s:'Восприятие+Первобытный инстинкт.' },
+      { n:'Чутьё сверхъестественного', l:2, d:'Чувствует сверхъестественное.', s:'Восприятие+Загадки.' },
+      { n:'Кошачья походка', l:3, d:'Устойчив к падениям до 30 м.', s:'Врождённый.' },
+      { n:'Имена духов', l:3, d:'Чувствует черты духа.', s:'1 ПСВ + Восприятие+Оккультизм (8).' },
+      { n:'Звериная жизнь', l:4, d:'Привлекает диких животных.', s:'1 Гнозис + Обаяние+Понимание зверей (7).' },
+      { n:'Разгрызание', l:4, d:'Челюсти разгрызают всё.', s:'1 ПСВ + Вынос+4 vs слж 3–9.' },
+      { n:'Дар элементаля', l:5, d:'Вызывает элементаля.', s:'1 Гнозис + Обаяние+Оккультизм (7).' },
+      { n:'Песнь Великого Зверя', l:5, d:'Призывает вымерших зверей.', s:'1 Гнозис + Обаяние+Первый инстинкт (8).' }
+    ]
+  },
+  auspices: {
+    'Рагабаш': [
+      { n:'Размывание', l:1, d:'Сливается с фоном.', s:'Манипул+Скрытность (8).' },
+      { n:'Взломанная печать', l:1, d:'Отмыкает любой замок.', s:'Гнозис (слж = Барьер).' },
+      { n:'Запах текущей воды', l:1, d:'Скрывает свой запах.', s:'Врождённый. +2 к сложности выслеживания.' },
+      { n:'Блаженное неведенье', l:2, d:'Невидим для всех чувств.', s:'Ловк+Скрытность (7).' },
+      { n:'Чутьё добычи', l:2, d:'Безошибочно находит цель.', s:'Восприятие+Загадки vs Сообразит+Скрытность.' },
+      { n:'Забытая вещь', l:2, d:'Забирает предмет, жертва забывает.', s:'Сообр+Скрытность (3 успеха).' },
+      { n:'Гремлины', l:3, d:'Прикосновением ломает технику.', s:'Манипул+Запугивание. Слж 4–10.' },
+      { n:'Открыть Лунный мост', l:3, d:'Создаёт Лунный мост без каэрна.', s:'1 Гнозис. До 1000 миль.' },
+      { n:'Благословение Луны', l:4, d:'Серебро теряет агграв.', s:'Врождённый, если видна луна.' },
+      { n:'Щенячье тело', l:4, d:'Ослабляет физ. атрибуты.', s:'Гнозис vs Гнозис. Навсегда.' },
+      { n:'Когти сороки-воровки', l:5, d:'Похищает силы других.', s:'Сообр+Скрытность (3) vs Воля.' },
+      { n:'Тысяча форм', l:5, d:'Превращение в любое животное.', s:'1 Гнозис + Интеллект+Понимание зверей. Слж 5–10.' }
+    ],
+    'Теург': [
+      { n:'Ласка Матери', l:1, d:'Исцеляет раны наложением рук (не себя).', s:'1 Гнозис + Интеллект+Медицина.' },
+      { n:'Чутьё Вирма', l:1, d:'Как Дар Метиса.', s:'Восприятие+Оккультизм.' },
+      { n:'Речь духов', l:1, d:'Общается с любым духом.', s:'Врождённый.' },
+      { n:'Приказ духу', l:2, d:'Приказывает встреченному духу.', s:'1 ПСВ + Обаяние+Лидерство vs Гнозис духа.' },
+      { n:'Имена духов', l:2, d:'Как Дар Люпуса 3-го уровня.', s:'1 ПСВ + Восприятие+Оккультизм (8).' },
+      { n:'Взгляд извне', l:2, d:'Видения об опасности.', s:'Сообр+Оккультизм (7).' },
+      { n:'Экзорцизм', l:3, d:'Изгоняет духов.', s:'3 хода. Манипул+Запугивание vs Воля духа.' },
+      { n:'Незримый ритм', l:3, d:'Видит сквозь Барьер постоянно.', s:'Авто, если Гнозис ≥ Барьер.' },
+      { n:'Потусторонняя хватка', l:4, d:'Берёт предметы и людей в Умбру.', s:'1–3 ПСВ + бросок Гнозиса.' },
+      { n:'Иссушение духа', l:4, d:'Высасывает Эссенцию духа в ПСВ.', s:'Гнозис vs Гнозис. 2 Эссенции = 1 ПСВ.' },
+      { n:'Дикая лоботомия', l:5, d:'Стирает Интеллект.', s:'Сообр+Эмпатия (Воля+3) + 2 Гнозиса за точку.' },
+      { n:'Податливый дух', l:5, d:'Меняет черты, отношение, тип духа.', s:'Гнозис vs Гнозис.' }
+    ],
+    'Филодокс': [
+      { n:'Устойчивость к боли', l:1, d:'Игнорирует штрафы от ранений.', s:'1 ПСВ, эффект — сцена.' },
+      { n:'Чутьё истинной формы', l:1, d:'Определяет истинную природу.', s:'Восприятие+Первый инстинкт (2 или 4 успеха).' },
+      { n:'Истина Гайи', l:1, d:'Чует ложь.', s:'Интеллект+Эмпатия vs Манипул+Хитрость.' },
+      { n:'Зов долга', l:2, d:'Вызывает духа по имени.', s:'Обаяние+Лидерство vs Воля духа.' },
+      { n:'Царь зверей', l:2, d:'Подчиняет животное.', s:'Обаяние+Понимание зверей. Слж 3–10.' },
+      { n:'Сила помыслов', l:2, d:'Восстанавливает Силу воли.', s:'Вынос+Ритуалы (7). 2 успеха = 1 ПСВ.' },
+      { n:'Брешь', l:3, d:'Находит слабости в бою.', s:'Восприятие+Рукопашный бой (8).' },
+      { n:'Мудрость древних путей', l:3, d:'Знания предков.', s:'Гнозис (9 − 1/Предки).' },
+      { n:'Продавить', l:4, d:'Заставляет врага подчиниться.', s:'Воля vs Воля (3 успеха).' },
+      { n:'Далекое чутьё', l:4, d:'Исследует знакомое место на расстоянии.', s:'Восприятие+Загадки (8).' },
+      { n:'Обет', l:5, d:'Накладывает священный обет.', s:'1 Гнозис + Манипул+Лидерство vs Воля.' },
+      { n:'Гранитная стена', l:5, d:'Движущаяся стена из камня.', s:'1 Гнозис. Поглощение 10, здоровья 15.' }
+    ],
+    'Галлиард': [
+      { n:'Язык зверей', l:1, d:'Общается с животными.', s:'Обаяние+Понимание зверей.' },
+      { n:'Зов Вильда', l:1, d:'Усиливает вой.', s:'Вынос+Эмпатия.' },
+      { n:'Мыслеречь', l:1, d:'Телепатическая беседа.', s:'1 ПСВ за цель + Манипул+Красноречие vs Воля.' },
+      { n:'Зов Вирма', l:2, d:'Привлекает существ Вирма.', s:'Манипул+Исполнение vs Воля (обе 7).' },
+      { n:'Отвлечение', l:2, d:'Визг отвлекает врага.', s:'Сообр+Исполнение vs Воля. −1 кубик/успех.' },
+      { n:'Речь снов', l:2, d:'Вторгается в сны.', s:'Сообр+Эмпатия (8).' },
+      { n:'Глаз кобры', l:3, d:'Взглядом притягивает.', s:'Внешность+Загадки vs Воля.' },
+      { n:'Песнь Ярости', l:3, d:'Ввергает врагов в бешенство.', s:'Манипул+Лидерство vs Воля.' },
+      { n:'Мостоходец', l:4, d:'Малый Лунный мост.', s:'1 Гнозис. До 1000 миль.' },
+      { n:'Пляска теней', l:4, d:'Разыгрывает историю с другими.', s:'Манипул+Исполнение vs Воля (3 успеха).' },
+      { n:'Ткань разума', l:5, d:'Существа из сновидений.', s:'Интеллект+Исполнение (8) + Гнозис.' },
+      { n:'Игры разума', l:5, d:'Манипулирует эмоциями.', s:'Манипул+Эмпатия vs Воля.' }
+    ],
+    'Арун': [
+      { n:'Оглушающее касание', l:1, d:'Одним касанием выводит врага.', s:'Ловкость+Медицина (Вынос+Атл).' },
+      { n:'Воодушевление', l:1, d:'Наполняет товарищей мощью.', s:'1 Гнозис. Союзники получают автоуспех Воли.' },
+      { n:'Заточенные когти', l:1, d:'Когти — бритвы.', s:'1 Ярость + полный ход. +1 урона когтями.' },
+      { n:'Чутьё серебра', l:2, d:'Чувствует серебро.', s:'Восприятие+Первый инстинкт (7).' },
+      { n:'Душа боя', l:2, d:'Всегда действует первым.', s:'+10 инициативы.' },
+      { n:'Яростный страх', l:2, d:'Пугает демонстрацией мощи.', s:'Сила+Запугивание vs Воля.' },
+      { n:'Сердце гнева', l:3, d:'Сдерживает Ярость.', s:'Воля (слж = Ярость).' },
+      { n:'Серебряные когти', l:3, d:'Когти становятся серебряными.', s:'Гнозис (7). Агграв.' },
+      { n:'Мертвая хватка', l:4, d:'Захватывает намертво.', s:'1 Ярость.' },
+      { n:'Пылающее пламя ярости', l:4, d:'Эффективнее направляет Ярость.', s:'Без броска на бешенство.' },
+      { n:'Поцелуй Гелиоса', l:5, d:'Иммунитет к огню.', s:'1 Гнозис. +2 урона пылающими кулаками.' },
+      { n:'Величие воли', l:5, d:'Ведёт стаю в ад.', s:'1 ПСВ + Обаяние+Лидерство (8). +1 ПСВ всем в 30 м.' }
+    ]
+  },
+  tribes: {
+    'Черные Фурии': [
+      { n:'Дыхание Вильда', l:1, d:'Энергия и жизнь.', s:'1 Гнозис (5–6). +1 мент. бросков.' },
+      { n:'Обострённые чувства', l:1, d:'Как Дар Люпуса.', s:'1 Гнозис.' },
+      { n:'Чутьё Вирма', l:1, d:'Как Дар Метиса.', s:'Восприятие+Оккультизм.' },
+      { n:'Проклятье Эола', l:2, d:'Зловещий туман.', s:'Гнозис (4–9).' },
+      { n:'Чутьё следа', l:2, d:'Как Дар Рагабаша.', s:'Восприятие+Загадки.' },
+      { n:'Завершающий удар', l:3, d:'Смертельный удар.', s:'1 ПСВ + Восприятие+Рукоп. Удвоение урона.' },
+      { n:'Раздирающая агония', l:3, d:'Мучительная боль.', s:'1 Ярость. Удвоение штрафов боли.' },
+      { n:'Телесное разорение', l:4, d:'Невыносимая боль.', s:'1 Гнозис + Сила+Медицина (Вынос+3).' },
+      { n:'Когти осы', l:4, d:'Стреляет когтями.', s:'1 Ярость + Ловк+Рукоп. Дист. 18 м.' },
+      { n:'Тысяча форм', l:5, d:'Как Дар Рагабаша.', s:'1 Гнозис.' },
+      { n:'Искажение Вильда', l:5, d:'Духи Вильда с непредсказуемым эффектом.', s:'1 Гнозис + 1 Ярость + Сообр+Загадки.' }
+    ],
+    'Костегрызы': [
+      { n:'Стряпня', l:1, d:'Готовит еду из мусора.', s:'Сообр+Выживание (6–10).' },
+      { n:'Сопротивление ядам', l:1, d:'Сопротивление токсинам.', s:'Вынос+Выживание. +3 кубика.' },
+      { n:'Навязчивое единство', l:1, d:'Расположение чужого тотема.', s:'Обаяние+Хитрость.' },
+      { n:'Блаженное неведенье', l:2, d:'Как Дар Рагабаша.', s:'Ловк+Скрытность (7).' },
+      { n:'Жуткая вонь', l:2, d:'Оглушает врагов запахом.', s:'1 Гнозис. Все в 6 м −2 кубика.' },
+      { n:'Друг в беде', l:3, d:'Передаёт союзнику черты.', s:'1 ПСВ + Воля (7).' },
+      { n:'Видоизменить объект', l:3, d:'Как Дар Хомида.', s:'Манипул+Ремесло.' },
+      { n:'Созвучность', l:4, d:'Общается с городскими духами.', s:'1 Гнозис + Восприятие+Уличные.' },
+      { n:'Нашествие', l:4, d:'Орда паразитов.', s:'1 Гнозис + Манипул+Понимание зверей (7).' },
+      { n:'Бунт', l:5, d:'Массовые беспорядки.', s:'1 Гнозис + Сообр+Хитрость (8).' },
+      { n:'Мастер выживания', l:5, d:'Иммунитет к лишениям.', s:'1 Гнозис + Вынос+Выживание (7).' }
+    ],
+    'Дети Гайи': [
+      { n:'Милосердие', l:1, d:'Урон естественным оружием — ударный.', s:'1 Гнозис.' },
+      { n:'Ласка Матери', l:1, d:'Как Дар Теурга.', s:'1 Гнозис + Интеллект+Медицина.' },
+      { n:'Сопротивление боли', l:1, d:'Как Дар Филодокса.', s:'1 ПСВ.' },
+      { n:'Спокойствие', l:2, d:'Подавляет Ярость.', s:'1 Гнозис + Обаяние+Эмпатия vs Воля.' },
+      { n:'Доспехи Луны', l:2, d:'Защита от серебра.', s:'1 Гнозис + Вынос+Выживание (7).' },
+      { n:'Изумление', l:3, d:'Любовь к Гайе.', s:'Обаяние+Эмпатия (4–9).' },
+      { n:'Дружба духов', l:3, d:'Улучшает отношения с духами.', s:'Обаяние+Эмпатия (7).' },
+      { n:'Звериная жизнь', l:4, d:'Как Дар Люпуса.', s:'1 Гнозис.' },
+      { n:'Удар по воздуху', l:4, d:'Пассивное сопротивление.', s:'1 ПСВ + Сообр+Уклонение vs Воля.' },
+      { n:'Сияние Солнца', l:5, d:'Солнечный свет.', s:'1 Гнозис. Вампиры горят.' },
+      { n:'Оживший лес', l:5, d:'Ожившие деревья.', s:'1 Гнозис + Обаяние+Выживание (8).' }
+    ],
+    'Фианна': [
+      { n:'Волшебный огонёк', l:1, d:'Сфера света.', s:'Сообр+Загадки.' },
+      { n:'Убеждение', l:1, d:'Как Дар Хомида.', s:'Обаяние+Хитрость.' },
+      { n:'Сопротивление ядам', l:1, d:'Как Дар Костегрызов.', s:'Вынос+Выживание.' },
+      { n:'Бойкий язык', l:2, d:'Слушатель слышит желаемое.', s:'1 Гнозис + Сообр+Красноречие.' },
+      { n:'Вопль баньши', l:2, d:'Вой, обращающий в бегство.', s:'1 Гнозис + Обаяние+Запугивание (8).' },
+      { n:'Сказочная родня', l:3, d:'Призывает фей.', s:'Гнозис + Манипул+Оккультизм (8).' },
+      { n:'Видоизменить объект', l:3, d:'Как Дар Хомида.', s:'Манипул+Ремесло.' },
+      { n:'Взгляд Балора', l:4, d:'Красный свет глаза — боль.', s:'1 Ярость + 1 Гнозис + Восприятие+Оккультизм.' },
+      { n:'Фантазм', l:4, d:'Иллюзия.', s:'1 Гнозис + Интеллект+Красноречие.' },
+      { n:'Призыв Охоты', l:5, d:'Охотник из кельтских легенд.', s:'1 час + 1 Гнозис + Обаяние+Оккультизм (8).' },
+      { n:'Дар Сприггана', l:5, d:'Изменение размера.', s:'1 Гнозис + Вынос+Первый инстинкт (8).' }
+    ],
+    'Потомки Фенрира': [
+      { n:'Заточенные когти', l:1, d:'Как Дар Аруна.', s:'1 Ярость + ход.' },
+      { n:'Устойчивость к боли', l:1, d:'Как Дар Филодокса.', s:'1 ПСВ.' },
+      { n:'Облик Фенрира', l:1, d:'Внушительный вид.', s:'Обаяние+Запугивание.' },
+      { n:'Задержка труса', l:2, d:'Замедляет бегущего.', s:'Ход + Обаяние+Запугивание vs Воля.' },
+      { n:'Рычание хищника', l:2, d:'Ступор от рыка.', s:'Обаяние+Запугивание (Сообр+3).' },
+      { n:'Мощь Тора', l:3, d:'Удваивает Силу.', s:'1 Гнозис + 1 Ярость + Воля (8).' },
+      { n:'Ядовитая кровь', l:3, d:'Разъедающая желчь.', s:'1 Ярость + Вынос+Медицина (7).' },
+      { n:'Героическая оборона', l:4, d:'Слияние с землёй.', s:'Воля (8).' },
+      { n:'Крик Гайи', l:4, d:'Крик сбивает с ног.', s:'1 Гнозис + бросок Ярости.' },
+      { n:'Орда Валгаллы', l:5, d:'Духи-волки Фенрира.', s:'Гнозис/Ярость + Обаяние+Понимание зверей.' },
+      { n:'Укус Фенрира', l:5, d:'Искалечивающий укус.', s:'1 Ярость + Сила+Медицина. 3 непоглощ. раны.' }
+    ],
+    'Стеклоходы': [
+      { n:'Контроль простых устройств', l:1, d:'Управление механизмами.', s:'1 ПСВ + Манипул+Ремесла (7).' },
+      { n:'Диагностика', l:1, d:'Понимает поломки.', s:'Восприятие+Ремесла.' },
+      { n:'Хитрый выстрел', l:1, d:'Необычные выстрелы.', s:'Врождённый. +Слава.' },
+      { n:'Киберчувства', l:2, d:'Машинные чувства.', s:'1 Гнозис за чувство + Восприятие+Естественные науки.' },
+      { n:'Короткое замыкание', l:2, d:'Отключает электричество.', s:'1 Гнозис + Сообр+Естественные науки (7).' },
+      { n:'Контроль сложных устройств', l:3, d:'Управляет духами машин.', s:'1 ПСВ + Манипул+Естественные науки (8).' },
+      { n:'Благосклонность элементаля', l:3, d:'Городской дух-покровитель.', s:'Обаяние+Хитрость vs Гнозис духа.' },
+      { n:'Созвучность', l:4, d:'Как Дар Костегрызов.', s:'1 Гнозис + Восприятие+Уличные.' },
+      { n:'Личина', l:4, d:'Любой облик.', s:'1 Гнозис + Обаяние+Исполнение (8).' },
+      { n:'Механика хаоса', l:5, d:'Ярость и Гнозис в один ход.', s:'Врождённый.' },
+      { n:'Вызов Сетевого паука', l:5, d:'Могущественный дух Вивер.', s:'1 Гнозис + Обаяние+Компьютеры (8).' }
+    ],
+    'Красные Когти': [
+      { n:'Язык зверей', l:1, d:'Как Дар Галлиарда.', s:'Обаяние+Понимание зверей.' },
+      { n:'Запах текущей воды', l:1, d:'Как Дар Рагабаша.', s:'Врождённый.' },
+      { n:'Волк у ворот', l:1, d:'Страх перед лесом.', s:'Обаяние+Первый инстинкт vs Воля.' },
+      { n:'Разум зверя', l:2, d:'Ум жертвы до животного.', s:'Манипул+Эмпатия vs Воля.' },
+      { n:'Чутьё добычи', l:2, d:'Как Дар Рагабаша.', s:'Восприятие+Загадки.' },
+      { n:'Благосклонность элементаля', l:3, d:'Как Дар Стеклоходов (природные).', s:'Обаяние+Хитрость vs Гнозис духа.' },
+      { n:'Непроторенная пустошь', l:3, d:'Люди теряются.', s:'1 Гнозис + Интеллект+Первый инстинкт.' },
+      { n:'Насыщение', l:4, d:'Больше запаса.', s:'Врождённый. +3 к максимуму черты.' },
+      { n:'Зыбучие пески', l:4, d:'Трясина.', s:'1 Гнозис + Манипул+Первый инстинкт (7).' },
+      { n:'Проклятье Ликаона', l:5, d:'Человек в волка.', s:'1 Гнозис vs Воля.' },
+      { n:'Мщение Гайи', l:5, d:'Местность атакует.', s:'1 Гнозис + 1 Ярость + Обаяние+Первый инстинкт.' }
+    ],
+    'Теневые Владыки': [
+      { n:'Аура уверенности', l:1, d:'Полный контроль.', s:'Обаяние+Хитрость (7).' },
+      { n:'Роковой изъян', l:1, d:'Слабости цели.', s:'Восприятие+Эмпатия vs Сообр+Хитрость.' },
+      { n:'Перехват преимущества', l:1, d:'Ничья в его пользу.', s:'1 Гнозис.' },
+      { n:'Громовой хлопок', l:2, d:'Раскат грома.', s:'1 Гнозис. Все в 3 м — Воля (8).' },
+      { n:'Доспехи Луны', l:2, d:'Как Дар Детей Гайи.', s:'1 Гнозис + Вынос+Выживание (7).' },
+      { n:'Направленная буря', l:3, d:'Направляет Бешенство.', s:'1 Гнозис + Воля vs Ярость.' },
+      { n:'Парализующий взгляд', l:3, d:'Паралич.', s:'1 Гнозис + Обаяние+Запугивание vs Воля.' },
+      { n:'Кровоточащие раны', l:4, d:'Кровоточащая рана.', s:'1 Гнозис + Сила+Медицина (7).' },
+      { n:'Мощь повелителя', l:4, d:'Лишает гнева.', s:'Сообр+Запугивание vs Воля.' },
+      { n:'Повиновение', l:5, d:'Неоспоримый вожак.', s:'1 Гнозис + Обаяние+Лидерство (8).' },
+      { n:'Стая теней', l:5, d:'Тени-копии.', s:'Гнозис (8) + трата Гнозиса.' }
+    ],
+    'Безмолвные Странники': [
+      { n:'Чутьё Вирма', l:1, d:'Как Дар Метиса.', s:'Восприятие+Оккультизм.' },
+      { n:'Тишина', l:1, d:'Приглушает звуки.', s:'Ловк+Скрытность.' },
+      { n:'Скорость мысли', l:1, d:'Удвоение бега.', s:'1 Гнозис.' },
+      { n:'Блаженное неведенье', l:2, d:'Как Дар Рагабаша.', s:'Ловк+Скрытность (7).' },
+      { n:'Стойкость гонца', l:2, d:'Трое суток без отдыха.', s:'1 Гнозис.' },
+      { n:'Адаптация', l:3, d:'Иммунитет к ядам, любая среда.', s:'1 Гнозис + Вынос+Выживание (7).' },
+      { n:'Великий прыжок', l:3, d:'Огромные прыжки.', s:'1 ПСВ + Сила+Атлетика.' },
+      { n:'Созвучность', l:4, d:'Как Дар Костегрызов.', s:'1 Гнозис + Восприятие+Уличные.' },
+      { n:'Немыслимая скорость', l:4, d:'Бег в 10 раз быстрее.', s:'1 Гнозис + Вынос+Атлетика.' },
+      { n:'Врата Луны', l:5, d:'Свой Лунный мост.', s:'Гнозис за 100 миль + Интеллект+Бдительность.' },
+      { n:'Пропуск в Умбру', l:5, d:'Свободный вход/выход.', s:'Врождённый.' }
+    ],
+    'Серебряные Клыки': [
+      { n:'Соколиная хватка', l:1, d:'Захват врагов.', s:'1 Ярость. До конца сцены.' },
+      { n:'Сияющее пламя', l:1, d:'Серебряное свечение.', s:'1 ПСВ. Свет 30 м.' },
+      { n:'Чутьё Вирма', l:1, d:'Как Дар Метиса.', s:'Восприятие+Оккультизм.' },
+      { n:'Сочувствие', l:2, d:'Понимает волков.', s:'1 Гнозис + Интеллект+Эмпатия (7).' },
+      { n:'Доспехи Луны', l:2, d:'Как Дар Детей Гайи.', s:'1 Гнозис.' },
+      { n:'Серебряные когти', l:3, d:'Как Дар Аруна.', s:'Гнозис (7).' },
+      { n:'Гнев Гайи', l:3, d:'Совершенный воин.', s:'1 Гнозис + Обаяние+Запугивание.' },
+      { n:'Господство', l:4, d:'Приказ вожака.', s:'1 Гнозис + Обаяние+Лидерство vs Сообр+3.' },
+      { n:'Непроницаемый разум', l:4, d:'Ментальная защита.', s:'Врождённый. Слж 10.' },
+      { n:'Лунный мститель', l:5, d:'Живое серебро.', s:'1 Гнозис. +2 Вынос.' },
+      { n:'Лапы щенка', l:5, d:'Кража сил.', s:'1 Гнозис + Гнозис vs Воля.' }
+    ],
+    'Уктена': [
+      { n:'Почувствовать магию', l:1, d:'Магическая энергия.', s:'Восприятие+Загадки.' },
+      { n:'Пелена', l:1, d:'Чернильная тьма.', s:'1 Гнозис + Гнозис (3–9).' },
+      { n:'Речь духов', l:1, d:'Как Дар Теурга.', s:'Врождённый.' },
+      { n:'Дух птицы', l:2, d:'Левитация.', s:'1 Гнозис.' },
+      { n:'Дыхание воды', l:2, d:'Дышит под водой.', s:'1 Гнозис + Вынос+Понимание зверей (7).' },
+      { n:'Изгнание тотема', l:3, d:'Разрывает связь с тотемом.', s:'1 Гнозис + 1 ПСВ.' },
+      { n:'Невидимость', l:3, d:'Невидимка.', s:'1 Гнозис + Интеллект+Оккультизм.' },
+      { n:'Призыв элементаля', l:4, d:'Классический элементаль.', s:'1 Гнозис + Манипул+Оккультизм (7).' },
+      { n:'Рука повелителей земли', l:4, d:'Телекинез до 500 кг.', s:'1 Гнозис + Ловк+Оккультизм (7).' },
+      { n:'Ткань разума', l:5, d:'Как Дар Галлиарда.', s:'Интеллект+Исполнение (8).' },
+      { n:'Кукла Вуду', l:5, d:'Симпатическая магия.', s:'Восприятие+Ремесла (8) + Интеллект+Медицина.' }
+    ],
+    'Вендиго': [
+      { n:'Призыв ветра', l:1, d:'Холодный ветер.', s:'Врождённый (свист).' },
+      { n:'Маскировка', l:1, d:'Сливается с лесом.', s:'Врождённый. +3 к сложности обнаружения.' },
+      { n:'Устойчивость к боли', l:1, d:'Как Дар Филодокса.', s:'1 ПСВ.' },
+      { n:'Леденящий ветер', l:2, d:'Холодный поток.', s:'1 ПСВ + Ловк+Оккультизм.' },
+      { n:'Речь духов ветра', l:2, d:'Совет от духов ветра.', s:'1 Гнозис + Манипул+Красноречие (7).' },
+      { n:'Кровавый пир', l:3, d:'Сила из плоти врагов.', s:'Гнозис (Вынос+3). +1 Сила.' },
+      { n:'Мудрость древних путей', l:3, d:'Как Дар Филодокса.', s:'Гнозис (9 − 1/Предки).' },
+      { n:'Вызов духа-каннибала', l:4, d:'Аватар Великого Вендиго.', s:'1 Ярость + 1 Гнозис + Обаяние+Оккультизм (8).' },
+      { n:'Заморозок', l:4, d:'Мистический холод.', s:'1 Гнозис + Интеллект+Оккультизм (4–9).' },
+      { n:'Призыв духов шторма', l:5, d:'Любая погода.', s:'1 Гнозис + Воля.' },
+      { n:'Ледяное сердце', l:5, d:'Внутренности — лёд.', s:'1 Гнозис + Сообр+Оккультизм vs Воля.' }
+    ],
+    'Звездочеты': [
+      { n:'Баланс', l:1, d:'По любому карнизу.', s:'Врождённый. −3 к сложности карабканья.' },
+      { n:'Оглушающее касание', l:1, d:'Как Дар Аруна.', s:'Ловкость+Медицина.' },
+      { n:'Чутьё Вирма', l:1, d:'Как Дар Метиса.', s:'Восприятие+Оккультизм.' },
+      { n:'Внутренние Силы', l:2, d:'Ярость в Силу воли.', s:'Сообр+Загадки (8).' },
+      { n:'Настройка на поверхность', l:2, d:'Любая поверхность.', s:'Ловк+Атлетика.' },
+      { n:'Ясность', l:3, d:'Сквозь туман и тьму.', s:'Восприятие+Загадки (7).' },
+      { n:'Милосердный удар', l:3, d:'Победа без вреда.', s:'1 Гнозис + Восприятие+Медицина.' },
+      { n:'Сверхъестественное Восприятие', l:4, d:'Предугадывает.', s:'1 Гнозис + Восприятие+Уклонение (7).' },
+      { n:'Удар по воздуху', l:4, d:'Как Дар Детей Гайи.', s:'1 ПСВ.' },
+      { n:'Круговая Атака', l:5, d:'Перенаправляет атаки.', s:'1 ПСВ + Сообр+Уклонение (Сообр+3).' },
+      { n:'Мудрость Провидца', l:5, d:'Звёзды отвечают.', s:'1 Гнозис + Интеллект+Загадки (7).' }
+    ]
+  }
+};
+
+const RITE_DATA = {
+  harmony: { label: '🕊️ Гармония', roll: 'Обаяние + Ритуалы', diff: '7',
+    rites: [
+      { n:'Обряд Очищения', l:1, d:'Очищает личность, место или объект от порчи Вирма. Хождение против часовой стрелки с тлеющей веткой (берёза/ива), затем погружение её в чистую воду.', s:'Сложность = Гнозис порчи. Рассвет: −1. 1 Гнозис за каждый доп. объект.' },
+      { n:'Обряд Раскаяния', l:1, d:'Извинение перед духом или Гару. Ползти на животе, скулить. Подарок оскорблённому.', s:'Сложность = Ярость цели. 1 успех = честное раскаяние.' },
+      { n:'Обряд Отречения', l:2, d:'Отказ от покровительства и смена на новое. Обнажённого поливают водой из серебряного сосуда.', s:'Ранг сбрасывается на 1. К старому вернуться нельзя.' }
+    ]},
+  caern: { label: '🏛️ Каэрн', roll: 'Разный (макс. Гнозис)', diff: '7',
+    rites: [
+      { n:'Вечевой Обряд', l:1, d:'Открывает вече и наполняет каэрн Гнозисом. Все в круге, Мастер Завываний ведёт вой.', s:'1 раз в месяц. 5 Гнозиса на каждый уровень каэрна.' },
+      { n:'Обряд Раскрытого Каэрна', l:1, d:'Получение силы каэрна. Прохождение испытания по типу каэрна.', s:'Сообразит+Ритуалы (7).' },
+      { n:'Обряд Открытого Моста', l:4, d:'Создаёт Лунный мост между двумя каэрнами. Требуется Путевой камень.', s:'Сообразит+Загадки (8 × уровень). Раз в 13 лун.' },
+      { n:'Барсучья Нора', l:4, d:'Дистанционное изучение области каэрна через воду/зеркало.', s:'Восприятие+Ритуалы. Слж 5–9.' },
+      { n:'Обряд Уединённой Лощины', l:4, d:'Скрывает область в Умбре.', s:'Сложность = Барьер каэрна +4. 10 Гнозиса на постоянство.' },
+      { n:'Обряд Закладки Каэрна', l:5, d:'Создаёт новый каэрн. Незаурядный Теург + ночь при растущей луне.', s:'40 успехов, 13+ участников, 100 Гнозиса. Провал: 7 урона всем.' }
+    ]},
+  death: { label: '⚰️ Смерть', roll: 'Обаяние + Ритуалы', diff: '8 − Ранг',
+    rites: [
+      { n:'Проводы Усопшего', l:1, d:'Обряд в честь недавно умершего. Галлиард рассказывает историю о подвигах павшего.', s:'Упрощает контакт с духом через Деталь биографии Предки.' },
+      { n:'Обряд Зимнего Волка', l:3, d:'Добровольное самоубийство старого или раненого Гару. Товарищи поют гимны.', s:'3+ Гару, ночь, серебряное оружие.' }
+    ]},
+  mystic: { label: '✨ Мистический', roll: 'Сообразительность + Ритуалы', diff: '7',
+    rites: [
+      { n:'Крещение огнём', l:1, d:'Отмечает новорождённого Гару знаком племени. Дух-Хранитель рода целует младенца на лунном свете.', s:'Обаяние+Ритуалы. 1 успех.' },
+      { n:'Обряд Указующего Камня', l:1, d:'Находит личность или объект через раскачивание иглы на нитке.', s:'Стандартный. Частица цели: −1 к сложности.' },
+      { n:'Обряд Освящённого Талисмана', l:1, d:'«Привязывает» объекты к телу — они меняют форму вместе с Гару.', s:'1 Гнозис за предмет. Максимум = Гнозис персонажа.' },
+      { n:'Обряд Удержания', l:1, d:'Привязывает духа к Гару.', s:'Гнозис vs Гнозис. Длит. 1 неделя за успех.' },
+      { n:'Обряд Подготовки', l:2, d:'Позволяет путешествовать в Глубокую Умбру. Браслет из волос, проволоки и плюща.', s:'Если уничтожен в Глубокой Умбре — 1 агграв. уровень.' },
+      { n:'Обряд Пробуждения Духа', l:2, d:'Пробуждает спящий дух. Музыка/барабан + вой.', s:'Сложность = Ярость духа.' },
+      { n:'Обряд Вызова', l:2, d:'Призывает духа по имени.', s:'Бросок Гнозиса vs сложность духа (4–10).' },
+      { n:'Обряд Фетиша', l:3, d:'Создаёт фетиш — объект, содержащий духа.', s:'Сообразит+Ритуалы (10).' },
+      { n:'Обряд Тотемa', l:3, d:'Прикрепляет тотем к группе Гару, объединяя их в стаю.', s:'Стандартный. Требует Деталь биографии Тотем.' }
+    ]},
+  punishment: { label: '⚖️ Наказание', roll: 'Обаяние + Ритуалы', diff: '7',
+    rites: [
+      { n:'Обряд Остракизма', l:2, d:'Отлучение от племени. Все отворачиваются, называя «не знаю такого брата».', s:'До следующей фазы. −1 Славы, −5 Чести, −1 Мудрости.' },
+      { n:'Камень Презрения', l:2, d:'Круг септа выцарапывает позорные символы с насмешками.', s:'−8 Чести, −2 Мудрости, пока не искупит.' },
+      { n:'Загнанный Шакал', l:2, d:'Голос становится визгливым. Пыль/пепел в нарушителя.', s:'−2 соц. броска, −2 Славы, −5 Чести.' },
+      { n:'Охота (Дикая Охота)', l:3, d:'Смертная казнь. Стая выслеживает преступника. Священные символы на телах.', s:'Обаяние+Ритуалы (Ранг +4).' },
+      { n:'Обряд Насмешки', l:3, d:'На вече высмеивают виноватого. Останется в устной традиции.', s:'Слж = Ранг +4. −1 постоянный Ранг.' },
+      { n:'Срывание Завесы', l:4, d:'Приподнимает Завесу для человека. Мешочек с фекалиями у спящего.', s:'Жертва теряет иммунитет к Первобытному Ужасу.' },
+      { n:'Мстительное Касание Гайи', l:5, d:'Казнь предателя. Гайя превращает всё, чего он коснётся, в серебро.', s:'Пять оборотней тянут предателя по земле. Никто не выжил.' }
+    ]},
+  renown: { label: '🏆 Известность', roll: 'Обаяние + Ритуалы', diff: '6',
+    rites: [
+      { n:'Обряд Первой Крови', l:1, d:'Отмечает первую боевую рану. Втирание золы, пир или молитвы.', s:'Гару получает 2 очка Славы.' },
+      { n:'Обряд Свершений', l:2, d:'Преобразует 10 временного Почёта в 1 постоянный.', s:'Сложность 4 (6 если оспаривается).' },
+      { n:'Обряд Перехода', l:2, d:'Щенок становится полноценным Гару. Опасное задание на выживание.', s:'До обряда щенок не имеет ранга.' }
+    ]},
+  seasonal: { label: '🍂 Сезонный', roll: 'Выносливость + Ритуалы', diff: '8 − уровень каэрна',
+    rites: [
+      { n:'Обряд Северных Ветров', l:2, d:'Самая длинная ночь. Гару хватают горящие ветки и бегут в лес с воем.', s:'Возвращаются к костру, пирушка до рассвета.' },
+      { n:'Обряд Пробуждения', l:2, d:'Весеннее равноденствие. Семь испытаний в Нижних мирах Умбры.', s:'Обычно заканчивается зачатием новых Гару.' },
+      { n:'Великая Охота', l:2, d:'Летнее солнцестояние. Гайя указывает цель, септ охотится до полуночи.', s:'3 очка Славы. При провале — 2 Славы в минус.' },
+      { n:'Долгое Бдение', l:2, d:'Осеннее равноденствие. Ночь рассказов о битвах, трофеи сжигаются.', s:'Прощание с летом, молитва Луне.' }
+    ]},
+  minor: { label: '🌿 Малые', roll: 'Без броска', diff: '—',
+    rites: [
+      { n:'Костяные Палочки', l:0, d:'Ритуальные барабанные палочки для почитания тотема.', s:'3 дня по 3 раза: +1 кубик в Умбре.' },
+      { n:'Дыхание Гайи', l:0, d:'13 глубоких вдохов чистого воздуха.', s:'1 лунный цикл: −2 к сложности лечения.' },
+      { n:'Приветствие Луне', l:0, d:'Хвалебная песнь Селене по фазе луны.', s:'Полный цикл: +1 кубик соц. бросков.' },
+      { n:'Приветствие Солнцу', l:0, d:'Хвала Гелиосу на рассвете.', s:'9 дней: +1 кубик обнаружения Вирма.' },
+      { n:'Охотничья Молитва', l:0, d:'Пауза перед охотой, носитель молитвы.', s:'3 цикла луны: +1 кубик на выслеживание.' },
+      { n:'Молитва за Добычу', l:0, d:'Шаг за грань после убийства для благодарности.', s:'Полный цикл: −1 к сложности с духами природы.' }
+    ]}
+};
+
+const ATTRS = {
+  'Физические': [ ['attr_strength','Сила'], ['attr_dexterity','Ловкость'], ['attr_stamina','Выносливость'] ],
+  'Социальные': [ ['attr_charisma','Обаяние'], ['attr_manipulation','Манипуляция'], ['attr_appearance','Внешность'] ],
+  'Ментальные': [ ['attr_perception','Восприятие'], ['attr_intelligence','Интеллект'], ['attr_wits','Смекалка'] ],
+};
+const ABILITIES = {
+  'Таланты': [
+    ['ab_athletics','Атлетика'], ['ab_alertness','Внимательность'], ['ab_intimidation','Запугивание'],
+    ['ab_streetwise','Знание Улиц'], ['ab_primal_urge','Инстинкты'], ['ab_brawl','Рукопашный Бой'],
+    ['ab_dodge','Уклонение'], ['ab_subterfuge','Хитрость'], ['ab_expression','Экспрессия'], ['ab_empathy','Эмпатия'],
+  ],
+  'Навыки': [
+    ['ab_drive','Вождение'], ['ab_survival','Выживание'], ['ab_animal_ken','Знание Животных'],
+    ['ab_performance','Исполнение'], ['ab_leadership','Лидерство'], ['ab_crafts','Ремесла'],
+    ['ab_stealth','Скрытность'], ['ab_firearms','Стрельба'], ['ab_melee','Фехтование'], ['ab_etiquette','Этикет'],
+  ],
+  'Познания': [
+    ['ab_enigmas','Загадки'], ['ab_law','Законы'], ['ab_computer','Компьютеры'],
+    ['ab_linguistics','Лингвистика'], ['ab_medicine','Медицина'], ['ab_science','Научные'],
+    ['ab_occult','Оккультизм'], ['ab_politics','Политика'], ['ab_investigation','Расследования'], ['ab_rituals','Ритуалы'],
+  ],
+};
+const HEALTH_LEVELS = [
+  ['Задет',''], ['Повреждён','−1'], ['Ранен','−1'], ['Тяжело Ранен','−2'],
+  ['Травмирован','−2'], ['Искалечен','−5'], ['Обездвижен','✕'],
+];
+const FORMS = [
+  { id:'homid',  name:'Хомид',  diff:6, mods:{} },
+  { id:'glabro', name:'Глабро', diff:7, mods:{ attr_strength:2, attr_stamina:2, attr_appearance:-1, attr_manipulation:-1 } },
+  { id:'crinos', name:'Кринос', diff:6, mods:{ attr_strength:4, attr_dexterity:1, attr_stamina:3, attr_manipulation:-3 }, note:'Вызывает Делириум у людей' },
+  { id:'hispo',  name:'Хиспо',  diff:7, mods:{ attr_strength:3, attr_dexterity:2, attr_stamina:3, attr_manipulation:-3 } },
+  { id:'lupus',  name:'Люпус',  diff:6, mods:{ attr_strength:1, attr_dexterity:2, attr_stamina:2, attr_manipulation:-3 } },
+];
+const LISTS = {
+  backgrounds: { max:5, placeholder:'Фон' },
+  gifts1:      { max:5, placeholder:'Дар' },
+  gifts2:      { max:5, placeholder:'Дар' },
+  rites:       { max:5, placeholder:'Ритуал' },
+};
+const AUTO_KEYS = ['rage','gnosis','willpower'];
+
+let state = {};
+function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; } }
+let saveTimer;
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const ind = document.getElementById('save-indicator');
+    if (ind) { ind.classList.add('show'); clearTimeout(saveTimer); saveTimer = setTimeout(() => ind.classList.remove('show'), 1100); }
+  } catch (e) {}
+}
+function paintDots(container, val, auto=false) {
+  container.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('filled', i < val);
+    d.classList.toggle('auto', auto && i < val);
+    d.classList.toggle('locked', auto);
+  });
+}
+function paintSquares(container, arr) { container.querySelectorAll('.sq').forEach((s, i) => { s.classList.toggle('filled', !!arr[i]); }); }
+function initDots() {
+  document.querySelectorAll('.dots[data-key]').forEach(container => {
+    if (container.dataset.initialized === '1') return;
+    container.dataset.initialized = '1';
+    const max = parseInt(container.dataset.max, 10) || 5;
+    const key = container.dataset.key;
+    for (let i = 0; i < max; i++) { const d = document.createElement('span'); d.className='dot'; d.dataset.i=i; container.appendChild(d); }
+    const isAuto = AUTO_KEYS.includes(key);
+    const val = (state.dots && state.dots[key]) || 0;
+    paintDots(container, val, isAuto && state.auto && state.auto[key]);
+    container.addEventListener('click', e => {
+      if (isAuto && state.auto && state.auto[key] && !e.shiftKey) return;
+      const dot = e.target.closest('.dot'); if (!dot) return;
+      const i = parseInt(dot.dataset.i, 10);
+      const cur = (state.dots && state.dots[key]) || 0;
+      const nv = (cur === i + 1) ? i : i + 1;
+      state.dots = state.dots || {}; state.dots[key] = nv;
+      paintDots(container, nv);
+      const sqContainer = document.querySelector(`.squares[data-key="${key}"]`);
+      if (sqContainer && state.squares && state.squares[key]) {
+        for (let j = nv; j < state.squares[key].length; j++) state.squares[key][j] = false;
+        paintSquares(sqContainer, state.squares[key]);
+      }
+      if (key.startsWith('attr_')) recomputeForms();
+      save();
+    });
+  });
+}
+function initSquares() {
+  document.querySelectorAll('.squares[data-key]').forEach(container => {
+    if (container.dataset.initialized === '1') return;
+    container.dataset.initialized = '1';
+    const max = parseInt(container.dataset.max, 10) || 5;
+    const key = container.dataset.key;
+    for (let i = 0; i < max; i++) { const s = document.createElement('span'); s.className='sq'; s.dataset.i=i; container.appendChild(s); }
+    state.squares = state.squares || {};
+    state.squares[key] = state.squares[key] || new Array(max).fill(false);
+    paintSquares(container, state.squares[key]);
+    container.addEventListener('click', e => {
+      const sq = e.target.closest('.sq'); if (!sq) return;
+      const i = parseInt(sq.dataset.i, 10);
+      const perm = (state.dots && state.dots[key]) || 0;
+      if (i >= perm) return;
+      const arr = state.squares[key];
+      const isLastFilled = arr[i] && (i === perm - 1 || !arr[i + 1]);
+      if (isLastFilled) arr[i] = false;
+      else for (let j = 0; j < arr.length; j++) arr[j] = j <= i;
+      paintSquares(container, arr); save();
+    });
+  });
+}
+function normalizeKey(input, dict) {
+  if (!input) return null;
+  const trimmed = input.trim().toLowerCase();
+  for (const key of Object.keys(dict)) if (key.toLowerCase() === trimmed) return key;
+  for (const key of Object.keys(dict)) { if (key.toLowerCase().startsWith(trimmed) || trimmed.startsWith(key.toLowerCase())) return key; }
+  return null;
+}
+function applyAutoFill() {
+  state.auto = state.auto || {};
+  const breedKey = normalizeKey(document.getElementById('f_breed').value, BREEDS);
+  const auspiceKey = normalizeKey(document.getElementById('f_auspice').value, AUSPICES);
+  const tribeKey = normalizeKey(document.getElementById('f_tribe').value, TRIBES);
+  state.dots = state.dots || {};
+  if (breedKey) { state.dots.gnosis = BREEDS[breedKey].gnosis; state.auto.gnosis = true; } else delete state.auto.gnosis;
+  if (auspiceKey) { state.dots.rage = AUSPICES[auspiceKey].rage; state.auto.rage = true; } else delete state.auto.rage;
+  if (tribeKey) { state.dots.willpower = TRIBES[tribeKey].willpower; state.auto.willpower = true; } else delete state.auto.willpower;
+  if (auspiceKey) {
+    const r = AUSPICES[auspiceKey].renown;
+    if (r.glory || r.honor || r.wisdom) {
+      state.dots.glory = Math.max(state.dots.glory || 0, r.glory);
+      state.dots.honor = Math.max(state.dots.honor || 0, r.honor);
+      state.dots.wisdom = Math.max(state.dots.wisdom || 0, r.wisdom);
+    }
+  }
+  document.querySelectorAll('.dots[data-key]').forEach(container => {
+    const key = container.dataset.key;
+    paintDots(container, state.dots[key] || 0, AUTO_KEYS.includes(key) && state.auto[key]);
+  });
+  document.getElementById('hint-rage').textContent = (auspiceKey && state.auto.rage) ? `✓ Авто: ${auspiceKey}` : '';
+  document.getElementById('hint-gnosis').textContent = (breedKey && state.auto.gnosis) ? `✓ Авто: ${breedKey}` : '';
+  document.getElementById('hint-willpower').textContent = (tribeKey && state.auto.willpower) ? `✓ Авто: ${tribeKey}` : '';
+  renderGiftBanner(breedKey, auspiceKey, tribeKey);
+  updateOnlyMineHint();
+  save();
+}
+function renderGiftBanner(breedKey, auspiceKey, tribeKey) {
+  const banner = document.getElementById('autofill-banner'); if (!banner) return;
+  if (!breedKey && !auspiceKey && !tribeKey) { banner.classList.remove('show'); banner.innerHTML = ''; return; }
+  let html = '<strong>✨ Авто-заполнение сработало</strong><br>';
+  const gifts = [];
+  if (breedKey) { html += `Порода: <b>${breedKey}</b> → Гнозис ${BREEDS[breedKey].gnosis}<br>`; BREEDS[breedKey].gifts.forEach(g => gifts.push({ g, src:'Порода' })); }
+  if (auspiceKey) {
+    const a = AUSPICES[auspiceKey];
+    html += `Покровительство: <b>${auspiceKey}</b> → Ярость ${a.rage}`;
+    if (a.renown.any) html += `, Почёт: ${a.renown.any} в любой комбинации`;
+    else { const parts = []; if (a.renown.glory) parts.push(`Слава ${a.renown.glory}`); if (a.renown.honor) parts.push(`Честь ${a.renown.honor}`); if (a.renown.wisdom) parts.push(`Мудрость ${a.renown.wisdom}`); if (parts.length) html += `, Почёт: ${parts.join(', ')}`; }
+    html += '<br>'; a.gifts.forEach(g => gifts.push({ g, src:'Покровительство' }));
+  }
+  if (tribeKey) { html += `Племя: <b>${tribeKey}</b> → Сила Воли ${TRIBES[tribeKey].willpower}<br>`; TRIBES[tribeKey].gifts.forEach(g => gifts.push({ g, src:'Племя' })); }
+  html += '<div class="gift-list"><b>Стартовые Дары:</b><ul style="margin:2px 0 0 0;padding-left:14px;">';
+  gifts.forEach(item => { html += `<li>${item.g} <span style="opacity:0.6">(${item.src})</span></li>`; });
+  html += '</ul></div><button class="reset-auto" id="reset-auto-btn">Отключить авто-заполнение</button>';
+  banner.innerHTML = html; banner.classList.add('show');
+  const resetBtn = document.getElementById('reset-auto-btn');
+  if (resetBtn) resetBtn.addEventListener('click', () => {
+    state.auto = {};
+    document.querySelectorAll('.dots[data-key]').forEach(c => { paintDots(c, state.dots[c.dataset.key] || 0, false); });
+    document.getElementById('hint-rage').textContent = '';
+    document.getElementById('hint-gnosis').textContent = '';
+    document.getElementById('hint-willpower').textContent = '';
+    banner.classList.remove('show'); banner.innerHTML = ''; save();
+  });
+}
+function initAutoFill() {
+  ['f_breed','f_auspice','f_tribe'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    el.addEventListener('change', () => { applyAutoFill(); renderGiftList(); });
+    el.addEventListener('blur', () => { applyAutoFill(); renderGiftList(); });
+  });
+  applyAutoFill();
+}
+function buildStats(root, groups) {
+  root.innerHTML = '';
+  for (const groupName of Object.keys(groups)) {
+    const col = document.createElement('div'); col.className = 'col';
+    if (groupName) { const h = document.createElement('h3'); h.textContent = groupName; col.appendChild(h); }
+    for (const [key, name] of groups[groupName]) {
+      const row = document.createElement('div'); row.className = 'stat';
+      const lbl = document.createElement('span'); lbl.className = 'stat-name'; lbl.textContent = name;
+      const dots = document.createElement('div'); dots.className = 'dots'; dots.dataset.key = key; dots.dataset.max = 5;
+      row.appendChild(lbl); row.appendChild(dots); col.appendChild(row);
+    }
+    root.appendChild(col);
+  }
+}
+function buildHealth() {
+  const root = document.getElementById('health'); root.innerHTML = '';
+  if (!state.health || state.health.length !== HEALTH_LEVELS.length) state.health = new Array(HEALTH_LEVELS.length).fill(false);
+  HEALTH_LEVELS.forEach(([name, pen], i) => {
+    const row = document.createElement('div'); row.className = 'health-row';
+    const box = document.createElement('span'); box.className = 'health-box';
+    if (state.health[i]) box.classList.add('filled');
+    const nm = document.createElement('span'); nm.className = 'health-name'; nm.textContent = name;
+    const pn = document.createElement('span'); pn.className = 'health-pen'; pn.textContent = pen;
+    row.appendChild(box); row.appendChild(nm); row.appendChild(pn);
+    row.addEventListener('click', () => {
+      const h = state.health;
+      const isLast = h[i] && (i === h.length - 1 || !h[i + 1]);
+      if (isLast) h[i] = false;
+      else for (let j = 0; j < h.length; j++) h[j] = j <= i;
+      buildHealth(); save();
+    });
+    root.appendChild(row);
+  });
+}
+function recomputeForms() {
+  document.querySelectorAll('.form-card').forEach(card => {
+    const form = FORMS.find(f => f.id === card.dataset.form); if (!form) return;
+    card.querySelectorAll('.form-mod').forEach(el => {
+      const attrKey = el.dataset.attr;
+      const base = (state.dots && state.dots[attrKey]) || 0;
+      const mod = form.mods[attrKey] || 0;
+      const total = base + mod;
+      const modText = mod > 0 ? `+${mod}` : (mod < 0 ? `${mod}` : '0');
+      el.querySelector('.mod-label').textContent = el.dataset.label + ' (' + modText + ')';
+      el.querySelector('.mod-value').textContent = total >= 0 ? total : 0;
+    });
+  });
+}
+function buildForms() {
+  const root = document.getElementById('forms'); root.innerHTML = '';
+  FORMS.forEach(form => {
+    const card = document.createElement('div'); card.className = 'form-card'; card.dataset.form = form.id;
+    const h = document.createElement('h4'); h.textContent = form.name; card.appendChild(h);
+    [['attr_strength','Сила'],['attr_dexterity','Ловкость'],['attr_stamina','Вынос.'],['attr_appearance','Внешн.'],['attr_manipulation','Манипул.']].forEach(([key, label]) => {
+      const mod = form.mods[key] || 0;
+      const row = document.createElement('div'); row.className = 'form-mod'; row.dataset.attr = key; row.dataset.label = label;
+      row.innerHTML = `<span class="mod-label">${label} (${mod > 0 ? '+'+mod : mod})</span><span class="mod-value">0</span>`;
+      card.appendChild(row);
+    });
+    if (form.id === 'homid') card.querySelectorAll('.form-mod').forEach(el => { el.querySelector('.mod-label').textContent = 'Без изменений'; el.querySelector('.mod-value').textContent = '—'; });
+    const d = document.createElement('div'); d.className = 'form-diff'; d.innerHTML = `Сложность: <b>${form.diff}</b>`; card.appendChild(d);
+    if (form.note) { const n = document.createElement('div'); n.style.cssText = 'font-size:10px;color:var(--muted);text-align:center;margin-top:5px;font-style:italic;'; n.textContent = form.note; card.appendChild(n); }
+    root.appendChild(card);
+  });
+  recomputeForms();
+}
+function renderList(key) {
+  const conf = LISTS[key];
+  const container = document.getElementById('list_' + key); if (!container) return;
+  container.innerHTML = '';
+  state.lists = state.lists || {};
+  state.lists[key] = state.lists[key] || [];
+  state.lists[key].forEach((item, idx) => {
+    const row = document.createElement('div'); row.className = 'list-row';
+    const input = document.createElement('input'); input.type = 'text'; input.value = item.name || ''; input.placeholder = conf.placeholder;
+    input.addEventListener('input', () => { state.lists[key][idx].name = input.value; save(); });
+    const dots = document.createElement('div'); dots.className = 'dots';
+    for (let i = 0; i < conf.max; i++) {
+      const d = document.createElement('span'); d.className = 'dot';
+      if (i < (item.value || 0)) d.classList.add('filled');
+      d.addEventListener('click', () => { const cur = state.lists[key][idx].value || 0; state.lists[key][idx].value = (cur === i + 1) ? i : i + 1; renderList(key); save(); });
+      dots.appendChild(d);
+    }
+    const rm = document.createElement('button'); rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
+    rm.addEventListener('click', () => { state.lists[key].splice(idx, 1); renderList(key); save(); });
+    row.appendChild(input); row.appendChild(dots); row.appendChild(rm);
+    container.appendChild(row);
+  });
+}
+function addListItem(key) {
+  state.lists = state.lists || {}; state.lists[key] = state.lists[key] || [];
+  state.lists[key].push({ name:'', value:0 }); renderList(key); save();
+}
+function renderFetishes() {
+  const root = document.getElementById('fetishes'); root.innerHTML = '';
+  state.fetishes = state.fetishes || [];
+  state.fetishes.forEach((f, idx) => {
+    const row = document.createElement('div'); row.className = 'fetish-row';
+    row.innerHTML = `<input type="text" placeholder="Название" value="${(f.name||'').replace(/"/g,'&quot;')}"><label><input type="checkbox" ${f.bound?'checked':''}> Прив.</label><input type="number" placeholder="Ур." min="1" max="5" value="${f.level||''}"><input type="number" placeholder="Гн." min="1" max="10" value="${f.gnosis||''}">`;
+    row.querySelectorAll('input')[0].addEventListener('input', e => { state.fetishes[idx].name = e.target.value; save(); });
+    row.querySelectorAll('input')[1].addEventListener('change', e => { state.fetishes[idx].bound = e.target.checked; save(); });
+    row.querySelectorAll('input')[2].addEventListener('input', e => { state.fetishes[idx].level = e.target.value; save(); });
+    row.querySelectorAll('input')[3].addEventListener('input', e => { state.fetishes[idx].gnosis = e.target.value; save(); });
+    const rm = document.createElement('button'); rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
+    rm.addEventListener('click', () => { state.fetishes.splice(idx, 1); renderFetishes(); save(); });
+    row.appendChild(rm); root.appendChild(row);
+  });
+}
+function renderCombat() {
+  const tbody = document.getElementById('combat-rows'); tbody.innerHTML = '';
+  state.combat = state.combat || [];
+  while (state.combat.length < 8) state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' });
+  state.combat.forEach((rowData, idx) => {
+    const tr = document.createElement('tr');
+    ['w','a','b','c','d','e','f','g'].forEach(k => {
+      const td = document.createElement('td');
+      const inp = document.createElement('input'); inp.type = 'text'; inp.value = rowData[k] || '';
+      inp.addEventListener('input', () => { state.combat[idx][k] = inp.value; save(); });
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+function renderMeritsFlaws(kind, tbodyId) {
+  const tbody = document.getElementById(tbodyId); tbody.innerHTML = '';
+  state[kind] = state[kind] || [];
+  while (state[kind].length < 8) state[kind].push({ n:'',t:'',c:'' });
+  state[kind].forEach((rowData, idx) => {
+    const tr = document.createElement('tr');
+    ['n','t','c'].forEach(k => {
+      const td = document.createElement('td');
+      const inp = document.createElement('input'); inp.type = 'text'; inp.value = rowData[k] || '';
+      inp.addEventListener('input', () => { state[kind][idx][k] = inp.value; save(); });
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+function initTextFields() {
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.closest('.list') || el.closest('.fetish-row')) return;
+    if (el.closest('table.combat')) return;
+    if (el.closest('.gift-filters') || el.closest('.gift-only-mine') || el.closest('.rite-filters')) return;
+    if (el.type === 'file' || el.type === 'checkbox') return;
+    const key = el.id; if (!key) return;
+    if (state.text && state.text[key] !== undefined) el.value = state.text[key];
+    el.addEventListener('input', () => { state.text = state.text || {}; state.text[key] = el.value; save(); });
+  });
+}
+function initTabs() {
+  document.querySelectorAll('.tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+}
+function initCheatSheets() {
+  document.querySelectorAll('.cheat-section').forEach(sec => {
+    const header = sec.querySelector('.cheat-header'); if (!header) return;
+    header.addEventListener('click', () => { sec.dataset.open = (sec.dataset.open === 'true') ? 'false' : 'true'; });
+  });
+  document.querySelectorAll('.cheat-nav button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sec = document.getElementById(btn.dataset.jump); if (!sec) return;
+      sec.dataset.open = 'true';
+      setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    });
+  });
+}
+function initButtons() {
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const data = JSON.stringify(state, null, 2);
+    const blob = new Blob([data], { type:'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const rawName = (state.text && state.text['f_name']) || 'character';
+    const safeName = rawName.replace(/[^\w\u0400-\u04FF\-]+/g, '_') || 'character';
+    a.href = url; a.download = `${safeName}_wta.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-input').click());
+  document.getElementById('file-input').addEventListener('change', e => {
+    const file = e.target.files && e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        if (typeof parsed !== 'object' || parsed === null) throw 0;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        location.reload();
+      } catch (err) { alert('Некорректный файл экспорта.'); }
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+  document.getElementById('btn-pdf').addEventListener('click', () => {
+    flashToast('💡 В диалоге печати выбери «Сохранить как PDF»', 'info', 4500);
+    setTimeout(() => window.print(), 350);
+  });
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (confirm('Сбросить весь лист персонажа?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+  });
+  document.querySelectorAll('.add-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.add;
+      if (key === 'fetishes') { state.fetishes = state.fetishes || []; state.fetishes.push({ name:'', bound:false, level:'', gnosis:'' }); renderFetishes(); save(); }
+      else if (key === 'combat') { state.combat = state.combat || []; state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' }); renderCombat(); save(); }
+      else if (key === 'merits' || key === 'flaws') { state[key] = state[key] || []; state[key].push({ n:'',t:'',c:'' }); renderMeritsFlaws(key, key + '-rows'); save(); }
+      else addListItem(key);
+    });
+  });
+}
+function flattenGifts() {
+  const out = [];
+  Object.keys(GIFT_DATA.breeds).forEach(s => GIFT_DATA.breeds[s].forEach(g => out.push({ ...g, source:s, sourceType:'breeds', sourceLabel:'Порода' })));
+  Object.keys(GIFT_DATA.auspices).forEach(s => GIFT_DATA.auspices[s].forEach(g => out.push({ ...g, source:s, sourceType:'auspices', sourceLabel:'Покровительство' })));
+  Object.keys(GIFT_DATA.tribes).forEach(s => GIFT_DATA.tribes[s].forEach(g => out.push({ ...g, source:s, sourceType:'tribes', sourceLabel:'Племя' })));
+  return out;
+}
+const ALL_GIFTS = flattenGifts();
+function getMySources() {
+  return {
+    breedKey: normalizeKey(document.getElementById('f_breed').value, BREEDS),
+    auspiceKey: normalizeKey(document.getElementById('f_auspice').value, AUSPICES),
+    tribeKey: normalizeKey(document.getElementById('f_tribe').value, TRIBES)
+  };
+}
+function hasAnyMySource() { const s = getMySources(); return !!(s.breedKey || s.auspiceKey || s.tribeKey); }
+function isGiftMine(g, s) {
+  if (g.sourceType === 'breeds' && s.breedKey && g.source === s.breedKey) return true;
+  if (g.sourceType === 'auspices' && s.auspiceKey && g.source === s.auspiceKey) return true;
+  if (g.sourceType === 'tribes' && s.tribeKey && g.source === s.tribeKey) return true;
+  return false;
+}
+function getSourceOptions() {
+  const type = document.getElementById('gift-source-type').value;
+  const select = document.getElementById('gift-source');
+  const current = select.value;
+  let options = [{ value:'all', label:'Все' }];
+  if (type === 'breeds') Object.keys(GIFT_DATA.breeds).forEach(n => options.push({ value:n, label:n }));
+  else if (type === 'auspices') Object.keys(GIFT_DATA.auspices).forEach(n => options.push({ value:n, label:n }));
+  else if (type === 'tribes') Object.keys(GIFT_DATA.tribes).forEach(n => options.push({ value:n, label:n }));
+  else {
+    options = [{ value:'all', label:'Все' }];
+    options.push({ value:'__breeds', label:'── Породы ──' });
+    Object.keys(GIFT_DATA.breeds).forEach(n => options.push({ value:'breeds:'+n, label:'  '+n }));
+    options.push({ value:'__auspices', label:'── Покровительства ──' });
+    Object.keys(GIFT_DATA.auspices).forEach(n => options.push({ value:'auspices:'+n, label:'  '+n }));
+    options.push({ value:'__tribes', label:'── Племена ──' });
+    Object.keys(GIFT_DATA.tribes).forEach(n => options.push({ value:'tribes:'+n, label:'  '+n }));
+  }
+  select.innerHTML = '';
+  options.forEach(o => {
+    const opt = document.createElement('option'); opt.value = o.value; opt.textContent = o.label;
+    if (o.value.startsWith('__')) opt.disabled = true;
+    select.appendChild(opt);
+  });
+  if (Array.from(select.options).some(o => o.value === current && !o.disabled)) select.value = current;
+  else select.value = 'all';
+}
+function updateOnlyMineHint() {
+  const hint = document.getElementById('gift-only-mine-hint'); if (!hint) return;
+  const s = getMySources();
+  const parts = [];
+  if (s.breedKey) parts.push(s.breedKey);
+  if (s.auspiceKey) parts.push(s.auspiceKey);
+  if (s.tribeKey) parts.push(s.tribeKey);
+  if (parts.length) { hint.textContent = '✓ ' + parts.join(' • '); hint.classList.add('ok'); }
+  else { hint.textContent = 'Заполни поля выше'; hint.classList.remove('ok'); }
+}
+function renderGiftList() {
+  const typeFilter = document.getElementById('gift-source-type').value;
+  const srcFilter  = document.getElementById('gift-source').value;
+  const lvlFilter  = document.getElementById('gift-level').value;
+  const search     = document.getElementById('gift-search').value.trim().toLowerCase();
+  const onlyMine   = document.getElementById('gift-only-mine').checked;
+  let items = ALL_GIFTS.slice();
+  const mySources = getMySources();
+  if (onlyMine) {
+    if (!hasAnyMySource()) flashToast('⚠ Заполни Породу / Покровительство / Племя', 'info', 2500);
+    else items = items.filter(g => isGiftMine(g, mySources));
+  }
+  if (typeFilter !== 'all') items = items.filter(g => g.sourceType === typeFilter);
+  if (srcFilter !== 'all') {
+    if (/^(breeds|auspices|tribes):/.test(srcFilter)) {
+      const [type, name] = srcFilter.split(':');
+      items = items.filter(g => g.sourceType === type && g.source === name);
+    } else items = items.filter(g => g.source === srcFilter);
+  }
+  if (lvlFilter !== 'all') items = items.filter(g => String(g.l) === String(lvlFilter));
+  if (search) items = items.filter(g => g.n.toLowerCase().includes(search) || (g.d && g.d.toLowerCase().includes(search)) || g.source.toLowerCase().includes(search));
+  const typeOrder = { breeds:0, auspices:1, tribes:2 };
+  items.sort((a,b) => {
+    if (typeOrder[a.sourceType] !== typeOrder[b.sourceType]) return typeOrder[a.sourceType] - typeOrder[b.sourceType];
+    if (a.source !== b.source) return a.source.localeCompare(b.source, 'ru');
+    if (a.l !== b.l) return a.l - b.l;
+    return a.n.localeCompare(b.n, 'ru');
+  });
+  const list = document.getElementById('gift-list');
+  const stats = document.getElementById('gift-stats');
+  list.innerHTML = '';
+  stats.textContent = (onlyMine && hasAnyMySource()) ? `🎯 Найдено «моих» Даров: ${items.length}` : `Найдено: ${items.length} из ${ALL_GIFTS.length} Даров`;
+  if (items.length === 0) { list.innerHTML = '<div class="gift-empty">Ничего не найдено. Попробуй изменить фильтры.</div>'; return; }
+  items.slice(0, 300).forEach(g => {
+    const card = document.createElement('div'); card.className = 'gift-card';
+    const typeColor = g.sourceType === 'breeds' ? '#8b6b3a' : g.sourceType === 'auspices' ? '#c9a227' : '#6b8f4e';
+    card.style.borderLeftColor = typeColor;
+    if (isGiftMine(g, mySources)) card.classList.add('mine');
+    const canAdd = hasFreeSlot();
+    card.innerHTML = `
+      <div class="gift-head"><span class="gift-name">${escapeHtml(g.n)}</span><span class="gift-level">Ур. ${g.l}</span></div>
+      <div class="gift-source" style="color:${typeColor}">${g.sourceLabel}: ${escapeHtml(g.source)}</div>
+      <div class="gift-desc">${escapeHtml(g.d || '')}</div>
+      ${g.s ? `<div class="gift-system">📖 ${escapeHtml(g.s)}</div>` : ''}
+      <div class="gift-actions"><button class="add-gift-btn" data-gift="${escapeHtml(g.n)}" data-level="${g.l}" ${canAdd ? '' : 'disabled'}>${canAdd ? '+ В лист' : 'Списки полны'}</button></div>
+    `;
+    list.appendChild(card);
+  });
+  list.querySelectorAll('.add-gift-btn').forEach(btn => {
+    btn.addEventListener('click', () => addGiftToSheet(btn.dataset.gift, parseInt(btn.dataset.level, 10) || 1));
+  });
+}
+function hasFreeSlot() {
+  state.lists = state.lists || {};
+  state.lists.gifts1 = state.lists.gifts1 || [];
+  state.lists.gifts2 = state.lists.gifts2 || [];
+  return state.lists.gifts1.length < 5 || state.lists.gifts2.length < 5;
+}
+function addGiftToSheet(name, level) {
+  state.lists = state.lists || {};
+  state.lists.gifts1 = state.lists.gifts1 || [];
+  state.lists.gifts2 = state.lists.gifts2 || [];
+  if ([...state.lists.gifts1, ...state.lists.gifts2].some(g => g.name === name)) { flashToast(`«${name}» уже в листе`); return; }
+  let target = null;
+  if (state.lists.gifts1.length < 5) target = 'gifts1';
+  else if (state.lists.gifts2.length < 5) target = 'gifts2';
+  else { flashToast('Оба списка Даров заполнены'); return; }
+  state.lists[target].push({ name, value: level });
+  renderList(target); save();
+  flashToast(`✓ «${name}» добавлен в ${target === 'gifts1' ? 'Дары I' : 'Дары II'}`);
+  renderGiftList();
+}
+function initGiftReference() {
+  getSourceOptions(); renderGiftList();
+  document.getElementById('gift-source-type').addEventListener('change', () => { getSourceOptions(); renderGiftList(); });
+  document.getElementById('gift-source').addEventListener('change', renderGiftList);
+  document.getElementById('gift-level').addEventListener('change', renderGiftList);
+  document.getElementById('gift-search').addEventListener('input', renderGiftList);
+  document.getElementById('gift-only-mine').addEventListener('change', () => { updateOnlyMineHint(); renderGiftList(); });
+  updateOnlyMineHint();
+}
+function flattenRites() {
+  const out = [];
+  Object.keys(RITE_DATA).forEach(key => {
+    const type = RITE_DATA[key];
+    type.rites.forEach(r => out.push({ ...r, type: key, typeLabel: type.label, typeRoll: type.roll, typeDiff: type.diff }));
+  });
+  return out;
+}
+const ALL_RITES = flattenRites();
+function initRiteTypeFilter() {
+  const sel = document.getElementById('rite-type-filter');
+  sel.innerHTML = '<option value="all">Все типы</option>';
+  Object.keys(RITE_DATA).forEach(k => {
+    const opt = document.createElement('option'); opt.value = k; opt.textContent = RITE_DATA[k].label;
+    sel.appendChild(opt);
+  });
+}
+function renderRiteList() {
+  const typeFilter = document.getElementById('rite-type-filter').value;
+  const lvlFilter = document.getElementById('rite-level-filter').value;
+  const search = document.getElementById('rite-search').value.trim().toLowerCase();
+  let items = ALL_RITES.slice();
+  if (typeFilter !== 'all') items = items.filter(r => r.type === typeFilter);
+  if (lvlFilter !== 'all') items = items.filter(r => String(r.l) === String(lvlFilter));
+  if (search) items = items.filter(r => r.n.toLowerCase().includes(search) || (r.d && r.d.toLowerCase().includes(search)) || (r.s && r.s.toLowerCase().includes(search)));
+  const typeOrder = { harmony:0, caern:1, death:2, mystic:3, punishment:4, renown:5, seasonal:6, minor:7 };
+  items.sort((a,b) => {
+    if (typeOrder[a.type] !== typeOrder[b.type]) return typeOrder[a.type] - typeOrder[b.type];
+    if (a.l !== b.l) return a.l - b.l;
+    return a.n.localeCompare(b.n, 'ru');
+  });
+  const list = document.getElementById('rite-list');
+  const stats = document.getElementById('rite-stats');
+  list.innerHTML = '';
+  stats.textContent = `Найдено: ${items.length} из ${ALL_RITES.length} обрядов`;
+  if (items.length === 0) { list.innerHTML = '<div class="gift-empty">Ничего не найдено. Попробуй изменить фильтры.</div>'; return; }
+  items.forEach(r => {
+    const card = document.createElement('div'); card.className = 'rite-card';
+    const canAdd = hasFreeRiteSlot();
+    const exists = (state.lists.rites || []).some(x => x.name === r.n);
+    card.innerHTML = `
+      <div class="rite-head"><span class="rite-name">${escapeHtml(r.n)}</span><span class="rite-level">${r.l === 0 ? 'Малый' : 'Ур. ' + r.l}</span></div>
+      <div class="rite-type">${r.typeLabel}</div>
+      <div class="rite-desc">${escapeHtml(r.d || '')}</div>
+      ${r.s ? `<div class="rite-system">📖 ${escapeHtml(r.s)}</div>` : ''}
+      <button class="add-rite-btn" data-rite="${escapeHtml(r.n)}" data-level="${r.l}" ${(!canAdd || exists) ? 'disabled' : ''}>${exists ? 'Уже в листе' : (canAdd ? '+ В лист ритуалов' : 'Список полон')}</button>
+    `;
+    list.appendChild(card);
+  });
+  list.querySelectorAll('.add-rite-btn').forEach(btn => {
+    btn.addEventListener('click', () => addRiteToSheet(btn.dataset.rite, parseInt(btn.dataset.level, 10) || 1));
+  });
+}
+function hasFreeRiteSlot() {
+  state.lists = state.lists || {}; state.lists.rites = state.lists.rites || [];
+  return state.lists.rites.length < 5;
+}
+function addRiteToSheet(name, level) {
+  state.lists = state.lists || {}; state.lists.rites = state.lists.rites || [];
+  if (state.lists.rites.some(r => r.name === name)) { flashToast(`«${name}» уже в листе ритуалов`); return; }
+  if (state.lists.rites.length >= 5) { flashToast('Список ритуалов заполнен'); return; }
+  state.lists.rites.push({ name, value: level });
+  renderList('rites'); save();
+  flashToast(`✓ «${name}» добавлен в ритуалы`, 'purple');
+  renderRiteList();
+}
+function initRiteReference() {
+  initRiteTypeFilter(); renderRiteList();
+  document.getElementById('rite-type-filter').addEventListener('change', renderRiteList);
+  document.getElementById('rite-level-filter').addEventListener('change', renderRiteList);
+  document.getElementById('rite-search').addEventListener('input', renderRiteList);
+}
+function flashToast(text, type='', duration=1800) {
+  const t = document.getElementById('toast'); if (!t) return;
+  t.textContent = text;
+  t.className = 'toast' + (type === 'info' ? ' info' : type === 'purple' ? ' purple' : '');
+  requestAnimationFrame(() => t.classList.add('show'));
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), duration);
+}
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function init() {
+  state = loadState();
+  buildStats(document.getElementById('attrs'), ATTRS);
+  buildStats(document.getElementById('abilities'), ABILITIES);
+  initDots(); initSquares(); buildHealth(); buildForms();
+  Object.keys(LISTS).forEach(renderList);
+  renderFetishes(); renderCombat();
+  renderMeritsFlaws('merits', 'merits-rows');
+  renderMeritsFlaws('flaws', 'flaws-rows');
+  initTextFields(); initButtons(); initTabs(); initCheatSheets();
+  initGiftReference(); initRiteReference(); initAutoFill();
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
