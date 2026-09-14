@@ -8,958 +8,224 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
-  --paper-1: #f3e9cb;
-  --paper-2: #ecdfbc;
+  --paper-1: #f3e9cb; --paper-2: #ecdfbc;
   --paper-glow: rgba(139, 100, 60, 0.10);
-  --ink: #1e1811;
-  --ink-soft: #3d3327;
-  --ink-faint: #6b5c44;
-  --line: #8f7e57;
-  --line-soft: #b5a37a;
-  --border-ink: #2a2016;
-  --gold: #8a6b14;
-  --gold-bright: #a8842a;
-  --red: #8b1a1a;
-  --green: #4a6b1f;
-  --blue: #2a4d6b;
-  --purple: #5c3b7a;
+  --ink: #1e1811; --ink-soft: #3d3327; --ink-faint: #6b5c44;
+  --line: #8f7e57; --line-soft: #b5a37a; --border-ink: #2a2016;
+  --gold: #8a6b14; --gold-bright: #a8842a;
+  --red: #8b1a1a; --green: #4a6b1f; --blue: #2a4d6b; --purple: #5c3b7a;
   --bg-dark: #1a130c;
 }
-
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
-  font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-  font-size: 14.5px;
-  line-height: 1.45;
-  color: var(--ink);
+  font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  font-size: 14.5px; line-height: 1.45; color: var(--ink);
   background: var(--bg-dark);
   background-image: radial-gradient(ellipse at center, #2a1f14 0%, #0f0a06 80%);
   background-attachment: fixed;
-  min-height: 100vh;
-  padding-bottom: 40px;
+  min-height: 100vh; padding-bottom: 40px;
 }
 button, input, textarea, select { font-family: inherit; }
 
-/* ---------- TOOLBAR ---------- */
 .toolbar {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; gap: 14px;
-  padding: 10px 20px;
-  background: rgba(15, 10, 6, 0.96);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid #3a2a18;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.7);
-  flex-wrap: wrap;
-  color: #e8ddc9;
+  padding: 10px 20px; background: rgba(15, 10, 6, 0.96);
+  backdrop-filter: blur(8px); border-bottom: 1px solid #3a2a18;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.7); flex-wrap: wrap; color: #e8ddc9;
 }
-.brand {
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 700; letter-spacing: 2px;
-  color: #c9a227; font-size: 14px;
-  text-transform: uppercase; white-space: nowrap;
-}
+.brand { font-family: 'Cinzel', Georgia, serif; font-weight: 700; letter-spacing: 2px; color: #c9a227; font-size: 14px; text-transform: uppercase; white-space: nowrap; }
 .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
-.tabs button {
-  background: transparent; color: #968772;
-  border: 1px solid #3a2e21;
-  padding: 5px 12px; border-radius: 3px;
-  cursor: pointer; font-size: 12px;
-  letter-spacing: 0.5px;
-  transition: all .15s;
-}
-.tabs button.active {
-  background: #c9a227; color: #1a1209;
-  border-color: #f2cd52; font-weight: 600;
-}
+.tabs button { background: transparent; color: #968772; border: 1px solid #3a2e21; padding: 5px 12px; border-radius: 3px; cursor: pointer; font-size: 12px; letter-spacing: 0.5px; transition: all .15s; }
+.tabs button.active { background: #c9a227; color: #1a1209; border-color: #f2cd52; font-weight: 600; }
 .tabs button:hover:not(.active) { color: #f2cd52; }
 .tools { display: flex; gap: 6px; margin-left: auto; }
-.tools button {
-  background: #221b14; color: #e8ddc9;
-  border: 1px solid #3a2e21;
-  padding: 5px 11px; border-radius: 3px;
-  cursor: pointer; font-size: 13px;
-  transition: all .15s;
-}
+.tools button { background: #221b14; color: #e8ddc9; border: 1px solid #3a2e21; padding: 5px 11px; border-radius: 3px; cursor: pointer; font-size: 13px; transition: all .15s; }
 .tools button:hover { border-color: #c9a227; color: #f2cd52; }
 .tools button.danger:hover { border-color: #8b2a2a; color: #ff7a7a; }
 .tools button.pdf:hover { border-color: #4a7fa5; color: #7db8e0; }
-#save-indicator {
-  color: #c9a227; font-size: 11px;
-  opacity: 0; transition: opacity .3s;
-  white-space: nowrap;
-}
+#save-indicator { color: #c9a227; font-size: 11px; opacity: 0; transition: opacity .3s; white-space: nowrap; }
 #save-indicator.show { opacity: 1; }
 
-/* ---------- CHARACTER BAR ---------- */
-.char-bar {
-  position: sticky; top: 47px; z-index: 49;
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 20px;
-  background: rgba(15, 10, 6, 0.97);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid #3a2a18;
-  flex-wrap: wrap;
-  color: #e8ddc9;
-}
-.char-bar .char-label {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 11px; color: #c9a227;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  white-space: nowrap; font-weight: 600;
-}
-.char-bar select {
-  background: #221b14; border: 1px solid #3a2e21;
-  color: #e8ddc9; padding: 5px 10px; border-radius: 3px;
-  font-size: 12.5px; min-width: 220px; cursor: pointer;
-  outline: none;
-}
+.char-bar { position: sticky; top: 47px; z-index: 49; display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(15, 10, 6, 0.97); backdrop-filter: blur(8px); border-bottom: 1px solid #3a2a18; flex-wrap: wrap; color: #e8ddc9; }
+.char-bar .char-label { font-family: 'Cinzel', Georgia, serif; font-size: 11px; color: #c9a227; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; font-weight: 600; }
+.char-bar select { background: #221b14; border: 1px solid #3a2e21; color: #e8ddc9; padding: 5px 10px; border-radius: 3px; font-size: 12.5px; min-width: 220px; cursor: pointer; outline: none; }
 .char-bar select:focus { border-color: #c9a227; }
-.char-btn {
-  background: transparent; border: 1px solid #3a2e21;
-  color: #968772; padding: 5px 11px; border-radius: 3px;
-  cursor: pointer; font-size: 11px; letter-spacing: 0.5px;
-  transition: all .15s; white-space: nowrap;
-}
+.char-btn { background: transparent; border: 1px solid #3a2e21; color: #968772; padding: 5px 11px; border-radius: 3px; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all .15s; white-space: nowrap; }
 .char-btn:hover { border-color: #c9a227; color: #f2cd52; }
 .char-btn.danger:hover { border-color: #8b2a2a; color: #ff7a7a; }
-.char-meta {
-  font-size: 10px; color: #968772;
-  margin-left: auto; font-style: italic; white-space: nowrap;
-}
+.char-meta { font-size: 10px; color: #968772; margin-left: auto; font-style: italic; white-space: nowrap; }
 
-/* ---------- SHEET (PAPER PAGE) ---------- */
 .sheet { max-width: 1320px; margin: 24px auto; padding: 0 16px; }
-.page {
-  display: none;
-  flex-direction: column;
-  gap: 0;
-  padding: 34px 44px 42px;
-  background:
-    radial-gradient(ellipse at 15% 10%, var(--paper-glow), transparent 45%),
-    radial-gradient(ellipse at 85% 90%, var(--paper-glow), transparent 45%),
-    linear-gradient(180deg, var(--paper-1) 0%, var(--paper-2) 100%);
-  border: 2px solid var(--border-ink);
-  border-radius: 4px;
-  box-shadow:
-    inset 0 0 0 1px #e8dcb8,
-    inset 0 0 90px rgba(139, 100, 60, 0.14),
-    0 20px 60px rgba(0,0,0,0.75),
-    0 4px 20px rgba(0,0,0,0.5);
-  position: relative;
-}
+.page { display: none; flex-direction: column; gap: 0; padding: 34px 44px 42px; background: radial-gradient(ellipse at 15% 10%, var(--paper-glow), transparent 45%), radial-gradient(ellipse at 85% 90%, var(--paper-glow), transparent 45%), linear-gradient(180deg, var(--paper-1) 0%, var(--paper-2) 100%); border: 2px solid var(--border-ink); border-radius: 4px; box-shadow: inset 0 0 0 1px #e8dcb8, inset 0 0 90px rgba(139, 100, 60, 0.14), 0 20px 60px rgba(0,0,0,0.75), 0 4px 20px rgba(0,0,0,0.5); position: relative; }
 .page.active { display: flex; }
-.page::before, .page::after {
-  content: ""; position: absolute;
-  width: 24px; height: 24px;
-  border: 1px solid var(--line);
-  pointer-events: none;
-}
+.page::before, .page::after { content: ""; position: absolute; width: 24px; height: 24px; border: 1px solid var(--line); pointer-events: none; }
 .page::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
 .page::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
-
-.panel {
-  background: transparent; border: none;
-  border-radius: 0; padding: 0;
-  box-shadow: none; margin-bottom: 22px;
-}
+.panel { background: transparent; border: none; border-radius: 0; padding: 0; box-shadow: none; margin-bottom: 22px; }
 .panel:last-child { margin-bottom: 0; }
-
-.panel > h2 {
-  margin: 0 0 16px; padding: 6px 0;
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 15px; font-weight: 700;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--ink);
-  display: flex; align-items: center;
-  justify-content: center; gap: 14px;
-  border-top: 2px solid var(--border-ink);
-  border-bottom: 1px solid var(--border-ink);
-}
-.panel > h2::before, .panel > h2::after {
-  content: "❖";
-  color: var(--gold);
-  font-size: 11px;
-  flex-shrink: 0;
-}
-.panel h3 {
-  margin: 12px 0 6px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 12px; font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--ink);
-}
+.panel > h2 { margin: 0 0 16px; padding: 6px 0; font-family: 'Cinzel', Georgia, serif; font-size: 15px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; text-align: center; color: var(--ink); display: flex; align-items: center; justify-content: center; gap: 14px; border-top: 2px solid var(--border-ink); border-bottom: 1px solid var(--border-ink); }
+.panel > h2::before, .panel > h2::after { content: "❖"; color: var(--gold); font-size: 11px; flex-shrink: 0; }
+.panel h3 { margin: 12px 0 6px; font-family: 'Cinzel', Georgia, serif; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; text-align: center; color: var(--ink); }
 .panel h3:first-child { margin-top: 0; }
 
-.sheet-title {
-  text-align: center;
-  margin: 0 0 22px;
-  padding: 2px 0 16px;
-  border-bottom: 1px solid var(--border-ink);
-}
-.sheet-title-main {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 38px; font-weight: 900;
-  letter-spacing: 12px;
-  color: var(--ink);
-  text-transform: uppercase;
-  line-height: 1;
-  text-shadow: 2px 2px 0 rgba(139, 100, 60, 0.22);
-}
-.sheet-title-sub {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 13px; font-weight: 500;
-  letter-spacing: 11px;
-  color: var(--gold);
-  text-transform: uppercase;
-  margin-top: 8px;
-  padding-left: 11px;
-}
+.sheet-title { text-align: center; margin: 0 0 22px; padding: 2px 0 16px; border-bottom: 1px solid var(--border-ink); }
+.sheet-title-main { font-family: 'Cinzel', Georgia, serif; font-size: 38px; font-weight: 900; letter-spacing: 12px; color: var(--ink); text-transform: uppercase; line-height: 1; text-shadow: 2px 2px 0 rgba(139, 100, 60, 0.22); }
+.sheet-title-sub { font-family: 'Cinzel', Georgia, serif; font-size: 13px; font-weight: 500; letter-spacing: 11px; color: var(--gold); text-transform: uppercase; margin-top: 8px; padding-left: 11px; }
 
-.id-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 14px 26px;
-}
+.id-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 26px; }
 .id-grid > div { display: flex; flex-direction: column; gap: 2px; }
+label { font-family: 'Cinzel', Georgia, serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; }
+input[type=text], input[type=number], textarea, select { background: transparent; border: none; border-bottom: 1px solid var(--border-ink); border-radius: 0; color: var(--ink); padding: 3px 4px; outline: none; font-size: 14.5px; width: 100%; transition: all .15s; }
+input[type=text]:focus, textarea:focus, select:focus { background: rgba(139, 100, 60, 0.08); border-bottom-color: var(--gold); }
+input::placeholder, textarea::placeholder { color: var(--ink-faint); font-style: italic; opacity: 0.6; }
+textarea { border: 1px solid var(--border-ink); padding: 6px 8px; border-radius: 2px; resize: vertical; min-height: 60px; line-height: 1.5; background: rgba(255, 250, 235, 0.4); }
+select { background: rgba(255, 250, 235, 0.6); border: 1px solid var(--border-ink); border-radius: 2px; padding: 4px 6px; cursor: pointer; }
 
-label {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 10px; letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  font-weight: 600;
-}
-input[type=text], input[type=number], textarea, select {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--border-ink);
-  border-radius: 0;
-  color: var(--ink);
-  padding: 3px 4px;
-  outline: none;
-  font-size: 14.5px;
-  width: 100%;
-  transition: all .15s;
-}
-input[type=text]:focus, textarea:focus, select:focus {
-  background: rgba(139, 100, 60, 0.08);
-  border-bottom-color: var(--gold);
-}
-input::placeholder, textarea::placeholder {
-  color: var(--ink-faint);
-  font-style: italic;
-  opacity: 0.6;
-}
-textarea {
-  border: 1px solid var(--border-ink);
-  padding: 6px 8px;
-  border-radius: 2px;
-  resize: vertical;
-  min-height: 60px;
-  line-height: 1.5;
-  background: rgba(255, 250, 235, 0.4);
-}
-select {
-  background: rgba(255, 250, 235, 0.6);
-  border: 1px solid var(--border-ink);
-  border-radius: 2px;
-  padding: 4px 6px;
-  cursor: pointer;
-}
-
-.triple {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
+.triple { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
 .col { display: flex; flex-direction: column; gap: 1px; }
-.col h3 {
-  margin: 0 0 8px;
-  padding: 3px 0 6px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 12px; font-weight: 600;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  text-align: center;
-  color: var(--ink);
-  border-bottom: 1px dashed var(--border-ink);
-}
+.col h3 { margin: 0 0 8px; padding: 3px 0 6px; font-family: 'Cinzel', Georgia, serif; font-size: 12px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; text-align: center; color: var(--ink); border-bottom: 1px dashed var(--border-ink); }
 
-.stat {
-  display: flex; align-items: center;
-  gap: 6px; padding: 1px 0;
-  min-height: 21px;
-}
-.stat-name {
-  order: 1;
-  font-size: 13.5px;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 0 1 auto;
-  min-width: 0;
-}
-.stat::before {
-  content: "";
-  order: 2;
-  flex: 1 1 auto;
-  min-width: 10px;
-  height: 1px;
-  margin-top: 4px;
-  align-self: center;
-  background: repeating-linear-gradient(
-    90deg,
-    var(--line-soft) 0, var(--line-soft) 2px,
-    transparent 2px, transparent 6px
-  );
-}
+.stat { display: flex; align-items: center; gap: 6px; padding: 1px 0; min-height: 21px; }
+.stat-name { order: 1; font-size: 13.5px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 0; }
+.stat::before { content: ""; order: 2; flex: 1 1 auto; min-width: 10px; height: 1px; margin-top: 4px; align-self: center; background: repeating-linear-gradient(90deg, var(--line-soft) 0, var(--line-soft) 2px, transparent 2px, transparent 6px); }
 .stat .dots { order: 3; }
 
-.dots {
-  display: flex; gap: 4px;
-  flex-shrink: 0;
-  cursor: pointer;
-  user-select: none;
-}
-.dot {
-  display: inline-block;
-  width: 13px; height: 13px;
-  border-radius: 50%;
-  border: 1.3px solid var(--ink);
-  background: transparent;
-  transition: all .1s;
-}
-.dot:hover {
-  border-color: var(--gold);
-  transform: scale(1.15);
-}
-.dot.filled {
-  background: radial-gradient(circle at 35% 35%, #4a3a20, #1a1208 85%);
-  border-color: var(--ink);
-  box-shadow: inset 0 0 3px rgba(0,0,0,0.6);
-}
-.dot.auto {
-  background: radial-gradient(circle at 35% 35%, #6b8f4e, #2b401a 85%);
-  border-color: #2b401a;
-}
+.dots { display: flex; gap: 4px; flex-shrink: 0; cursor: pointer; user-select: none; }
+.dot { display: inline-block; width: 13px; height: 13px; border-radius: 50%; border: 1.3px solid var(--ink); background: transparent; transition: all .1s; }
+.dot:hover { border-color: var(--gold); transform: scale(1.15); }
+.dot.filled { background: radial-gradient(circle at 35% 35%, #4a3a20, #1a1208 85%); border-color: var(--ink); box-shadow: inset 0 0 3px rgba(0,0,0,0.6); }
+.dot.auto { background: radial-gradient(circle at 35% 35%, #6b8f4e, #2b401a 85%); border-color: #2b401a; }
 .dot.locked { cursor: not-allowed; }
-
-.squares {
-  display: flex; gap: 4px;
-  flex-shrink: 0;
-  cursor: pointer;
-  user-select: none;
-  margin-top: 3px;
-}
-.sq {
-  display: inline-block;
-  width: 13px; height: 13px;
-  border: 1.3px solid var(--ink);
-  border-radius: 2px;
-  background: transparent;
-  transition: all .1s;
-}
+.squares { display: flex; gap: 4px; flex-shrink: 0; cursor: pointer; user-select: none; margin-top: 3px; }
+.sq { display: inline-block; width: 13px; height: 13px; border: 1.3px solid var(--ink); border-radius: 2px; background: transparent; transition: all .1s; }
 .sq:hover { border-color: var(--gold); }
-.sq.filled {
-  background: linear-gradient(135deg, #4a3a20, #1a1208);
-  border-color: var(--ink);
-}
+.sq.filled { background: linear-gradient(135deg, #4a3a20, #1a1208); border-color: var(--ink); }
 
-.bottom-grid {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 26px; align-items: start;
-}
-.pool-block {
-  display: flex; flex-direction: column;
-  align-items: center; gap: 3px;
-  margin-bottom: 12px;
-  padding: 4px 0 8px;
-  border-bottom: 1px dotted var(--line-soft);
-}
+.bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 26px; align-items: start; }
+.pool-block { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-bottom: 12px; padding: 4px 0 8px; border-bottom: 1px dotted var(--line-soft); }
 .pool-block:last-child { border-bottom: none; padding-bottom: 0; }
-.pool-block .stat-name {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 12px; font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--ink);
-  text-align: center;
-  order: 0;
-}
-.pool-block .auto-hint {
-  font-size: 10px;
-  color: var(--green);
-  font-style: italic;
-  text-align: center;
-  min-height: 12px;
-}
+.pool-block .stat-name { font-family: 'Cinzel', Georgia, serif; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); text-align: center; order: 0; }
+.pool-block .auto-hint { font-size: 10px; color: var(--green); font-style: italic; text-align: center; min-height: 12px; }
 
-/* ---------- HEALTH ---------- */
 .health { display: flex; flex-direction: column; gap: 0; }
-.health-row {
-  display: flex; align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  padding: 5px 0;
-  user-select: none;
-  border-bottom: 1px dotted var(--line-soft);
-}
+.health-row { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 5px 0; user-select: none; border-bottom: 1px dotted var(--line-soft); }
 .health-row:last-child { border-bottom: none; }
-.health-row:hover .health-box {
-  border-color: var(--gold);
-  box-shadow: 0 0 4px rgba(138, 107, 20, 0.3);
-}
-.health-box {
-  position: relative;
-  width: 20px; height: 20px;
-  border: 1.5px solid var(--ink);
-  background: transparent;
-  border-radius: 2px;
-  flex-shrink: 0;
-  transition: all .12s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-.health-box[data-state="slash"] {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='3' y1='17' x2='17' y2='3' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/></svg>");
-}
-.health-box[data-state="cross"] {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='3' y1='3' x2='17' y2='17' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/><line x1='17' y1='3' x2='3' y2='17' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/></svg>");
-}
-.health-box[data-state="star"] {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='10' y1='2' x2='10' y2='18' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/><line x1='3.5' y1='6' x2='16.5' y2='14' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/><line x1='16.5' y1='6' x2='3.5' y2='14' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/></svg>");
-}
-.health-name {
-  flex: 1; font-size: 13.5px;
-  color: var(--ink);
-}
-.health-pen {
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  color: var(--ink-soft);
-  font-weight: 700;
-  min-width: 26px;
-  text-align: right;
-}
+.health-row:hover .health-box { border-color: var(--gold); box-shadow: 0 0 4px rgba(138, 107, 20, 0.3); }
+.health-box { position: relative; width: 20px; height: 20px; border: 1.5px solid var(--ink); background: transparent; border-radius: 2px; flex-shrink: 0; transition: all .12s; display: flex; align-items: center; justify-content: center; background-size: 100% 100%; background-repeat: no-repeat; background-position: center; }
+.health-box[data-state="slash"] { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='3' y1='17' x2='17' y2='3' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/></svg>"); }
+.health-box[data-state="cross"] { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='3' y1='3' x2='17' y2='17' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/><line x1='17' y1='3' x2='3' y2='17' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/></svg>"); }
+.health-box[data-state="star"] { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='10' y1='2' x2='10' y2='18' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/><line x1='3.5' y1='6' x2='16.5' y2='14' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/><line x1='16.5' y1='6' x2='3.5' y2='14' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/></svg>"); }
+.health-name { flex: 1; font-size: 13.5px; color: var(--ink); }
+.health-pen { font-family: 'Courier New', monospace; font-size: 12px; color: var(--ink-soft); font-weight: 700; min-width: 26px; text-align: right; }
 
-/* ---------- LISTS ---------- */
 .list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
 .list-row { display: flex; align-items: center; gap: 6px; }
-.list-row input[type=text] {
-  flex: 1; min-width: 0;
-  border-bottom: 1px solid var(--line);
-}
-.list-row .rm {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--ink-soft);
-  border-radius: 2px;
-  cursor: pointer;
-  width: 22px; height: 22px;
-  font-size: 14px; line-height: 1;
-  flex-shrink: 0; padding: 0;
-  transition: all .15s;
-}
-.list-row .rm:hover {
-  border-color: var(--red);
-  color: var(--red);
-  background: rgba(139, 26, 26, 0.08);
-}
-.add-btn {
-  background: transparent;
-  border: 1px dashed var(--line);
-  color: var(--ink-soft);
-  padding: 3px 10px; border-radius: 3px;
-  cursor: pointer; font-size: 11px;
-  letter-spacing: 0.5px;
-  transition: all .15s;
-}
-.add-btn:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: rgba(138, 107, 20, 0.06);
-}
+.list-row input[type=text] { flex: 1; min-width: 0; border-bottom: 1px solid var(--line); }
+.list-row .rm { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); border-radius: 2px; cursor: pointer; width: 22px; height: 22px; font-size: 14px; line-height: 1; flex-shrink: 0; padding: 0; transition: all .15s; }
+.list-row .rm:hover { border-color: var(--red); color: var(--red); background: rgba(139, 26, 26, 0.08); }
+.add-btn { background: transparent; border: 1px dashed var(--line); color: var(--ink-soft); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all .15s; }
+.add-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(138, 107, 20, 0.06); }
 
-/* ---------- FORMS ---------- */
-.forms-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
-}
-.form-card {
-  border: 1px solid var(--border-ink);
-  border-radius: 3px;
-  padding: 10px 12px;
-  background: rgba(255, 250, 235, 0.4);
-}
-.form-card h4 {
-  margin: 0 0 8px;
-  text-align: center;
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 12px; font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--ink);
-  border-bottom: 1px dashed var(--border-ink);
-  padding-bottom: 6px;
-}
-.form-mod {
-  display: flex; justify-content: space-between;
-  font-size: 12px; padding: 1px 0; gap: 4px;
-}
+.forms-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.form-card { border: 1px solid var(--border-ink); border-radius: 3px; padding: 10px 12px; background: rgba(255, 250, 235, 0.4); }
+.form-card h4 { margin: 0 0 8px; text-align: center; font-family: 'Cinzel', Georgia, serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--ink); border-bottom: 1px dashed var(--border-ink); padding-bottom: 6px; }
+.form-mod { display: flex; justify-content: space-between; font-size: 12px; padding: 1px 0; gap: 4px; }
 .form-mod .mod-label { color: var(--ink-soft); }
-.form-mod .mod-value {
-  color: var(--ink); font-weight: 700;
-  font-family: 'Courier New', monospace;
-}
-.form-diff {
-  margin-top: 8px; text-align: center;
-  font-size: 11.5px; color: var(--ink-soft);
-  border-top: 1px dashed var(--border-ink);
-  padding-top: 6px;
-  font-family: 'Cinzel', Georgia, serif;
-  letter-spacing: 1px;
-}
+.form-mod .mod-value { color: var(--ink); font-weight: 700; font-family: 'Courier New', monospace; }
+.form-diff { margin-top: 8px; text-align: center; font-size: 11.5px; color: var(--ink-soft); border-top: 1px dashed var(--border-ink); padding-top: 6px; font-family: 'Cinzel', Georgia, serif; letter-spacing: 1px; }
 .form-diff b { color: var(--ink); font-weight: 700; }
 
-/* ---------- TABLES ---------- */
 .combat-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; }
-table.combat {
-  width: 100%; border-collapse: collapse; font-size: 12px;
-}
-table.combat th {
-  font-family: 'Cinzel', Georgia, serif;
-  color: var(--ink);
-  font-weight: 700; font-size: 10.5px;
-  letter-spacing: 0.5px; text-transform: uppercase;
-  padding: 5px 3px;
-  border-top: 1px solid var(--border-ink);
-  border-bottom: 1px solid var(--border-ink);
-  text-align: center;
-  background: rgba(139, 100, 60, 0.06);
-}
-table.combat td {
-  padding: 1px;
-  border-bottom: 1px dotted var(--line-soft);
-}
-table.combat td input {
-  background: transparent; border: none;
-  color: var(--ink); width: 100%;
-  padding: 4px 5px; font-size: 12.5px;
-  outline: none;
-}
-table.combat td input:focus {
-  background: rgba(139, 100, 60, 0.1);
-}
+table.combat { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.combat th { font-family: 'Cinzel', Georgia, serif; color: var(--ink); font-weight: 700; font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; padding: 5px 3px; border-top: 1px solid var(--border-ink); border-bottom: 1px solid var(--border-ink); text-align: center; background: rgba(139, 100, 60, 0.06); }
+table.combat td { padding: 1px; border-bottom: 1px dotted var(--line-soft); }
+table.combat td input { background: transparent; border: none; color: var(--ink); width: 100%; padding: 4px 5px; font-size: 12.5px; outline: none; }
+table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 
-/* ---------- FETISHES ---------- */
-.fetish-row {
-  display: grid;
-  grid-template-columns: 2fr 30px 40px 40px 30px;
-  gap: 6px; align-items: center;
-  padding: 3px 0;
-  border-bottom: 1px dotted var(--line-soft);
-}
+.fetish-row { display: grid; grid-template-columns: 2fr 30px 40px 40px 30px; gap: 6px; align-items: center; padding: 3px 0; border-bottom: 1px dotted var(--line-soft); }
 .fetish-row input[type=text] { padding: 2px 4px; border-bottom: 1px solid var(--line); }
-.fetish-row label {
-  font-family: 'EB Garamond', Georgia, serif;
-  font-size: 11px; letter-spacing: 0;
-  text-transform: none; font-weight: 400;
-  color: var(--ink-soft);
-  display: flex; align-items: center; gap: 3px;
-}
+.fetish-row label { font-family: 'EB Garamond', Georgia, serif; font-size: 11px; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--ink-soft); display: flex; align-items: center; gap: 3px; }
 .fetish-row input[type=number] { padding: 2px 4px; text-align: center; border-bottom: 1px solid var(--line); }
 
 .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .misc-block { display: flex; flex-direction: column; gap: 6px; }
-.misc-block > label {
-  color: var(--ink);
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  border-bottom: 1px dashed var(--border-ink);
-  padding-bottom: 4px;
-  margin-top: 4px;
-}
+.misc-block > label { color: var(--ink); font-size: 11px; letter-spacing: 1.5px; border-bottom: 1px dashed var(--border-ink); padding-bottom: 4px; margin-top: 4px; }
 
-/* ---------- AUTOFILL ---------- */
-.autofill-banner {
-  display: none;
-  background: rgba(74, 107, 31, 0.1);
-  border: 1px solid var(--green);
-  border-left: 4px solid var(--green);
-  padding: 10px 14px;
-  border-radius: 0 3px 3px 0;
-  font-size: 12.5px;
-  color: var(--ink);
-  margin-bottom: 14px;
-}
+.autofill-banner { display: none; background: rgba(74, 107, 31, 0.1); border: 1px solid var(--green); border-left: 4px solid var(--green); padding: 10px 14px; border-radius: 0 3px 3px 0; font-size: 12.5px; color: var(--ink); margin-bottom: 14px; }
 .autofill-banner.show { display: block; }
 .autofill-banner strong { color: var(--green); font-family: 'Cinzel', Georgia, serif; letter-spacing: 1px; }
 .autofill-banner .gift-list { margin-top: 6px; padding-left: 18px; font-size: 12px; color: var(--ink-soft); }
 .autofill-banner .gift-list li { margin: 1px 0; }
-.autofill-banner .reset-auto {
-  background: transparent;
-  border: 1px solid var(--green);
-  color: var(--green);
-  padding: 3px 10px; border-radius: 3px;
-  cursor: pointer; font-size: 10px;
-  margin-top: 6px;
-  letter-spacing: 0.5px;
-}
+.autofill-banner .reset-auto { background: transparent; border: 1px solid var(--green); color: var(--green); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; margin-top: 6px; letter-spacing: 0.5px; }
 .autofill-banner .reset-auto:hover { background: rgba(74, 107, 31, 0.15); }
 
-/* ---------- GIFTS ---------- */
-.gift-filters {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 2fr;
-  gap: 10px; margin-bottom: 12px;
-}
-.gift-filters select, .gift-filters input {
-  border: 1px solid var(--border-ink);
-  background: rgba(255, 250, 235, 0.6);
-  color: var(--ink);
-  padding: 6px 8px; border-radius: 2px;
-  font-size: 12.5px;
-  outline: none;
-}
+.gift-filters { display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 10px; margin-bottom: 12px; }
+.gift-filters select, .gift-filters input { border: 1px solid var(--border-ink); background: rgba(255, 250, 235, 0.6); color: var(--ink); padding: 6px 8px; border-radius: 2px; font-size: 12.5px; outline: none; }
 .gift-filters select:focus, .gift-filters input:focus { border-color: var(--gold); }
-.gift-only-mine {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 14px; margin-bottom: 16px;
-  background: rgba(138, 107, 20, 0.08);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  font-size: 12.5px;
-  cursor: pointer; user-select: none;
-  transition: all .15s;
-}
+.gift-only-mine { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 16px; background: rgba(138, 107, 20, 0.08); border: 1px solid var(--line); border-radius: 3px; font-size: 12.5px; cursor: pointer; user-select: none; transition: all .15s; }
 .gift-only-mine:hover { border-color: var(--gold); }
-.gift-only-mine input[type=checkbox] {
-  width: 16px; height: 16px;
-  accent-color: var(--gold);
-  cursor: pointer;
-}
-.gift-only-mine .hint {
-  color: var(--ink-faint); font-size: 11.5px;
-  margin-left: auto; font-style: italic;
-}
+.gift-only-mine input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
+.gift-only-mine .hint { color: var(--ink-faint); font-size: 11.5px; margin-left: auto; font-style: italic; }
 .gift-only-mine .hint.ok { color: var(--green); font-weight: 600; }
-.gift-stats {
-  font-size: 11.5px; color: var(--ink-soft);
-  margin-bottom: 12px; text-align: right;
-  font-style: italic;
-}
-.gift-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 12px; max-height: 72vh;
-  overflow-y: auto; padding-right: 6px;
-}
-.gift-card {
-  background: rgba(255, 250, 235, 0.5);
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--gold);
-  border-radius: 3px;
-  padding: 10px 12px;
-  transition: all .15s;
-  display: flex; flex-direction: column; gap: 5px;
-}
-.gift-card:hover {
-  background: rgba(255, 250, 235, 0.85);
-  box-shadow: 0 2px 8px rgba(139, 100, 60, 0.15);
-}
-.gift-card.mine {
-  box-shadow: 0 0 0 1px rgba(138, 107, 20, 0.35), 0 0 12px rgba(138, 107, 20, 0.15);
-  background: rgba(255, 248, 220, 0.7);
-}
-.gift-card .gift-head {
-  display: flex; justify-content: space-between;
-  align-items: baseline; gap: 6px;
-}
-.gift-card .gift-name {
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 700; color: var(--ink);
-  font-size: 13px; line-height: 1.2;
-  letter-spacing: 0.5px;
-}
-.gift-card .gift-level {
-  font-size: 10px; color: var(--ink-soft);
-  letter-spacing: 1px;
-  background: rgba(139, 100, 60, 0.15);
-  border: 1px solid var(--line);
-  padding: 1px 6px; border-radius: 10px;
-  white-space: nowrap;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 600;
-}
-.gift-card .gift-source {
-  font-size: 10.5px; color: var(--ink-soft);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 600;
-}
-.gift-card .gift-desc {
-  font-size: 12.5px; color: var(--ink);
-  line-height: 1.45;
-}
-.gift-card .gift-system {
-  font-size: 11.5px; color: var(--ink-faint);
-  font-style: italic;
-  border-top: 1px dashed var(--line);
-  padding-top: 4px; margin-top: 3px;
-}
-.gift-card .gift-actions {
-  display: flex; justify-content: flex-end;
-  margin-top: 4px; gap: 6px;
-}
-.gift-card .add-gift-btn {
-  background: transparent;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  padding: 3px 12px; border-radius: 3px;
-  cursor: pointer; font-size: 10px;
-  letter-spacing: 0.5px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 600;
-  transition: all .15s;
-}
-.gift-card .add-gift-btn:hover {
-  background: var(--gold); color: var(--paper-1);
-}
-.gift-card .add-gift-btn:disabled {
-  opacity: 0.4; cursor: not-allowed;
-  border-color: var(--line);
-  color: var(--ink-faint);
-}
-.gift-empty {
-  text-align: center; color: var(--ink-faint);
-  padding: 30px 10px; font-style: italic;
-}
+.gift-stats { font-size: 11.5px; color: var(--ink-soft); margin-bottom: 12px; text-align: right; font-style: italic; }
+.gift-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; max-height: 72vh; overflow-y: auto; padding-right: 6px; }
+.gift-card { background: rgba(255, 250, 235, 0.5); border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 3px; padding: 10px 12px; transition: all .15s; display: flex; flex-direction: column; gap: 5px; }
+.gift-card:hover { background: rgba(255, 250, 235, 0.85); box-shadow: 0 2px 8px rgba(139, 100, 60, 0.15); }
+.gift-card.mine { box-shadow: 0 0 0 1px rgba(138, 107, 20, 0.35), 0 0 12px rgba(138, 107, 20, 0.15); background: rgba(255, 248, 220, 0.7); }
+.gift-card .gift-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.gift-card .gift-name { font-family: 'Cinzel', Georgia, serif; font-weight: 700; color: var(--ink); font-size: 13px; line-height: 1.2; letter-spacing: 0.5px; }
+.gift-card .gift-level { font-size: 10px; color: var(--ink-soft); letter-spacing: 1px; background: rgba(139, 100, 60, 0.15); border: 1px solid var(--line); padding: 1px 6px; border-radius: 10px; white-space: nowrap; font-family: 'Cinzel', Georgia, serif; font-weight: 600; }
+.gift-card .gift-source { font-size: 10.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; font-family: 'Cinzel', Georgia, serif; font-weight: 600; }
+.gift-card .gift-desc { font-size: 12.5px; color: var(--ink); line-height: 1.45; }
+.gift-card .gift-system { font-size: 11.5px; color: var(--ink-faint); font-style: italic; border-top: 1px dashed var(--line); padding-top: 4px; margin-top: 3px; }
+.gift-card .gift-actions { display: flex; justify-content: flex-end; margin-top: 4px; gap: 6px; }
+.gift-card .add-gift-btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 3px 12px; border-radius: 3px; cursor: pointer; font-size: 10px; letter-spacing: 0.5px; font-family: 'Cinzel', Georgia, serif; font-weight: 600; transition: all .15s; }
+.gift-card .add-gift-btn:hover { background: var(--gold); color: var(--paper-1); }
+.gift-card .add-gift-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--line); color: var(--ink-faint); }
+.gift-empty { text-align: center; color: var(--ink-faint); padding: 30px 10px; font-style: italic; }
 
-/* ---------- RITES ---------- */
-.rite-info {
-  background: rgba(92, 59, 122, 0.08);
-  border: 1px solid var(--purple);
-  border-left: 4px solid var(--purple);
-  padding: 12px 16px;
-  border-radius: 0 3px 3px 0;
-  font-size: 13px;
-  margin-bottom: 16px;
-  line-height: 1.55;
-  color: var(--ink);
-}
-.rite-info strong {
-  color: var(--purple);
-  font-family: 'Cinzel', Georgia, serif;
-  letter-spacing: 1px;
-}
-.rite-info code {
-  background: rgba(0,0,0,0.06);
-  border: 1px solid var(--line);
-  padding: 0 5px; border-radius: 2px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px; color: var(--ink);
-}
+.rite-info { background: rgba(92, 59, 122, 0.08); border: 1px solid var(--purple); border-left: 4px solid var(--purple); padding: 12px 16px; border-radius: 0 3px 3px 0; font-size: 13px; margin-bottom: 16px; line-height: 1.55; color: var(--ink); }
+.rite-info strong { color: var(--purple); font-family: 'Cinzel', Georgia, serif; letter-spacing: 1px; }
+.rite-info code { background: rgba(0,0,0,0.06); border: 1px solid var(--line); padding: 0 5px; border-radius: 2px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--ink); }
 .rite-info ul { margin: 6px 0; padding-left: 22px; }
 .rite-info ul li::marker { color: var(--purple); }
-.rite-info .rolls-table {
-  width: 100%; border-collapse: collapse;
-  margin: 8px 0 4px; font-size: 12px;
-}
-.rite-info .rolls-table th {
-  background: rgba(92, 59, 122, 0.15);
-  color: var(--purple);
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 700; text-align: left;
-  padding: 4px 8px;
-  border-bottom: 1px solid var(--border-ink);
-  font-size: 10.5px; letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.rite-info .rolls-table td {
-  padding: 3px 8px;
-  border-bottom: 1px dotted var(--line);
-}
-
-.rite-filters {
-  display: grid;
-  grid-template-columns: 1fr 1fr 2fr;
-  gap: 10px; margin-bottom: 14px;
-}
-.rite-filters select, .rite-filters input {
-  border: 1px solid var(--border-ink);
-  background: rgba(255, 250, 235, 0.6);
-  color: var(--ink);
-  padding: 6px 8px; border-radius: 2px;
-  font-size: 12.5px;
-  outline: none;
-}
+.rite-info .rolls-table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 12px; }
+.rite-info .rolls-table th { background: rgba(92, 59, 122, 0.15); color: var(--purple); font-family: 'Cinzel', Georgia, serif; font-weight: 700; text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border-ink); font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; }
+.rite-info .rolls-table td { padding: 3px 8px; border-bottom: 1px dotted var(--line); }
+.rite-filters { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; margin-bottom: 14px; }
+.rite-filters select, .rite-filters input { border: 1px solid var(--border-ink); background: rgba(255, 250, 235, 0.6); color: var(--ink); padding: 6px 8px; border-radius: 2px; font-size: 12.5px; outline: none; }
 .rite-filters select:focus, .rite-filters input:focus { border-color: var(--purple); }
+.rite-stats { font-size: 11.5px; color: var(--ink-soft); margin-bottom: 12px; text-align: right; font-style: italic; }
+.rite-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; max-height: 72vh; overflow-y: auto; padding-right: 6px; }
+.rite-card { background: rgba(255, 250, 235, 0.5); border: 1px solid var(--line); border-left: 4px solid var(--purple); border-radius: 3px; padding: 10px 12px; transition: all .15s; display: flex; flex-direction: column; gap: 5px; }
+.rite-card:hover { background: rgba(255, 250, 235, 0.85); box-shadow: 0 2px 8px rgba(92, 59, 122, 0.15); }
+.rite-card .rite-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.rite-card .rite-name { font-family: 'Cinzel', Georgia, serif; font-weight: 700; color: var(--ink); font-size: 13px; line-height: 1.2; letter-spacing: 0.5px; }
+.rite-card .rite-level { font-size: 10px; color: var(--ink-soft); letter-spacing: 1px; background: rgba(92, 59, 122, 0.15); border: 1px solid var(--purple); padding: 1px 6px; border-radius: 10px; white-space: nowrap; font-family: 'Cinzel', Georgia, serif; font-weight: 600; }
+.rite-card .rite-type { font-size: 10.5px; color: var(--purple); text-transform: uppercase; letter-spacing: 1px; font-family: 'Cinzel', Georgia, serif; font-weight: 600; }
+.rite-card .rite-desc { font-size: 12.5px; color: var(--ink); line-height: 1.45; }
+.rite-card .rite-system { font-size: 11.5px; color: var(--ink-faint); font-style: italic; border-top: 1px dashed var(--line); padding-top: 4px; margin-top: 3px; }
+.rite-card .add-rite-btn { background: transparent; border: 1px solid var(--purple); color: var(--purple); padding: 3px 12px; border-radius: 3px; cursor: pointer; font-size: 10px; letter-spacing: 0.5px; font-family: 'Cinzel', Georgia, serif; font-weight: 600; transition: all .15s; margin-top: 4px; align-self: flex-end; }
+.rite-card .add-rite-btn:hover { background: var(--purple); color: var(--paper-1); }
+.rite-card .add-rite-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--line); color: var(--ink-faint); }
 
-.rite-stats {
-  font-size: 11.5px; color: var(--ink-soft);
-  margin-bottom: 12px; text-align: right;
-  font-style: italic;
-}
-.rite-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 12px; max-height: 72vh;
-  overflow-y: auto; padding-right: 6px;
-}
-.rite-card {
-  background: rgba(255, 250, 235, 0.5);
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--purple);
-  border-radius: 3px;
-  padding: 10px 12px;
-  transition: all .15s;
-  display: flex; flex-direction: column; gap: 5px;
-}
-.rite-card:hover {
-  background: rgba(255, 250, 235, 0.85);
-  box-shadow: 0 2px 8px rgba(92, 59, 122, 0.15);
-}
-.rite-card .rite-head {
-  display: flex; justify-content: space-between;
-  align-items: baseline; gap: 6px;
-}
-.rite-card .rite-name {
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 700; color: var(--ink);
-  font-size: 13px; line-height: 1.2;
-  letter-spacing: 0.5px;
-}
-.rite-card .rite-level {
-  font-size: 10px; color: var(--ink-soft);
-  letter-spacing: 1px;
-  background: rgba(92, 59, 122, 0.15);
-  border: 1px solid var(--purple);
-  padding: 1px 6px; border-radius: 10px;
-  white-space: nowrap;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 600;
-}
-.rite-card .rite-type {
-  font-size: 10.5px; color: var(--purple);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 600;
-}
-.rite-card .rite-desc {
-  font-size: 12.5px; color: var(--ink);
-  line-height: 1.45;
-}
-.rite-card .rite-system {
-  font-size: 11.5px; color: var(--ink-faint);
-  font-style: italic;
-  border-top: 1px dashed var(--line);
-  padding-top: 4px; margin-top: 3px;
-}
-.rite-card .add-rite-btn {
-  background: transparent;
-  border: 1px solid var(--purple);
-  color: var(--purple);
-  padding: 3px 12px; border-radius: 3px;
-  cursor: pointer; font-size: 10px;
-  letter-spacing: 0.5px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 600;
-  transition: all .15s;
-  margin-top: 4px; align-self: flex-end;
-}
-.rite-card .add-rite-btn:hover {
-  background: var(--purple); color: var(--paper-1);
-}
-.rite-card .add-rite-btn:disabled {
-  opacity: 0.4; cursor: not-allowed;
-  border-color: var(--line);
-  color: var(--ink-faint);
-}
-
-/* ---------- CHEATS ---------- */
-.cheat-nav {
-  display: flex; gap: 6px; flex-wrap: wrap;
-  margin-bottom: 16px; padding-bottom: 12px;
-  border-bottom: 1px dashed var(--line);
-}
-.cheat-nav button {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--ink-soft);
-  padding: 4px 12px; border-radius: 3px;
-  cursor: pointer; font-size: 11.5px;
-  letter-spacing: 0.5px;
-  transition: all .15s;
-}
-.cheat-nav button:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: rgba(138, 107, 20, 0.06);
-}
+.cheat-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+.cheat-nav button { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 11.5px; letter-spacing: 0.5px; transition: all .15s; }
+.cheat-nav button:hover { border-color: var(--gold); color: var(--gold); background: rgba(138, 107, 20, 0.06); }
 .cheat-accordion { display: flex; flex-direction: column; gap: 8px; }
-.cheat-section {
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  background: rgba(255, 250, 235, 0.4);
-  overflow: hidden;
-  transition: all .2s;
-}
-.cheat-section[data-open="true"] {
-  border-color: var(--border-ink);
-  background: rgba(255, 250, 235, 0.7);
-}
-.cheat-header {
-  display: flex; justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  cursor: pointer; user-select: none;
-  background: rgba(139, 100, 60, 0.06);
-  transition: all .15s;
-}
+.cheat-section { border: 1px solid var(--line); border-radius: 3px; background: rgba(255, 250, 235, 0.4); overflow: hidden; transition: all .2s; }
+.cheat-section[data-open="true"] { border-color: var(--border-ink); background: rgba(255, 250, 235, 0.7); }
+.cheat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; user-select: none; background: rgba(139, 100, 60, 0.06); transition: all .15s; }
 .cheat-header:hover { background: rgba(139, 100, 60, 0.12); }
-.cheat-title {
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 13.5px; font-weight: 700;
-  color: var(--ink);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-.cheat-title .emoji {
-  margin-right: 8px; font-size: 15px;
-}
-.cheat-toggle {
-  color: var(--ink-soft); font-size: 16px;
-  transition: transform .2s;
-}
-.cheat-section[data-open="true"] .cheat-toggle {
-  transform: rotate(90deg); color: var(--gold);
-}
-.cheat-body {
-  display: none;
-  padding: 6px 18px 16px 18px;
-  font-size: 13px; line-height: 1.55;
-}
+.cheat-title { font-family: 'Cinzel', Georgia, serif; font-size: 13.5px; font-weight: 700; color: var(--ink); letter-spacing: 1.5px; text-transform: uppercase; }
+.cheat-title .emoji { margin-right: 8px; font-size: 15px; }
+.cheat-toggle { color: var(--ink-soft); font-size: 16px; transition: transform .2s; }
+.cheat-section[data-open="true"] .cheat-toggle { transform: rotate(90deg); color: var(--gold); }
+.cheat-body { display: none; padding: 6px 18px 16px 18px; font-size: 13px; line-height: 1.55; }
 .cheat-section[data-open="true"] .cheat-body { display: block; }
-.cheat-body h4 {
-  margin: 14px 0 6px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 11.5px; letter-spacing: 2px;
-  color: var(--ink);
-  text-transform: uppercase;
-  border-bottom: 1px dashed var(--border-ink);
-  padding-bottom: 3px;
-  font-weight: 700;
-}
+.cheat-body h4 { margin: 14px 0 6px; font-family: 'Cinzel', Georgia, serif; font-size: 11.5px; letter-spacing: 2px; color: var(--ink); text-transform: uppercase; border-bottom: 1px dashed var(--border-ink); padding-bottom: 3px; font-weight: 700; }
 .cheat-body h4:first-child { margin-top: 4px; }
 .cheat-body p { margin: 5px 0; }
 .cheat-body ul, .cheat-body ol { margin: 5px 0; padding-left: 24px; }
@@ -967,195 +233,43 @@ table.combat td input:focus {
 .cheat-body ul li::marker { color: var(--gold); }
 .cheat-body strong { color: var(--ink); font-weight: 700; }
 .cheat-body em { color: var(--ink-faint); font-style: italic; }
-.cheat-body code {
-  background: rgba(0,0,0,0.06);
-  border: 1px solid var(--line);
-  padding: 0 5px; border-radius: 2px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px; color: var(--ink);
-}
-.cheat-body table {
-  width: 100%; border-collapse: collapse;
-  margin: 8px 0; font-size: 12px;
-}
-.cheat-body table th {
-  background: rgba(139, 100, 60, 0.1);
-  color: var(--ink);
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 700; text-align: left;
-  padding: 4px 8px;
-  border-bottom: 1px solid var(--border-ink);
-  font-size: 10.5px; letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.cheat-body table td {
-  padding: 3px 8px;
-  border-bottom: 1px dotted var(--line);
-}
+.cheat-body code { background: rgba(0,0,0,0.06); border: 1px solid var(--line); padding: 0 5px; border-radius: 2px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--ink); }
+.cheat-body table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+.cheat-body table th { background: rgba(139, 100, 60, 0.1); color: var(--ink); font-family: 'Cinzel', Georgia, serif; font-weight: 700; text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border-ink); font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; }
+.cheat-body table td { padding: 3px 8px; border-bottom: 1px dotted var(--line); }
 .cheat-body table tr:last-child td { border-bottom: none; }
-.cheat-body .pill {
-  display: inline-block;
-  padding: 1px 8px; border-radius: 10px;
-  font-size: 10.5px; letter-spacing: 0.5px;
-  margin-right: 4px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 600;
-}
+.cheat-body .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 10.5px; letter-spacing: 0.5px; margin-right: 4px; font-family: 'Cinzel', Georgia, serif; font-weight: 600; }
 .cheat-body .pill.rage { background: rgba(139,26,26,0.12); color: var(--red); border: 1px solid rgba(139,26,26,0.3); }
 .cheat-body .pill.wp { background: rgba(42,77,107,0.12); color: var(--blue); border: 1px solid rgba(42,77,107,0.3); }
 .cheat-body .pill.gnosis { background: rgba(74,107,31,0.12); color: var(--green); border: 1px solid rgba(74,107,31,0.3); }
-.cheat-body .note {
-  background: rgba(42, 77, 107, 0.08);
-  border-left: 3px solid var(--blue);
-  padding: 8px 12px; margin: 10px 0;
-  font-size: 12px;
-  border-radius: 0 3px 3px 0;
-}
-.cheat-body .warn {
-  background: rgba(139, 26, 26, 0.08);
-  border-left: 3px solid var(--red);
-  padding: 8px 12px; margin: 10px 0;
-  font-size: 12px;
-  border-radius: 0 3px 3px 0;
-}
+.cheat-body .note { background: rgba(42, 77, 107, 0.08); border-left: 3px solid var(--blue); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
+.cheat-body .warn { background: rgba(139, 26, 26, 0.08); border-left: 3px solid var(--red); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
 
-/* ---------- GUIDE ---------- */
-.guide-intro {
-  background: rgba(138, 107, 20, 0.08);
-  border-left: 4px solid var(--gold);
-  padding: 12px 16px;
-  border-radius: 0 3px 3px 0;
-  font-size: 13px;
-  margin-bottom: 16px;
-  line-height: 1.55;
-}
-.guide-intro strong {
-  color: var(--gold);
-  font-family: 'Cinzel', Georgia, serif;
-  letter-spacing: 1px;
-}
-.guide-progress {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; margin-bottom: 18px;
-  background: rgba(255, 250, 235, 0.5);
-  border: 1px solid var(--line);
-  border-radius: 3px;
-}
-.guide-progress .bar {
-  flex: 1; height: 8px;
-  background: rgba(0,0,0,0.08);
-  border-radius: 4px; overflow: hidden;
-}
-.guide-progress .bar-fill {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
-  transition: width .4s ease;
-  box-shadow: 0 0 8px rgba(138, 107, 20, 0.5);
-}
-.guide-progress .bar-text {
-  font-size: 12px; color: var(--ink);
-  font-weight: 700; white-space: nowrap;
-  font-family: 'Courier New', monospace;
-}
-.guide-progress .reset-guide {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--ink-soft);
-  padding: 3px 10px; border-radius: 3px;
-  cursor: pointer; font-size: 10px;
-  letter-spacing: 0.5px;
-  transition: all .15s;
-}
-.guide-progress .reset-guide:hover {
-  border-color: var(--red); color: var(--red);
-  background: rgba(139, 26, 26, 0.06);
-}
-
-.guide-step {
-  border: 1px solid var(--line);
-  border-radius: 3px;
-  margin-bottom: 10px;
-  overflow: hidden;
-  transition: all .2s;
-  background: rgba(255, 250, 235, 0.4);
-}
-.guide-step[data-open="true"] {
-  border-color: var(--border-ink);
-  background: rgba(255, 250, 235, 0.7);
-}
-.guide-step.done {
-  border-left: 4px solid var(--green);
-  background: rgba(74, 107, 31, 0.06);
-}
-.guide-step-head {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 14px;
-  cursor: pointer; user-select: none;
-  background: rgba(139, 100, 60, 0.06);
-  transition: all .15s;
-}
+.guide-intro { background: rgba(138, 107, 20, 0.08); border-left: 4px solid var(--gold); padding: 12px 16px; border-radius: 0 3px 3px 0; font-size: 13px; margin-bottom: 16px; line-height: 1.55; }
+.guide-intro strong { color: var(--gold); font-family: 'Cinzel', Georgia, serif; letter-spacing: 1px; }
+.guide-progress { display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 18px; background: rgba(255, 250, 235, 0.5); border: 1px solid var(--line); border-radius: 3px; }
+.guide-progress .bar { flex: 1; height: 8px; background: rgba(0,0,0,0.08); border-radius: 4px; overflow: hidden; }
+.guide-progress .bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), var(--gold-bright)); transition: width .4s ease; box-shadow: 0 0 8px rgba(138, 107, 20, 0.5); }
+.guide-progress .bar-text { font-size: 12px; color: var(--ink); font-weight: 700; white-space: nowrap; font-family: 'Courier New', monospace; }
+.guide-progress .reset-guide { background: transparent; border: 1px solid var(--line); color: var(--ink-soft); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; letter-spacing: 0.5px; transition: all .15s; }
+.guide-progress .reset-guide:hover { border-color: var(--red); color: var(--red); background: rgba(139, 26, 26, 0.06); }
+.guide-step { border: 1px solid var(--line); border-radius: 3px; margin-bottom: 10px; overflow: hidden; transition: all .2s; background: rgba(255, 250, 235, 0.4); }
+.guide-step[data-open="true"] { border-color: var(--border-ink); background: rgba(255, 250, 235, 0.7); }
+.guide-step.done { border-left: 4px solid var(--green); background: rgba(74, 107, 31, 0.06); }
+.guide-step-head { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; user-select: none; background: rgba(139, 100, 60, 0.06); transition: all .15s; }
 .guide-step-head:hover { background: rgba(139, 100, 60, 0.12); }
-.guide-step-num {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--line);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 14px; font-weight: 700;
-  color: var(--ink-soft);
-  flex-shrink: 0;
-  transition: all .2s;
-}
-.guide-step[data-open="true"] .guide-step-num {
-  border-color: var(--gold); color: var(--gold);
-  background: rgba(138, 107, 20, 0.1);
-  box-shadow: 0 0 10px rgba(138, 107, 20, 0.3);
-}
-.guide-step.done .guide-step-num {
-  background: var(--green); border-color: var(--green);
-  color: var(--paper-1);
-}
-.guide-step-title {
-  flex: 1; font-size: 14px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
+.guide-step-num { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-family: 'Cinzel', Georgia, serif; font-size: 14px; font-weight: 700; color: var(--ink-soft); flex-shrink: 0; transition: all .2s; }
+.guide-step[data-open="true"] .guide-step-num { border-color: var(--gold); color: var(--gold); background: rgba(138, 107, 20, 0.1); box-shadow: 0 0 10px rgba(138, 107, 20, 0.3); }
+.guide-step.done .guide-step-num { background: var(--green); border-color: var(--green); color: var(--paper-1); }
+.guide-step-title { flex: 1; font-size: 14px; font-family: 'Cinzel', Georgia, serif; font-weight: 700; color: var(--ink); letter-spacing: 1.5px; text-transform: uppercase; }
 .guide-step.done .guide-step-title { color: var(--green); }
-.guide-step-actions {
-  display: flex; align-items: center; gap: 6px;
-}
-.guide-step-check {
-  width: 20px; height: 20px;
-  cursor: pointer;
-  accent-color: var(--green);
-  flex-shrink: 0;
-}
-.guide-step-toggle {
-  color: var(--ink-soft); font-size: 16px;
-  transition: transform .2s;
-}
-.guide-step[data-open="true"] .guide-step-toggle {
-  transform: rotate(90deg); color: var(--gold);
-}
-.guide-step-body {
-  display: none;
-  padding: 6px 18px 16px 58px;
-  font-size: 13px; line-height: 1.55;
-}
+.guide-step-actions { display: flex; align-items: center; gap: 6px; }
+.guide-step-check { width: 20px; height: 20px; cursor: pointer; accent-color: var(--green); flex-shrink: 0; }
+.guide-step-toggle { color: var(--ink-soft); font-size: 16px; transition: transform .2s; }
+.guide-step[data-open="true"] .guide-step-toggle { transform: rotate(90deg); color: var(--gold); }
+.guide-step-body { display: none; padding: 6px 18px 16px 58px; font-size: 13px; line-height: 1.55; }
 .guide-step[data-open="true"] .guide-step-body { display: block; }
-.guide-step-body h4 {
-  margin: 14px 0 6px;
-  font-family: 'Cinzel', Georgia, serif;
-  font-size: 11.5px; letter-spacing: 2px;
-  color: var(--ink);
-  text-transform: uppercase;
-  border-bottom: 1px dashed var(--border-ink);
-  padding-bottom: 3px;
-  font-weight: 700;
-}
+.guide-step-body h4 { margin: 14px 0 6px; font-family: 'Cinzel', Georgia, serif; font-size: 11.5px; letter-spacing: 2px; color: var(--ink); text-transform: uppercase; border-bottom: 1px dashed var(--border-ink); padding-bottom: 3px; font-weight: 700; }
 .guide-step-body h4:first-child { margin-top: 4px; }
 .guide-step-body p { margin: 5px 0; }
 .guide-step-body ul, .guide-step-body ol { margin: 5px 0; padding-left: 24px; }
@@ -1164,69 +278,35 @@ table.combat td input:focus {
 .guide-step-body ol li::marker { color: var(--gold); font-weight: 700; }
 .guide-step-body strong { color: var(--ink); font-weight: 700; }
 .guide-step-body em { color: var(--ink-faint); font-style: italic; }
-.guide-step-body code {
-  background: rgba(0,0,0,0.06);
-  border: 1px solid var(--line);
-  padding: 0 5px; border-radius: 2px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px; color: var(--ink);
-}
-.guide-step-body table {
-  width: 100%; border-collapse: collapse;
-  margin: 8px 0; font-size: 12px;
-}
-.guide-step-body table th {
-  background: rgba(139, 100, 60, 0.1);
-  color: var(--ink);
-  font-family: 'Cinzel', Georgia, serif;
-  font-weight: 700; text-align: left;
-  padding: 5px 8px;
-  border-bottom: 1px solid var(--border-ink);
-  font-size: 10.5px; letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.guide-step-body table td {
-  padding: 4px 8px;
-  border-bottom: 1px dotted var(--line);
-}
+.guide-step-body code { background: rgba(0,0,0,0.06); border: 1px solid var(--line); padding: 0 5px; border-radius: 2px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--ink); }
+.guide-step-body table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+.guide-step-body table th { background: rgba(139, 100, 60, 0.1); color: var(--ink); font-family: 'Cinzel', Georgia, serif; font-weight: 700; text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--border-ink); font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; }
+.guide-step-body table td { padding: 4px 8px; border-bottom: 1px dotted var(--line); }
 .guide-step-body table tr:last-child td { border-bottom: none; }
-.guide-step-body .note {
-  background: rgba(42, 77, 107, 0.08);
-  border-left: 3px solid var(--blue);
-  padding: 8px 12px; margin: 10px 0;
-  font-size: 12px;
-  border-radius: 0 3px 3px 0;
-}
-.guide-step-body .warn {
-  background: rgba(139, 26, 26, 0.08);
-  border-left: 3px solid var(--red);
-  padding: 8px 12px; margin: 10px 0;
-  font-size: 12px;
-  border-radius: 0 3px 3px 0;
-}
-.guide-step-body .hint-green {
-  background: rgba(74, 107, 31, 0.08);
-  border-left: 3px solid var(--green);
-  padding: 8px 12px; margin: 10px 0;
-  font-size: 12px;
-  border-radius: 0 3px 3px 0;
-}
-.guide-step-body .example {
-  background: rgba(139, 100, 60, 0.06);
-  border: 1px dashed var(--line);
-  padding: 8px 12px; margin: 10px 0;
-  font-size: 12px;
-  border-radius: 3px;
-  font-style: italic;
-  color: var(--ink);
-}
-.guide-step-body .example strong {
-  color: var(--gold); font-style: normal;
-  font-family: 'Cinzel', Georgia, serif;
-  letter-spacing: 0.5px;
-}
+.guide-step-body .note { background: rgba(42, 77, 107, 0.08); border-left: 3px solid var(--blue); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
+.guide-step-body .warn { background: rgba(139, 26, 26, 0.08); border-left: 3px solid var(--red); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
+.guide-step-body .hint-green { background: rgba(74, 107, 31, 0.08); border-left: 3px solid var(--green); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
+.guide-step-body .example { background: rgba(139, 100, 60, 0.06); border: 1px dashed var(--line); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 3px; font-style: italic; color: var(--ink); }
+.guide-step-body .example strong { color: var(--gold); font-style: normal; font-family: 'Cinzel', Georgia, serif; letter-spacing: 0.5px; }
 
-/* ---------- RESPONSIVE ---------- */
+/* ---------- RANK INFO ---------- */
+.rank-info-btn { display: block; width: 100%; background: transparent; border: 1px solid var(--line); color: var(--ink); padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 11.5px; font-family: 'Cinzel', Georgia, serif; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; transition: all .15s; }
+.rank-info-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(138, 107, 20, 0.06); }
+.rank-info-panel { display: none; background: rgba(255, 250, 235, 0.5); border: 1px solid var(--line); border-left: 4px solid var(--gold); border-radius: 0 3px 3px 0; padding: 12px 14px; font-size: 12px; margin-bottom: 12px; line-height: 1.5; }
+.rank-info-panel.show { display: block; }
+.rank-info-panel h4 { margin: 0 0 8px; font-family: 'Cinzel', Georgia, serif; font-size: 12px; letter-spacing: 1.5px; color: var(--gold); text-transform: uppercase; border-bottom: 1px dashed var(--border-ink); padding-bottom: 4px; }
+.rank-info-panel .rank-row { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px dotted var(--line-soft); font-size: 11.5px; }
+.rank-info-panel .rank-row:last-child { border-bottom: none; }
+.rank-info-panel .rank-row.current { background: rgba(138, 107, 20, 0.12); padding: 6px 8px; margin: 4px -8px; border-radius: 3px; font-weight: 700; }
+.rank-info-panel .rank-row .rn { color: var(--ink); font-weight: 600; min-width: 90px; }
+.rank-info-panel .rank-row .req { color: var(--ink-soft); font-family: 'Courier New', monospace; font-size: 11px; text-align: right; }
+.rank-info-panel .status { margin-top: 10px; padding: 6px 10px; border-radius: 3px; font-size: 11.5px; text-align: center; }
+.rank-info-panel .status.ok { background: rgba(74, 107, 31, 0.12); color: var(--green); border: 1px solid var(--green); }
+.rank-info-panel .status.warn { background: rgba(139, 26, 26, 0.08); color: var(--red); border: 1px solid var(--red); }
+.gift-card .gift-level.locked, .rite-card .rite-level.locked { background: rgba(139, 26, 26, 0.12); border-color: rgba(139, 26, 26, 0.4); color: var(--red); }
+.gift-card.rank-locked, .rite-card.rank-locked { opacity: 0.55; filter: grayscale(0.6); }
+.gift-card.rank-locked:hover, .rite-card.rank-locked:hover { opacity: 0.8; filter: grayscale(0.3); }
+
 @media (max-width: 900px) {
   .triple, .id-grid { grid-template-columns: 1fr; }
   .bottom-grid { grid-template-columns: 1fr; }
@@ -1248,31 +328,12 @@ table.combat td input:focus {
   .guide-step-num { width: 26px; height: 26px; font-size: 12px; }
   .guide-step-title { font-size: 11px; letter-spacing: 0.5px; }
 }
-
-/* ---------- PRINT ---------- */
 @media print {
   @page { size: A4; margin: 8mm; }
-  .toolbar, .char-bar, .add-btn, .rm, #save-indicator, .autofill-banner,
-  .gift-filters, .gift-actions, .gift-only-mine, .cheat-nav,
-  .cheat-toggle, .toast, .rite-filters, .add-rite-btn, .guide-progress,
-  .guide-step-check, .guide-step-toggle, .reset-guide { display: none !important; }
-  body {
-    background: #fff !important;
-    color: #000 !important;
-    padding: 0;
-    font-size: 10px;
-  }
+  .toolbar, .char-bar, .add-btn, .rm, #save-indicator, .autofill-banner, .gift-filters, .gift-actions, .gift-only-mine, .cheat-nav, .cheat-toggle, .toast, .rite-filters, .add-rite-btn, .guide-progress, .guide-step-check, .guide-step-toggle, .reset-guide, .rank-info-btn { display: none !important; }
+  body { background: #fff !important; color: #000 !important; padding: 0; font-size: 10px; }
   .sheet { margin: 0; padding: 0; max-width: 100%; }
-  .page {
-    display: none;
-    gap: 8px;
-    page-break-after: always;
-    background: #fff !important;
-    border: 1px solid #333 !important;
-    box-shadow: none !important;
-    padding: 10px 14px;
-    border-radius: 0;
-  }
+  .page { display: none; gap: 8px; page-break-after: always; background: #fff !important; border: 1px solid #333 !important; box-shadow: none !important; padding: 10px 14px; border-radius: 0; }
   .page.active { display: flex !important; }
   .page:last-child { page-break-after: auto; }
   .page::before, .page::after { display: none !important; }
@@ -1280,10 +341,7 @@ table.combat td input:focus {
   .panel > h2::before, .panel > h2::after { color: #000; }
   .col h3 { color: #000; border-bottom-color: #000; }
   label { color: #333; }
-  input, textarea, select {
-    background: #fff !important; color: #000 !important;
-    border-color: #666 !important;
-  }
+  input, textarea, select { background: #fff !important; color: #000 !important; border-color: #666 !important; }
   .dot { border-color: #000; background: #fff; }
   .dot.filled, .dot.auto { background: #000 !important; border-color: #000; box-shadow: none; }
   .sq { border-color: #000; background: #fff; }
@@ -1296,23 +354,7 @@ table.combat td input:focus {
   table.combat th { color: #000; background: #eee; border-color: #000; }
   .guide-step, .gift-card, .rite-card { background: #fff !important; border-color: #666 !important; }
 }
-
-/* ---------- TOAST ---------- */
-.toast {
-  position: fixed;
-  bottom: 24px; left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: rgba(74, 107, 31, 0.95);
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 3px;
-  font-size: 13px;
-  z-index: 999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  opacity: 0;
-  transition: opacity .25s, transform .25s;
-  pointer-events: none;
-}
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(74, 107, 31, 0.95); color: #fff; padding: 10px 20px; border-radius: 3px; font-size: 13px; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.info { background: rgba(42, 77, 107, 0.95); }
 .toast.purple { background: rgba(92, 59, 122, 0.95); }
@@ -1354,7 +396,6 @@ table.combat td input:focus {
 
 <main class="sheet">
 
-  <!-- =================== PAGE 1 =================== -->
   <div class="page active" id="page1">
     <div class="autofill-banner" id="autofill-banner"></div>
 
@@ -1375,7 +416,16 @@ table.combat td input:focus {
         <div><label>Концепция</label><input type="text" id="f_concept" autocomplete="off"></div>
         <div><label>Покровительство (Аспект)</label><input type="text" id="f_auspice" list="dl_auspices" autocomplete="off"></div>
         <div><label>Порода</label><input type="text" id="f_breed" list="dl_breeds" autocomplete="off"></div>
-        <div><label>Ранг</label><input type="text" id="f_rank" autocomplete="off" placeholder="Клиат (1)"></div>
+        <div>
+          <label>Ранг</label>
+          <select id="f_rank_select">
+            <option value="1">1 — Клиат</option>
+            <option value="2">2 — Фостерн</option>
+            <option value="3">3 — Адрен</option>
+            <option value="4">4 — Атро</option>
+            <option value="5">5 — Старейшина</option>
+          </select>
+        </div>
       </div>
     </section>
 
@@ -1395,6 +445,8 @@ table.combat td input:focus {
       <div class="bottom-grid">
         <div>
           <h2 style="font-size:13px;text-align:center;letter-spacing:2px;margin:0 0 10px;font-variant:small-caps;">Известность</h2>
+          <button class="rank-info-btn" id="btn-rank-info" title="Показать требования по рангам">🎖 Требования к рангам</button>
+          <div class="rank-info-panel" id="rank-info-panel"></div>
           <div class="pool-block"><div class="stat-name">Слава</div><div class="dots" data-key="glory" data-max="10"></div><div class="squares" data-key="glory" data-max="10"></div></div>
           <div class="pool-block"><div class="stat-name">Честь</div><div class="dots" data-key="honor" data-max="10"></div><div class="squares" data-key="honor" data-max="10"></div></div>
           <div class="pool-block"><div class="stat-name">Мудрость</div><div class="dots" data-key="wisdom" data-max="10"></div><div class="squares" data-key="wisdom" data-max="10"></div></div>
@@ -1413,7 +465,6 @@ table.combat td input:focus {
     </section>
   </div>
 
-  <!-- =================== PAGE 2 =================== -->
   <div class="page" id="page2">
     <section class="panel"><h2>Формы</h2><div class="forms-grid" id="forms"></div></section>
     <section class="panel"><h2>Другие Трейты</h2><div class="triple" id="other-traits"></div></section>
@@ -1447,7 +498,6 @@ table.combat td input:focus {
     </section>
   </div>
 
-  <!-- =================== PAGE 3 =================== -->
   <div class="page" id="page3">
     <section class="panel">
       <div class="id-grid" style="grid-template-columns: 1fr 1fr;">
@@ -1505,7 +555,6 @@ table.combat td input:focus {
     </section>
   </div>
 
-  <!-- =================== PAGE 4: ДАРЫ =================== -->
   <div class="page" id="page4">
     <section class="panel">
       <h2>Справочник Даров</h2>
@@ -1530,12 +579,16 @@ table.combat td input:focus {
         <span>🎯 Показывать только мои (по выбранным в листе Породе / Покровительству / Племени)</span>
         <span class="hint" id="gift-only-mine-hint"></span>
       </label>
+      <label class="gift-only-mine" style="margin-top:-8px;">
+        <input type="checkbox" id="gift-only-available">
+        <span>🎖 Показывать только доступные по рангу</span>
+        <span class="hint" id="gift-only-available-hint"></span>
+      </label>
       <div class="gift-stats" id="gift-stats">Загрузка…</div>
       <div class="gift-list" id="gift-list"></div>
     </section>
   </div>
 
-  <!-- =================== PAGE 6: ОБРЯДЫ =================== -->
   <div class="page" id="page6">
     <section class="panel">
       <h2>Справочник Обрядов</h2>
@@ -1579,7 +632,6 @@ table.combat td input:focus {
     </section>
   </div>
 
-  <!-- =================== PAGE 7: СОЗДАНИЕ =================== -->
   <div class="page" id="page7">
     <section class="panel">
       <h2>Гайд по созданию персонажа</h2>
@@ -1587,39 +639,25 @@ table.combat td input:focus {
         <strong>📖 Как создать оборотня за 5 шагов</strong><br>
         Создание персонажа в Werewolf: The Apocalypse строится по системе точек. Ты распределяешь очки между чертами и получаешь 15 <strong>свободных очков</strong> в конце, чтобы «докрутить» детали. Каждый шаг отмечай галочкой — прогресс сохраняется.
       </div>
-
       <div class="guide-progress">
         <span class="bar-text" id="guide-progress-text">0 / 5</span>
         <div class="bar"><div class="bar-fill" id="guide-progress-fill"></div></div>
         <button class="reset-guide" id="btn-reset-guide">Сбросить прогресс</button>
       </div>
-
       <div class="guide-accordion" id="guide-accordion">
-
         <div class="guide-step" data-step="1" data-open="false">
-          <div class="guide-step-head">
-            <div class="guide-step-num">1</div>
-            <div class="guide-step-title">Концепция и основа</div>
-            <div class="guide-step-actions">
-              <input type="checkbox" class="guide-step-check" data-step="1" title="Отметить шаг выполненным">
-              <span class="guide-step-toggle">▶</span>
-            </div>
-          </div>
+          <div class="guide-step-head"><div class="guide-step-num">1</div><div class="guide-step-title">Концепция и основа</div><div class="guide-step-actions"><input type="checkbox" class="guide-step-check" data-step="1"><span class="guide-step-toggle">▶</span></div></div>
           <div class="guide-step-body">
             <h4>Придумай концепцию</h4>
-            <p>Начни с общей идеи из 3–5 слов — она будет стержнем персонажа. Это не обязательно роль в бою, скорее <em>кто он и зачем</em>.</p>
-            <div class="example">
-              <strong>Примеры:</strong> «Миротворец поневоле», «Дипломат-нейтрал», «Современный крестоносец», «Журналист, ищущий правду».
-            </div>
-
+            <p>Начни с общей идеи из 3–5 слов — она будет стержнем персонажа.</p>
+            <div class="example"><strong>Примеры:</strong> «Миротворец поневоле», «Дипломат-нейтрал», «Современный крестоносец», «Журналист, ищущий правду».</div>
             <h4>Три фундаментальных выбора</h4>
             <table>
               <tr><th>Атрибут</th><th>Что определяет</th><th>Варианты</th></tr>
               <tr><td><strong>Порода</strong></td><td>Кем ты родился</td><td>Хомид / Метис / Люпус</td></tr>
-              <tr><td><strong>Покровительство</strong></td><td>Роль в обществе Гару (фаза луны)</td><td>Рагабаш / Теург / Филодокс / Галлиард / Арун</td></tr>
-              <tr><td><strong>Племя</strong></td><td>Твоя «семья», культура, философия</td><td>13 вариантов</td></tr>
+              <tr><td><strong>Покровительство</strong></td><td>Роль в обществе Гару</td><td>Рагабаш / Теург / Филодокс / Галлиард / Арун</td></tr>
+              <tr><td><strong>Племя</strong></td><td>Культура, философия</td><td>13 вариантов</td></tr>
             </table>
-
             <h4>Породы</h4>
             <table>
               <tr><th>Порода</th><th>Гнозис</th><th>Стартовые Дары</th></tr>
@@ -1627,7 +665,6 @@ table.combat td input:focus {
               <tr><td><strong>Метис</strong></td><td>3</td><td>Создать стихию, Первобытный гнев, Чутьё Вирма</td></tr>
               <tr><td><strong>Люпус</strong></td><td>5</td><td>Заячий прыжок, Обострённые чувства, Чутьё дичи</td></tr>
             </table>
-
             <h4>Покровительства</h4>
             <table>
               <tr><th>Покровительство</th><th>Ярость</th><th>Почёт</th></tr>
@@ -1637,40 +674,27 @@ table.combat td input:focus {
               <tr><td><strong>Галлиард</strong></td><td>4</td><td>Слава 2, Мудрость 1</td></tr>
               <tr><td><strong>Арун</strong></td><td>5</td><td>Слава 2, Честь 1</td></tr>
             </table>
-
-            <h4>Племена и стартовая Сила Воли</h4>
+            <h4>Племена и Сила Воли</h4>
             <table>
               <tr><th>Племя</th><th>Сила Воли</th><th>Особенность</th></tr>
               <tr><td>Черные Фурии</td><td>3</td><td>Только женщины (кроме метисов)</td></tr>
               <tr><td>Костегрызы</td><td>4</td><td>Без Предков, Чистой Крови, Ресурсов</td></tr>
               <tr><td>Дети Гайи</td><td>4</td><td>Миротворцы</td></tr>
-              <tr><td>Фианна</td><td>3</td><td>Кельтские корни, барды</td></tr>
+              <tr><td>Фианна</td><td>3</td><td>Кельтские корни</td></tr>
               <tr><td>Потомки Фенрира</td><td>3</td><td>Без Контактов</td></tr>
               <tr><td>Стеклоходы</td><td>3</td><td>Без Чистой Крови, Предков, Наставника</td></tr>
               <tr><td>Красные Когти</td><td>3</td><td>Только люпусы</td></tr>
               <tr><td>Теневые Владыки</td><td>3</td><td>Без Союзников, Наставника</td></tr>
               <tr><td>Безмолвные Странники</td><td>3</td><td>Без Ресурсов, Предков</td></tr>
-              <tr><td>Серебряные Клыки</td><td>3</td><td>Обязательно 3+ в Чистоте Рода</td></tr>
+              <tr><td>Серебряные Клыки</td><td>3</td><td>3+ в Чистоте Рода</td></tr>
               <tr><td>Уктена</td><td>3</td><td>Мистики</td></tr>
               <tr><td>Вендиго</td><td>4</td><td>Без Контактов, Ресурсов</td></tr>
               <tr><td>Звездочеты</td><td>5</td><td>Без Фетиша, Ресурсов</td></tr>
             </table>
-
-            <div class="hint-green">
-              💡 <strong>Не переживай об оптимальности.</strong> Выбор должен нравиться тебе и Рассказчику. Концепция важнее цифр.
-            </div>
           </div>
         </div>
-
         <div class="guide-step" data-step="2" data-open="false">
-          <div class="guide-step-head">
-            <div class="guide-step-num">2</div>
-            <div class="guide-step-title">Атрибуты (7 / 5 / 3)</div>
-            <div class="guide-step-actions">
-              <input type="checkbox" class="guide-step-check" data-step="2">
-              <span class="guide-step-toggle">▶</span>
-            </div>
-          </div>
+          <div class="guide-step-head"><div class="guide-step-num">2</div><div class="guide-step-title">Атрибуты (7 / 5 / 3)</div><div class="guide-step-actions"><input type="checkbox" class="guide-step-check" data-step="2"><span class="guide-step-toggle">▶</span></div></div>
           <div class="guide-step-body">
             <h4>Приоритеты</h4>
             <p>Определи три категории атрибутов по приоритетам. Каждый атрибут уже имеет базовое значение <strong>1</strong>.</p>
@@ -1681,14 +705,11 @@ table.combat td input:focus {
               <tr><td>Третичная</td><td><strong>3</strong></td></tr>
             </table>
             <p>Атрибуты: <em>Сила, Ловкость, Выносливость, Обаяние, Манипуляция, Внешность, Восприятие, Интеллект, Смекалка</em>.</p>
-
             <h4>Правила</h4>
             <ul>
-              <li>Можно распределять внутри категории как угодно</li>
               <li>Максимум <strong>5</strong> в одном атрибуте до свободных очков</li>
               <li>Минимум <strong>1</strong></li>
             </ul>
-
             <h4>Что означают значения</h4>
             <table>
               <tr><th>Значение</th><th>Смысл</th></tr>
@@ -1696,24 +717,12 @@ table.combat td input:focus {
               <tr><td>2</td><td>Средне — нормальный человек</td></tr>
               <tr><td>3</td><td>Хорошо — заметно выше среднего</td></tr>
               <tr><td>4</td><td>Незаурядно</td></tr>
-              <tr><td>5</td><td>Исключительно — предел человеческих возможностей</td></tr>
+              <tr><td>5</td><td>Исключительно — предел возможностей</td></tr>
             </table>
-
-            <div class="example">
-              <strong>Пример:</strong> журналист-хомид Рагабаш из Фианна. Ментальные первичные (7): Восприятие 3, Интеллект 3, Смекалка 4. Социальные вторичные (5): Обаяние 2, Манипуляция 4, Внешность 2. Физические третичные (3): все по 2.
-            </div>
           </div>
         </div>
-
         <div class="guide-step" data-step="3" data-open="false">
-          <div class="guide-step-head">
-            <div class="guide-step-num">3</div>
-            <div class="guide-step-title">Способности (13 / 9 / 5)</div>
-            <div class="guide-step-actions">
-              <input type="checkbox" class="guide-step-check" data-step="3">
-              <span class="guide-step-toggle">▶</span>
-            </div>
-          </div>
+          <div class="guide-step-head"><div class="guide-step-num">3</div><div class="guide-step-title">Способности (13 / 9 / 5)</div><div class="guide-step-actions"><input type="checkbox" class="guide-step-check" data-step="3"><span class="guide-step-toggle">▶</span></div></div>
           <div class="guide-step-body">
             <h4>Приоритеты</h4>
             <table>
@@ -1722,56 +731,34 @@ table.combat td input:focus {
               <tr><td><strong>Навыки</strong></td><td>13 / 9 / 5</td><td>Тренировки, практика</td></tr>
               <tr><td><strong>Познания</strong></td><td>13 / 9 / 5</td><td>Обучение, книги</td></tr>
             </table>
-
             <h4>Правила</h4>
             <ul>
               <li>Максимум <strong>3</strong> в одной способности при распределении</li>
               <li>Можно поднять до 4–5 за свободные очки</li>
-              <li>Способности без точек использовать нельзя</li>
             </ul>
-
-            <div class="warn">
-              ⚠️ <strong>Люпусы ограничены:</strong> не могут брать Ремесла, Вождение, Этикет, Огнестрельное; из познаний — Компьютеры, Законы, Языки, Политику, Естественные науки.
-            </div>
-
-            <div class="example">
-              <strong>Пример:</strong> Журналист. Таланты первичные (13): Бдительность 2, Эмпатия 2, Красноречие 3, Хитрость 2, Запугивание 1, Уклонение 1, Инстинкты 1, Уличные порядки 1. Познания вторичные (9): Расследование 3, Компьютеры 1, Языки 1, Политика 2, Ритуалы 2. Навыки третичные (5): Вождение 1, Скрытность 2, Выживание 2.
-            </div>
+            <div class="warn">⚠️ <strong>Люпусы ограничены:</strong> не могут брать Ремесла, Вождение, Этикет, Огнестрельное; из познаний — Компьютеры, Законы, Языки, Политику, Естественные науки.</div>
           </div>
         </div>
-
         <div class="guide-step" data-step="4" data-open="false">
-          <div class="guide-step-head">
-            <div class="guide-step-num">4</div>
-            <div class="guide-step-title">Преимущества</div>
-            <div class="guide-step-actions">
-              <input type="checkbox" class="guide-step-check" data-step="4">
-              <span class="guide-step-toggle">▶</span>
-            </div>
-          </div>
+          <div class="guide-step-head"><div class="guide-step-num">4</div><div class="guide-step-title">Преимущества</div><div class="guide-step-actions"><input type="checkbox" class="guide-step-check" data-step="4"><span class="guide-step-toggle">▶</span></div></div>
           <div class="guide-step-body">
             <h4>Детали биографии — 5 точек</h4>
             <table>
               <tr><th>Деталь</th><th>Что даёт</th></tr>
               <tr><td><strong>Союзники</strong></td><td>Друзья, помогающие в беде</td></tr>
               <tr><td><strong>Предки</strong></td><td>Связь с духами предков</td></tr>
-              <tr><td><strong>Контакты</strong></td><td>Информаторы из разных слоёв</td></tr>
-              <tr><td><strong>Фетиш</strong></td><td>Предмет с духом, дающий силу</td></tr>
+              <tr><td><strong>Контакты</strong></td><td>Информаторы</td></tr>
+              <tr><td><strong>Фетиш</strong></td><td>Предмет с духом</td></tr>
               <tr><td><strong>Родня</strong></td><td>Родственники-люди или волки</td></tr>
               <tr><td><strong>Наставник</strong></td><td>Опытный Гару</td></tr>
-              <tr><td><strong>Чистота Рода</strong></td><td>Знатное происхождение; +1 кубик соц. бросков за точку</td></tr>
-              <tr><td><strong>Ресурсы</strong></td><td>Богатство, имущество</td></tr>
+              <tr><td><strong>Чистота Рода</strong></td><td>+1 кубик соц. бросков за точку</td></tr>
+              <tr><td><strong>Ресурсы</strong></td><td>Богатство</td></tr>
               <tr><td><strong>Обряды</strong></td><td>Знание ритуалов</td></tr>
-              <tr><td><strong>Тотем</strong></td><td>Дух-покровитель стаи (покупается коллективно)</td></tr>
+              <tr><td><strong>Тотем</strong></td><td>Дух-покровитель (коллективно)</td></tr>
             </table>
-
             <h4>Дары — 3 стартовых</h4>
-            <p>По одному Дару 1-го уровня от <strong>породы</strong>, <strong>покровительства</strong> и <strong>племени</strong>. Дополнительные Дары — 7 очков за штуку.</p>
-
-            <div class="hint-green">
-              💡 <strong>Автоматизация:</strong> заполни Породу, Покровительство и Племя — стартовые Дары и пулы заполнятся сами! Вкладка «📖 Дары» + фильтр «🎯 Только мои».
-            </div>
-
+            <p>По одному Дару 1-го уровня от <strong>породы</strong>, <strong>покровительства</strong> и <strong>племени</strong>. Дополнительные — 7 очков за штуку.</p>
+            <div class="hint-green">💡 <strong>Автоматизация:</strong> заполни Породу, Покровительство и Племя — стартовые Дары и пулы заполнятся сами!</div>
             <h4>Почёт</h4>
             <table>
               <tr><th>Покровительство</th><th>Слава</th><th>Честь</th><th>Мудрость</th></tr>
@@ -1783,16 +770,8 @@ table.combat td input:focus {
             </table>
           </div>
         </div>
-
         <div class="guide-step" data-step="5" data-open="false">
-          <div class="guide-step-head">
-            <div class="guide-step-num">5</div>
-            <div class="guide-step-title">Финальные штрихи и свободные очки</div>
-            <div class="guide-step-actions">
-              <input type="checkbox" class="guide-step-check" data-step="5">
-              <span class="guide-step-toggle">▶</span>
-            </div>
-          </div>
+          <div class="guide-step-head"><div class="guide-step-num">5</div><div class="guide-step-title">Финальные штрихи и свободные очки</div><div class="guide-step-actions"><input type="checkbox" class="guide-step-check" data-step="5"><span class="guide-step-toggle">▶</span></div></div>
           <div class="guide-step-body">
             <h4>Свободные очки — 15 штук</h4>
             <table>
@@ -1805,15 +784,6 @@ table.combat td input:focus {
               <tr><td>Гнозис</td><td><strong>2</strong> за точку</td></tr>
               <tr><td>Сила воли</td><td><strong>1</strong> за точку</td></tr>
             </table>
-
-            <h4>Как распределить?</h4>
-            <ul>
-              <li><strong>Специалист:</strong> всё в одну категорию</li>
-              <li><strong>Универсал:</strong> по чуть-чуть везде</li>
-              <li><strong>Компенсация:</strong> закрыть слабые места</li>
-              <li><strong>Сюжетно:</strong> по предыстории</li>
-            </ul>
-
             <h4>Проверь себя</h4>
             <ul>
               <li>Все поля на вкладке «Основное» заполнены</li>
@@ -1821,30 +791,23 @@ table.combat td input:focus {
               <li>Сумма израсходованных свободных очков = 15</li>
               <li>3 стартовых Дара записаны</li>
               <li>Пулы Ярости / Гнозиса / Воли заполнены</li>
-              <li>Здоровье — 7 уровней, все пустые</li>
+              <li>Здоровье — 7 уровней</li>
             </ul>
-
-            <div class="hint-green">
-              🎉 <strong>Персонаж готов!</strong> Не забудь:
+            <div class="hint-green">🎉 <strong>Персонаж готов!</strong> Не забудь:
               <ul style="margin-top:6px;">
-                <li>Придумать имя стаи и тотем (с Рассказчиком)</li>
+                <li>Придумать имя стаи и тотем</li>
                 <li>Записать биографию</li>
                 <li>Пройти Прелюдию и Первое Изменение</li>
                 <li>Разыграть Обряд Перехода</li>
               </ul>
             </div>
-
-            <div class="note">
-              <strong>📌 Что дальше?</strong> Персонаж растёт через опыт. В конце каждой главы Рассказчик раздаёт 1–5 очков опыта.
-            </div>
+            <div class="note"><strong>📌 Что дальше?</strong> Опыт в конце главы: 1–5 очков. Стоимость повышения — на вкладке «Дополнения».</div>
           </div>
         </div>
-
       </div>
     </section>
   </div>
 
-  <!-- =================== PAGE 5: ШПАРГАЛКИ =================== -->
   <div class="page" id="page5">
     <section class="panel">
       <h2>Шпаргалки Мастера и Игрока</h2>
@@ -1857,7 +820,6 @@ table.combat td input:focus {
         <button data-jump="cheat-frenzy">🩸 Бешенство</button>
       </div>
       <div class="cheat-accordion" id="cheat-accordion">
-
         <div class="cheat-section" id="cheat-umbra" data-open="false">
           <div class="cheat-header"><span class="cheat-title"><span class="emoji">🌀</span>Шаг за грань — Вход в Умбру</span><span class="cheat-toggle">▶</span></div>
           <div class="cheat-body">
@@ -1892,7 +854,6 @@ table.combat td input:focus {
             <div class="note">Нельзя тратить Ярость в тот же ход, что и делать Шаг за грань.</div>
           </div>
         </div>
-
         <div class="cheat-section" id="cheat-combat" data-open="false">
           <div class="cheat-header"><span class="cheat-title"><span class="emoji">⚔️</span>Бой — Действия и броски</span><span class="cheat-toggle">▶</span></div>
           <div class="cheat-body">
@@ -1946,7 +907,6 @@ table.combat td input:focus {
             <div class="note"><strong>Ярость:</strong> 1 пункт = 1 доп. атака без штрафов.</div>
           </div>
         </div>
-
         <div class="cheat-section" id="cheat-rage" data-open="false">
           <div class="cheat-header"><span class="cheat-title"><span class="emoji">🔥</span>Траты Ярости <span class="pill rage">Rage</span></span><span class="cheat-toggle">▶</span></div>
           <div class="cheat-body">
@@ -1970,7 +930,6 @@ table.combat td input:focus {
             </table>
           </div>
         </div>
-
         <div class="cheat-section" id="cheat-wp" data-open="false">
           <div class="cheat-header"><span class="cheat-title"><span class="emoji">💪</span>Траты Силы Воли <span class="pill wp">Willpower</span></span><span class="cheat-toggle">▶</span></div>
           <div class="cheat-body">
@@ -1984,7 +943,6 @@ table.combat td input:focus {
             </table>
           </div>
         </div>
-
         <div class="cheat-section" id="cheat-gnosis" data-open="false">
           <div class="cheat-header"><span class="cheat-title"><span class="emoji">✨</span>Траты Гнозиса <span class="pill gnosis">Gnosis</span></span><span class="cheat-toggle">▶</span></div>
           <div class="cheat-body">
@@ -2001,7 +959,6 @@ table.combat td input:focus {
             <p><strong>Священная охота:</strong> полное восстановление.</p>
           </div>
         </div>
-
         <div class="cheat-section" id="cheat-frenzy" data-open="false">
           <div class="cheat-header"><span class="cheat-title"><span class="emoji">🩸</span>Бешенство (Frenzy)</span><span class="cheat-toggle">▶</span></div>
           <div class="cheat-body">
@@ -2029,7 +986,6 @@ table.combat td input:focus {
             </ul>
           </div>
         </div>
-
       </div>
     </section>
   </div>
@@ -2068,8 +1024,8 @@ table.combat td input:focus {
 
 <script>
 /* =========================================================
-   WEREWOLF: THE APOCALYPSE — Character Sheet v7
-   (мульти-персонаж + гайд + пергамент + градации здоровья)
+   WEREWOLF: THE APOCALYPSE — Character Sheet v8
+   (мульти-персонаж + гайд + пергамент + градации здоровья + связь ранга)
    ========================================================= */
 
 const CHAR_LIST_KEY  = 'wta_characters_list';
@@ -2078,7 +1034,6 @@ const CHAR_PREFIX    = 'wta_char_';
 const LEGACY_STORAGE_KEY = 'wta_char_sheet_v6';
 const GUIDE_KEY = 'wta_guide_progress';
 
-/* ============ СПРАВОЧНИКИ ============ */
 const BREEDS = {
   'Хомид': { gnosis: 1, gifts: ['Повелитель огня', 'Убеждение', 'Запах человека'] },
   'Метис': { gnosis: 3, gifts: ['Создать стихию', 'Первобытный гнев', 'Чутьё Вирма'] },
@@ -2395,70 +1350,62 @@ const GIFT_DATA = {
 };
 
 const RITE_DATA = {
-  harmony: { label: '🕊️ Гармония', roll: 'Обаяние + Ритуалы', diff: '7',
-    rites: [
-      { n:'Обряд Очищения', l:1, d:'Очищает личность, место или объект от порчи Вирма.', s:'Сложность = Гнозис порчи. Рассвет: −1.' },
-      { n:'Обряд Раскаяния', l:1, d:'Извинение перед духом или Гару.', s:'Сложность = Ярость цели.' },
-      { n:'Обряд Отречения', l:2, d:'Отказ от покровительства и смена на новое.', s:'Ранг сбрасывается на 1.' }
-    ]},
-  caern: { label: '🏛️ Каэрн', roll: 'Разный (макс. Гнозис)', diff: '7',
-    rites: [
-      { n:'Вечевой Обряд', l:1, d:'Открывает вече и наполняет каэрн Гнозисом.', s:'1 раз в месяц. 5 Гнозиса на уровень.' },
-      { n:'Обряд Раскрытого Каэрна', l:1, d:'Получение силы каэрна.', s:'Сообразит+Ритуалы (7).' },
-      { n:'Обряд Открытого Моста', l:4, d:'Создаёт Лунный мост между двумя каэрнами.', s:'Сообразит+Загадки (8 × уровень).' },
-      { n:'Барсучья Нора', l:4, d:'Дистанционное изучение области каэрна.', s:'Восприятие+Ритуалы. Слж 5–9.' },
-      { n:'Обряд Уединённой Лощины', l:4, d:'Скрывает область в Умбре.', s:'Барьер каэрна +4. 10 Гнозиса на постоянство.' },
-      { n:'Обряд Закладки Каэрна', l:5, d:'Создаёт новый каэрн.', s:'40 успехов, 13+ участников, 100 Гнозиса.' }
-    ]},
-  death: { label: '⚰️ Смерть', roll: 'Обаяние + Ритуалы', diff: '8 − Ранг',
-    rites: [
-      { n:'Проводы Усопшего', l:1, d:'Обряд в честь недавно умершего.', s:'Упрощает контакт с духом через Предки.' },
-      { n:'Обряд Зимнего Волка', l:3, d:'Добровольное самоубийство старого или раненого Гару.', s:'3+ Гару, ночь, серебряное оружие.' }
-    ]},
-  mystic: { label: '✨ Мистический', roll: 'Сообразительность + Ритуалы', diff: '7',
-    rites: [
-      { n:'Крещение огнём', l:1, d:'Отмечает новорождённого Гару знаком племени.', s:'Обаяние+Ритуалы. 1 успех.' },
-      { n:'Обряд Указующего Камня', l:1, d:'Находит личность или объект.', s:'Стандартный. Частица цели: −1.' },
-      { n:'Обряд Освящённого Талисмана', l:1, d:'«Привязывает» объекты к телу.', s:'1 Гнозис за предмет.' },
-      { n:'Обряд Удержания', l:1, d:'Привязывает духа к Гару.', s:'Гнозис vs Гнозис.' },
-      { n:'Обряд Подготовки', l:2, d:'Путешествие в Глубокую Умбру.', s:'Если браслет уничтожен — 1 агграв.' },
-      { n:'Обряд Пробуждения Духа', l:2, d:'Пробуждает спящий дух.', s:'Сложность = Ярость духа.' },
-      { n:'Обряд Вызова', l:2, d:'Призывает духа по имени.', s:'Бросок Гнозиса vs сложность духа (4–10).' },
-      { n:'Обряд Фетиша', l:3, d:'Создаёт фетиш.', s:'Сообразит+Ритуалы (10).' },
-      { n:'Обряд Тотемa', l:3, d:'Прикрепляет тотем к группе Гару.', s:'Стандартный. Требует Деталь Тотем.' }
-    ]},
-  punishment: { label: '⚖️ Наказание', roll: 'Обаяние + Ритуалы', diff: '7',
-    rites: [
-      { n:'Обряд Остракизма', l:2, d:'Отлучение от племени.', s:'−1 Славы, −5 Чести, −1 Мудрости.' },
-      { n:'Камень Презрения', l:2, d:'Круг септа выцарапывает позорные символы.', s:'−8 Чести, −2 Мудрости.' },
-      { n:'Загнанный Шакал', l:2, d:'Голос становится визгливым.', s:'−2 соц. броска, −2 Славы, −5 Чести.' },
-      { n:'Охота (Дикая Охота)', l:3, d:'Смертная казнь.', s:'Обаяние+Ритуалы (Ранг +4).' },
-      { n:'Обряд Насмешки', l:3, d:'На вече высмеивают виноватого.', s:'Слж = Ранг +4.' },
-      { n:'Срывание Завесы', l:4, d:'Приподнимает Завесу для человека.', s:'Жертва теряет иммунитет к Ужасу.' },
-      { n:'Мстительное Касание Гайи', l:5, d:'Казнь предателя.', s:'Никто не выжил.' }
-    ]},
-  renown: { label: '🏆 Известность', roll: 'Обаяние + Ритуалы', diff: '6',
-    rites: [
-      { n:'Обряд Первой Крови', l:1, d:'Отмечает первую боевую рану.', s:'Гару получает 2 очка Славы.' },
-      { n:'Обряд Свершений', l:2, d:'10 временного Почёта → 1 постоянный.', s:'Слж 4 (6 если оспаривается).' },
-      { n:'Обряд Перехода', l:2, d:'Щенок становится полноценным Гару.', s:'До обряда щенок не имеет ранга.' }
-    ]},
-  seasonal: { label: '🍂 Сезонный', roll: 'Выносливость + Ритуалы', diff: '8 − уровень каэрна',
-    rites: [
-      { n:'Обряд Северных Ветров', l:2, d:'Самая длинная ночь.', s:'Пирушка до рассвета.' },
-      { n:'Обряд Пробуждения', l:2, d:'Весеннее равноденствие.', s:'Семь испытаний в Умбре.' },
-      { n:'Великая Охота', l:2, d:'Летнее солнцестояние.', s:'3 очка Славы. При провале — 2 Славы в минус.' },
-      { n:'Долгое Бдение', l:2, d:'Осеннее равноденствие.', s:'Прощание с летом.' }
-    ]},
-  minor: { label: '🌿 Малые', roll: 'Без броска', diff: '—',
-    rites: [
-      { n:'Костяные Палочки', l:0, d:'Ритуальные барабанные палочки.', s:'3 дня: +1 кубик в Умбре.' },
-      { n:'Дыхание Гайи', l:0, d:'13 глубоких вдохов.', s:'1 цикл: −2 к лечению.' },
-      { n:'Приветствие Луне', l:0, d:'Хвалебная песнь Селене.', s:'Полный цикл: +1 кубик соц. бросков.' },
-      { n:'Приветствие Солнцу', l:0, d:'Хвала Гелиосу.', s:'9 дней: +1 кубик обнаружения.' },
-      { n:'Охотничья Молитва', l:0, d:'Пауза перед охотой.', s:'3 цикла: +1 на выслеживание.' },
-      { n:'Молитва за Добычу', l:0, d:'Шаг за грань после убийства.', s:'Полный цикл: −1 к общению с духами.' }
-    ]}
+  harmony: { label: '🕊️ Гармония', roll: 'Обаяние + Ритуалы', diff: '7', rites: [
+    { n:'Обряд Очищения', l:1, d:'Очищает от порчи Вирма.', s:'Сложность = Гнозис порчи. Рассвет: −1.' },
+    { n:'Обряд Раскаяния', l:1, d:'Извинение перед духом или Гару.', s:'Сложность = Ярость цели.' },
+    { n:'Обряд Отречения', l:2, d:'Отказ от покровительства.', s:'Ранг сбрасывается на 1.' }
+  ]},
+  caern: { label: '🏛️ Каэрн', roll: 'Разный (макс. Гнозис)', diff: '7', rites: [
+    { n:'Вечевой Обряд', l:1, d:'Открывает вече, наполняет каэрн Гнозисом.', s:'1 раз в месяц. 5 Гнозиса на уровень.' },
+    { n:'Обряд Раскрытого Каэрна', l:1, d:'Получение силы каэрна.', s:'Сообразит+Ритуалы (7).' },
+    { n:'Обряд Открытого Моста', l:4, d:'Создаёт Лунный мост между двумя каэрнами.', s:'Сообразит+Загадки (8 × уровень).' },
+    { n:'Барсучья Нора', l:4, d:'Дистанционное изучение каэрна.', s:'Восприятие+Ритуалы. Слж 5–9.' },
+    { n:'Обряд Уединённой Лощины', l:4, d:'Скрывает область в Умбре.', s:'Барьер каэрна +4. 10 Гнозиса на постоянство.' },
+    { n:'Обряд Закладки Каэрна', l:5, d:'Создаёт новый каэрн.', s:'40 успехов, 13+ участников, 100 Гнозиса.' }
+  ]},
+  death: { label: '⚰️ Смерть', roll: 'Обаяние + Ритуалы', diff: '8 − Ранг', rites: [
+    { n:'Проводы Усопшего', l:1, d:'Обряд в честь умершего.', s:'Упрощает контакт с духом через Предки.' },
+    { n:'Обряд Зимнего Волка', l:3, d:'Добровольное самоубийство старого или раненого Гару.', s:'3+ Гару, ночь, серебряное оружие.' }
+  ]},
+  mystic: { label: '✨ Мистический', roll: 'Сообразительность + Ритуалы', diff: '7', rites: [
+    { n:'Крещение огнём', l:1, d:'Отмечает новорождённого Гару.', s:'Обаяние+Ритуалы. 1 успех.' },
+    { n:'Обряд Указующего Камня', l:1, d:'Находит личность или объект.', s:'Стандартный. Частица цели: −1.' },
+    { n:'Обряд Освящённого Талисмана', l:1, d:'«Привязывает» объекты к телу.', s:'1 Гнозис за предмет.' },
+    { n:'Обряд Удержания', l:1, d:'Привязывает духа к Гару.', s:'Гнозис vs Гнозис.' },
+    { n:'Обряд Подготовки', l:2, d:'Путешествие в Глубокую Умбру.', s:'Если браслет уничтожен — 1 агграв.' },
+    { n:'Обряд Пробуждения Духа', l:2, d:'Пробуждает спящий дух.', s:'Сложность = Ярость духа.' },
+    { n:'Обряд Вызова', l:2, d:'Призывает духа по имени.', s:'Бросок Гнозиса vs сложность духа (4–10).' },
+    { n:'Обряд Фетиша', l:3, d:'Создаёт фетиш.', s:'Сообразит+Ритуалы (10).' },
+    { n:'Обряд Тотемa', l:3, d:'Прикрепляет тотем к группе Гару.', s:'Стандартный. Требует Деталь Тотем.' }
+  ]},
+  punishment: { label: '⚖️ Наказание', roll: 'Обаяние + Ритуалы', diff: '7', rites: [
+    { n:'Обряд Остракизма', l:2, d:'Отлучение от племени.', s:'−1 Славы, −5 Чести, −1 Мудрости.' },
+    { n:'Камень Презрения', l:2, d:'Позорные символы вокруг нарушителя.', s:'−8 Чести, −2 Мудрости.' },
+    { n:'Загнанный Шакал', l:2, d:'Голос становится визгливым.', s:'−2 соц. броска, −2 Славы, −5 Чести.' },
+    { n:'Охота (Дикая Охота)', l:3, d:'Смертная казнь.', s:'Обаяние+Ритуалы (Ранг +4).' },
+    { n:'Обряд Насмешки', l:3, d:'На вече высмеивают виноватого.', s:'Слж = Ранг +4.' },
+    { n:'Срывание Завесы', l:4, d:'Приподнимает Завесу для человека.', s:'Жертва теряет иммунитет к Ужасу.' },
+    { n:'Мстительное Касание Гайи', l:5, d:'Казнь предателя.', s:'Никто не выжил.' }
+  ]},
+  renown: { label: '🏆 Известность', roll: 'Обаяние + Ритуалы', diff: '6', rites: [
+    { n:'Обряд Первой Крови', l:1, d:'Отмечает первую боевую рану.', s:'Гару получает 2 очка Славы.' },
+    { n:'Обряд Свершений', l:2, d:'10 временного Почёта → 1 постоянный.', s:'Слж 4 (6 если оспаривается).' },
+    { n:'Обряд Перехода', l:2, d:'Щенок становится полноценным Гару.', s:'До обряда щенок не имеет ранга.' }
+  ]},
+  seasonal: { label: '🍂 Сезонный', roll: 'Выносливость + Ритуалы', diff: '8 − уровень каэрна', rites: [
+    { n:'Обряд Северных Ветров', l:2, d:'Самая длинная ночь.', s:'Пирушка до рассвета.' },
+    { n:'Обряд Пробуждения', l:2, d:'Весеннее равноденствие.', s:'Семь испытаний в Умбре.' },
+    { n:'Великая Охота', l:2, d:'Летнее солнцестояние.', s:'3 очка Славы. При провале — 2 Славы в минус.' },
+    { n:'Долгое Бдение', l:2, d:'Осеннее равноденствие.', s:'Прощание с летом.' }
+  ]},
+  minor: { label: '🌿 Малые', roll: 'Без броска', diff: '—', rites: [
+    { n:'Костяные Палочки', l:0, d:'Ритуальные барабанные палочки.', s:'3 дня: +1 кубик в Умбре.' },
+    { n:'Дыхание Гайи', l:0, d:'13 глубоких вдохов.', s:'1 цикл: −2 к лечению.' },
+    { n:'Приветствие Луне', l:0, d:'Хвалебная песнь Селене.', s:'Полный цикл: +1 кубик соц. бросков.' },
+    { n:'Приветствие Солнцу', l:0, d:'Хвала Гелиосу.', s:'9 дней: +1 кубик обнаружения.' },
+    { n:'Охотничья Молитва', l:0, d:'Пауза перед охотой.', s:'3 цикла: +1 на выслеживание.' },
+    { n:'Молитва за Добычу', l:0, d:'Шаг за грань после убийства.', s:'Полный цикл: −1 к общению с духами.' }
+  ]}
 };
 
 const ATTRS = {
@@ -2503,19 +1450,117 @@ const LISTS = {
 const AUTO_KEYS = ['rage','gnosis','willpower'];
 const HEALTH_STATES = ['none', 'slash', 'cross', 'star'];
 
-/* ============ МУЛЬТИ-ПЕРСОНАЖ ============ */
-function getCharList() {
-  try { return JSON.parse(localStorage.getItem(CHAR_LIST_KEY)) || []; }
-  catch (e) { return []; }
+const RANKS = [
+  { n:1, name:'Клиат',      desc:'Молодой Гару после Обряда Перехода' },
+  { n:2, name:'Фостерн',    desc:'Опытный оборотень, уважаемый стаей' },
+  { n:3, name:'Адрен',      desc:'Старший оборотень, вожак малой стаи' },
+  { n:4, name:'Атро',       desc:'Учитель, наставник, лидер септа' },
+  { n:5, name:'Старейшина', desc:'Легендарная фигура Нации Гару' }
+];
+
+const RANK_REQUIREMENTS = {
+  'Рагабаш':  [
+    { n:1, sum:3,  text:'3 в любой комбинации' },
+    { n:2, sum:7,  text:'7 в любой комбинации' },
+    { n:3, sum:13, text:'13 в любой комбинации' },
+    { n:4, sum:19, text:'19 в любой комбинации' },
+    { n:5, sum:25, text:'25 в любой комбинации' }
+  ],
+  'Теург': [
+    { n:1, glory:0, honor:0, wisdom:3,  text:'Слава 0 · Честь 0 · Мудрость 3' },
+    { n:2, glory:1, honor:0, wisdom:5,  text:'Слава 1 · Честь 0 · Мудрость 5' },
+    { n:3, glory:2, honor:1, wisdom:7,  text:'Слава 2 · Честь 1 · Мудрость 7' },
+    { n:4, glory:4, honor:2, wisdom:9,  text:'Слава 4 · Честь 2 · Мудрость 9' },
+    { n:5, glory:4, honor:9, wisdom:10, text:'Слава 4 · Честь 9 · Мудрость 10' }
+  ],
+  'Филодокс': [
+    { n:1, glory:0, honor:3, wisdom:0,  text:'Слава 0 · Честь 3 · Мудрость 0' },
+    { n:2, glory:1, honor:4, wisdom:1,  text:'Слава 1 · Честь 4 · Мудрость 1' },
+    { n:3, glory:2, honor:6, wisdom:2,  text:'Слава 2 · Честь 6 · Мудрость 2' },
+    { n:4, glory:3, honor:8, wisdom:4,  text:'Слава 3 · Честь 8 · Мудрость 4' },
+    { n:5, glory:4, honor:10, wisdom:9, text:'Слава 4 · Честь 10 · Мудрость 9' }
+  ],
+  'Галлиард': [
+    { n:1, glory:2, honor:0, wisdom:1,  text:'Слава 2 · Честь 0 · Мудрость 1' },
+    { n:2, glory:4, honor:0, wisdom:2,  text:'Слава 4 · Честь 0 · Мудрость 2' },
+    { n:3, glory:4, honor:2, wisdom:4,  text:'Слава 4 · Честь 2 · Мудрость 4' },
+    { n:4, glory:7, honor:2, wisdom:6,  text:'Слава 7 · Честь 2 · Мудрость 6' },
+    { n:5, glory:9, honor:5, wisdom:9,  text:'Слава 9 · Честь 5 · Мудрость 9' }
+  ],
+  'Арун': [
+    { n:1, glory:2, honor:1, wisdom:0,  text:'Слава 2 · Честь 1 · Мудрость 0' },
+    { n:2, glory:4, honor:1, wisdom:1,  text:'Слава 4 · Честь 1 · Мудрость 1' },
+    { n:3, glory:6, honor:3, wisdom:1,  text:'Слава 6 · Честь 3 · Мудрость 1' },
+    { n:4, glory:9, honor:5, wisdom:2,  text:'Слава 9 · Честь 5 · Мудрость 2' },
+    { n:5, glory:10,honor:9, wisdom:4,  text:'Слава 10 · Честь 9 · Мудрость 4' }
+  ]
+};
+
+function getCurrentRank() {
+  const sel = document.getElementById('f_rank_select');
+  return sel ? (parseInt(sel.value, 10) || 1) : 1;
 }
+function getCurrentAuspiceKey() {
+  return normalizeKey(document.getElementById('f_auspice').value, AUSPICES);
+}
+
+function renderRankInfo() {
+  const panel = document.getElementById('rank-info-panel');
+  if (!panel) return;
+  const auspiceKey = getCurrentAuspiceKey();
+  const currentRank = getCurrentRank();
+  const dots = state.dots || {};
+  const glory = dots.glory || 0, honor = dots.honor || 0, wisdom = dots.wisdom || 0;
+
+  if (!auspiceKey) {
+    panel.innerHTML = '<h4>🎖 Требования к рангам</h4><p style="font-size:12px;color:var(--ink-soft);">Заполни <strong>Покровительство</strong> — тогда здесь появятся требования для твоего аспекта.</p>';
+    return;
+  }
+  const reqs = RANK_REQUIREMENTS[auspiceKey] || [];
+  let html = `<h4>🎖 Требования — ${auspiceKey}</h4>`;
+  reqs.forEach(req => {
+    const isCurrent = req.n === currentRank;
+    html += `<div class="rank-row ${isCurrent ? 'current' : ''}">
+      <span class="rn">${req.n}. ${RANKS[req.n-1].name}</span>
+      <span class="req">${req.text}</span>
+    </div>`;
+  });
+  const reqForCurrent = reqs.find(r => r.n === currentRank);
+  if (reqForCurrent) {
+    let ok = true, detail = '';
+    if (auspiceKey === 'Рагабаш') {
+      const sum = glory + honor + wisdom;
+      ok = sum >= reqForCurrent.sum;
+      detail = `У тебя: Слава ${glory} + Честь ${honor} + Мудрость ${wisdom} = ${sum} (нужно ${reqForCurrent.sum})`;
+    } else {
+      ok = glory >= reqForCurrent.glory && honor >= reqForCurrent.honor && wisdom >= reqForCurrent.wisdom;
+      detail = `У тебя: Слава ${glory}/${reqForCurrent.glory} · Честь ${honor}/${reqForCurrent.honor} · Мудрость ${wisdom}/${reqForCurrent.wisdom}`;
+    }
+    html += `<div class="status ${ok ? 'ok' : 'warn'}">
+      ${ok ? '✓ Ты соответствуешь текущему рангу' : '⚠ Не хватает Почёта для этого ранга'}<br>
+      <span style="font-size:10.5px;opacity:0.8;">${detail}</span>
+    </div>`;
+  }
+  html += `<p style="font-size:10.5px;color:var(--ink-soft);margin-top:8px;font-style:italic;">
+    Почёт учитывается <strong>постоянный</strong> (точки). Для повышения: набрать временный Почёт → Обряд Свершений → вызов на поединок старшего.
+  </p>`;
+  panel.innerHTML = html;
+}
+
+function updateAvailableHint() {
+  const hint = document.getElementById('gift-only-available-hint');
+  if (!hint) return;
+  const rank = getCurrentRank();
+  hint.textContent = `Ранг ${rank} — Дары ур. 1–${rank}`;
+  hint.classList.add('ok');
+}
+
+function getCharList() { try { return JSON.parse(localStorage.getItem(CHAR_LIST_KEY)) || []; } catch (e) { return []; } }
 function setCharList(list) { localStorage.setItem(CHAR_LIST_KEY, JSON.stringify(list)); }
 function getActiveCharId() { return localStorage.getItem(ACTIVE_CHAR_KEY) || null; }
 function setActiveCharId(id) { localStorage.setItem(ACTIVE_CHAR_KEY, id); }
 function genCharId() { return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
-function loadCharData(id) {
-  try { return JSON.parse(localStorage.getItem(CHAR_PREFIX + id)) || {}; }
-  catch (e) { return {}; }
-}
+function loadCharData(id) { try { return JSON.parse(localStorage.getItem(CHAR_PREFIX + id)) || {}; } catch (e) { return {}; } }
 function saveCharData(id, data) { localStorage.setItem(CHAR_PREFIX + id, JSON.stringify(data)); }
 function deleteCharData(id) { localStorage.removeItem(CHAR_PREFIX + id); }
 
@@ -2585,19 +1630,12 @@ function createNewCharacter(name) {
   setActiveCharId(id);
   location.reload();
 }
-function switchCharacter(id) {
-  if (id === getActiveCharId()) return;
-  setActiveCharId(id);
-  location.reload();
-}
+function switchCharacter(id) { if (id === getActiveCharId()) return; setActiveCharId(id); location.reload(); }
 function deleteCurrentCharacter() {
   const id = getActiveCharId();
   if (!id) return;
   const list = getCharList();
-  if (list.length <= 1) {
-    alert('Нельзя удалить последнего персонажа.');
-    return;
-  }
+  if (list.length <= 1) { alert('Нельзя удалить последнего персонажа.'); return; }
   const c = list.find(x => x.id === id);
   if (!confirm('Удалить персонажа "' + (c ? c.name : '') + '"?')) return;
   const newList = list.filter(x => x.id !== id);
@@ -2641,7 +1679,6 @@ function duplicateCurrentCharacter() {
   setActiveCharId(newId);
   location.reload();
 }
-
 function initCharBar() {
   document.getElementById('char-select').addEventListener('change', e => switchCharacter(e.target.value));
   document.getElementById('btn-new-char').addEventListener('click', () => {
@@ -2654,7 +1691,6 @@ function initCharBar() {
   document.getElementById('btn-del-char').addEventListener('click', deleteCurrentCharacter);
 }
 
-/* ============ STATE ============ */
 let state = {};
 let saveTimer;
 function save() {
@@ -2665,15 +1701,10 @@ function save() {
       updateCharMeta();
     }
     const ind = document.getElementById('save-indicator');
-    if (ind) {
-      ind.classList.add('show');
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => ind.classList.remove('show'), 1100);
-    }
+    if (ind) { ind.classList.add('show'); clearTimeout(saveTimer); saveTimer = setTimeout(() => ind.classList.remove('show'), 1100); }
   } catch (e) {}
 }
 
-/* ============ DOTS ============ */
 function paintDots(container, val, auto=false) {
   container.querySelectorAll('.dot').forEach((d, i) => {
     d.classList.toggle('filled', i < val);
@@ -2682,9 +1713,7 @@ function paintDots(container, val, auto=false) {
   });
 }
 function paintSquares(container, arr) {
-  container.querySelectorAll('.sq').forEach((s, i) => {
-    s.classList.toggle('filled', !!arr[i]);
-  });
+  container.querySelectorAll('.sq').forEach((s, i) => { s.classList.toggle('filled', !!arr[i]); });
 }
 function initDots() {
   document.querySelectorAll('.dots[data-key]').forEach(container => {
@@ -2692,23 +1721,17 @@ function initDots() {
     container.dataset.initialized = '1';
     const max = parseInt(container.dataset.max, 10) || 5;
     const key = container.dataset.key;
-    for (let i = 0; i < max; i++) {
-      const d = document.createElement('span');
-      d.className = 'dot'; d.dataset.i = i;
-      container.appendChild(d);
-    }
+    for (let i = 0; i < max; i++) { const d = document.createElement('span'); d.className='dot'; d.dataset.i=i; container.appendChild(d); }
     const isAuto = AUTO_KEYS.includes(key);
     const val = (state.dots && state.dots[key]) || 0;
     paintDots(container, val, isAuto && state.auto && state.auto[key]);
     container.addEventListener('click', e => {
       if (isAuto && state.auto && state.auto[key] && !e.shiftKey) return;
-      const dot = e.target.closest('.dot');
-      if (!dot) return;
+      const dot = e.target.closest('.dot'); if (!dot) return;
       const i = parseInt(dot.dataset.i, 10);
       const cur = (state.dots && state.dots[key]) || 0;
       const nv = (cur === i + 1) ? i : i + 1;
-      state.dots = state.dots || {};
-      state.dots[key] = nv;
+      state.dots = state.dots || {}; state.dots[key] = nv;
       paintDots(container, nv);
       const sqContainer = document.querySelector(`.squares[data-key="${key}"]`);
       if (sqContainer && state.squares && state.squares[key]) {
@@ -2716,6 +1739,8 @@ function initDots() {
         paintSquares(sqContainer, state.squares[key]);
       }
       if (key.startsWith('attr_')) recomputeForms();
+      if (['glory','honor','wisdom'].includes(key)) renderRankInfo();
+      if (key === 'ab_rituals') renderRiteList();
       save();
     });
   });
@@ -2726,17 +1751,12 @@ function initSquares() {
     container.dataset.initialized = '1';
     const max = parseInt(container.dataset.max, 10) || 5;
     const key = container.dataset.key;
-    for (let i = 0; i < max; i++) {
-      const s = document.createElement('span');
-      s.className = 'sq'; s.dataset.i = i;
-      container.appendChild(s);
-    }
+    for (let i = 0; i < max; i++) { const s = document.createElement('span'); s.className='sq'; s.dataset.i=i; container.appendChild(s); }
     state.squares = state.squares || {};
     state.squares[key] = state.squares[key] || new Array(max).fill(false);
     paintSquares(container, state.squares[key]);
     container.addEventListener('click', e => {
-      const sq = e.target.closest('.sq');
-      if (!sq) return;
+      const sq = e.target.closest('.sq'); if (!sq) return;
       const i = parseInt(sq.dataset.i, 10);
       const perm = (state.dots && state.dots[key]) || 0;
       if (i >= perm) return;
@@ -2744,20 +1764,16 @@ function initSquares() {
       const isLastFilled = arr[i] && (i === perm - 1 || !arr[i + 1]);
       if (isLastFilled) arr[i] = false;
       else for (let j = 0; j < arr.length; j++) arr[j] = j <= i;
-      paintSquares(container, arr);
-      save();
+      paintSquares(container, arr); save();
     });
   });
 }
 
-/* ============ AUTO-FILL ============ */
 function normalizeKey(input, dict) {
   if (!input) return null;
   const trimmed = input.trim().toLowerCase();
   for (const key of Object.keys(dict)) if (key.toLowerCase() === trimmed) return key;
-  for (const key of Object.keys(dict)) {
-    if (key.toLowerCase().startsWith(trimmed) || trimmed.startsWith(key.toLowerCase())) return key;
-  }
+  for (const key of Object.keys(dict)) { if (key.toLowerCase().startsWith(trimmed) || trimmed.startsWith(key.toLowerCase())) return key; }
   return null;
 }
 function applyAutoFill() {
@@ -2766,12 +1782,9 @@ function applyAutoFill() {
   const auspiceKey = normalizeKey(document.getElementById('f_auspice').value, AUSPICES);
   const tribeKey = normalizeKey(document.getElementById('f_tribe').value, TRIBES);
   state.dots = state.dots || {};
-  if (breedKey) { state.dots.gnosis = BREEDS[breedKey].gnosis; state.auto.gnosis = true; }
-  else delete state.auto.gnosis;
-  if (auspiceKey) { state.dots.rage = AUSPICES[auspiceKey].rage; state.auto.rage = true; }
-  else delete state.auto.rage;
-  if (tribeKey) { state.dots.willpower = TRIBES[tribeKey].willpower; state.auto.willpower = true; }
-  else delete state.auto.willpower;
+  if (breedKey) { state.dots.gnosis = BREEDS[breedKey].gnosis; state.auto.gnosis = true; } else delete state.auto.gnosis;
+  if (auspiceKey) { state.dots.rage = AUSPICES[auspiceKey].rage; state.auto.rage = true; } else delete state.auto.rage;
+  if (tribeKey) { state.dots.willpower = TRIBES[tribeKey].willpower; state.auto.willpower = true; } else delete state.auto.willpower;
   if (auspiceKey) {
     const r = AUSPICES[auspiceKey].renown;
     if (r.glory || r.honor || r.wisdom) {
@@ -2789,86 +1802,59 @@ function applyAutoFill() {
   document.getElementById('hint-willpower').textContent = (tribeKey && state.auto.willpower) ? `✓ Авто: ${tribeKey}` : '';
   renderGiftBanner(breedKey, auspiceKey, tribeKey);
   updateOnlyMineHint();
+  updateAvailableHint();
+  renderRankInfo();
+  if (typeof renderGiftList === 'function') renderGiftList();
+  if (typeof renderRiteList === 'function') renderRiteList();
   save();
 }
 function renderGiftBanner(breedKey, auspiceKey, tribeKey) {
-  const banner = document.getElementById('autofill-banner');
-  if (!banner) return;
-  if (!breedKey && !auspiceKey && !tribeKey) {
-    banner.classList.remove('show'); banner.innerHTML = ''; return;
-  }
+  const banner = document.getElementById('autofill-banner'); if (!banner) return;
+  if (!breedKey && !auspiceKey && !tribeKey) { banner.classList.remove('show'); banner.innerHTML = ''; return; }
   let html = '<strong>✨ Авто-заполнение сработало</strong><br>';
   const gifts = [];
-  if (breedKey) {
-    html += `Порода: <b>${breedKey}</b> → Гнозис ${BREEDS[breedKey].gnosis}<br>`;
-    BREEDS[breedKey].gifts.forEach(g => gifts.push({ g, src:'Порода' }));
-  }
+  if (breedKey) { html += `Порода: <b>${breedKey}</b> → Гнозис ${BREEDS[breedKey].gnosis}<br>`; BREEDS[breedKey].gifts.forEach(g => gifts.push({ g, src:'Порода' })); }
   if (auspiceKey) {
     const a = AUSPICES[auspiceKey];
     html += `Покровительство: <b>${auspiceKey}</b> → Ярость ${a.rage}`;
     if (a.renown.any) html += `, Почёт: ${a.renown.any} в любой комбинации`;
-    else {
-      const parts = [];
-      if (a.renown.glory) parts.push(`Слава ${a.renown.glory}`);
-      if (a.renown.honor) parts.push(`Честь ${a.renown.honor}`);
-      if (a.renown.wisdom) parts.push(`Мудрость ${a.renown.wisdom}`);
-      if (parts.length) html += `, Почёт: ${parts.join(', ')}`;
-    }
-    html += '<br>';
-    a.gifts.forEach(g => gifts.push({ g, src:'Покровительство' }));
+    else { const parts = []; if (a.renown.glory) parts.push(`Слава ${a.renown.glory}`); if (a.renown.honor) parts.push(`Честь ${a.renown.honor}`); if (a.renown.wisdom) parts.push(`Мудрость ${a.renown.wisdom}`); if (parts.length) html += `, Почёт: ${parts.join(', ')}`; }
+    html += '<br>'; a.gifts.forEach(g => gifts.push({ g, src:'Покровительство' }));
   }
-  if (tribeKey) {
-    html += `Племя: <b>${tribeKey}</b> → Сила Воли ${TRIBES[tribeKey].willpower}<br>`;
-    TRIBES[tribeKey].gifts.forEach(g => gifts.push({ g, src:'Племя' }));
-  }
+  if (tribeKey) { html += `Племя: <b>${tribeKey}</b> → Сила Воли ${TRIBES[tribeKey].willpower}<br>`; TRIBES[tribeKey].gifts.forEach(g => gifts.push({ g, src:'Племя' })); }
   html += '<div class="gift-list"><b>Стартовые Дары (3 шт.):</b><ul style="margin:2px 0 0 0;padding-left:14px;">';
   gifts.forEach(item => { html += `<li>${item.g} <span style="opacity:0.6">(${item.src})</span></li>`; });
   html += '</ul></div><button class="reset-auto" id="reset-auto-btn">Отключить авто-заполнение</button>';
-  banner.innerHTML = html;
-  banner.classList.add('show');
+  banner.innerHTML = html; banner.classList.add('show');
   const resetBtn = document.getElementById('reset-auto-btn');
   if (resetBtn) resetBtn.addEventListener('click', () => {
     state.auto = {};
-    document.querySelectorAll('.dots[data-key]').forEach(c => {
-      paintDots(c, state.dots[c.dataset.key] || 0, false);
-    });
+    document.querySelectorAll('.dots[data-key]').forEach(c => { paintDots(c, state.dots[c.dataset.key] || 0, false); });
     document.getElementById('hint-rage').textContent = '';
     document.getElementById('hint-gnosis').textContent = '';
     document.getElementById('hint-willpower').textContent = '';
-    banner.classList.remove('show'); banner.innerHTML = '';
-    save();
+    banner.classList.remove('show'); banner.innerHTML = ''; save();
   });
 }
 function initAutoFill() {
   ['f_breed','f_auspice','f_tribe'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
+    const el = document.getElementById(id); if (!el) return;
     el.addEventListener('change', () => { applyAutoFill(); renderGiftList(); });
     el.addEventListener('blur', () => { applyAutoFill(); renderGiftList(); });
   });
   applyAutoFill();
 }
 
-/* ============ STATS / HEALTH / FORMS ============ */
 function buildStats(root, groups) {
   root.innerHTML = '';
   for (const groupName of Object.keys(groups)) {
-    const col = document.createElement('div');
-    col.className = 'col';
-    if (groupName) {
-      const h = document.createElement('h3');
-      h.textContent = groupName;
-      col.appendChild(h);
-    }
+    const col = document.createElement('div'); col.className = 'col';
+    if (groupName) { const h = document.createElement('h3'); h.textContent = groupName; col.appendChild(h); }
     for (const [key, name] of groups[groupName]) {
-      const row = document.createElement('div');
-      row.className = 'stat';
-      const lbl = document.createElement('span');
-      lbl.className = 'stat-name'; lbl.textContent = name;
-      const dots = document.createElement('div');
-      dots.className = 'dots'; dots.dataset.key = key; dots.dataset.max = 5;
-      row.appendChild(lbl); row.appendChild(dots);
-      col.appendChild(row);
+      const row = document.createElement('div'); row.className = 'stat';
+      const lbl = document.createElement('span'); lbl.className = 'stat-name'; lbl.textContent = name;
+      const dots = document.createElement('div'); dots.className = 'dots'; dots.dataset.key = key; dots.dataset.max = 5;
+      row.appendChild(lbl); row.appendChild(dots); col.appendChild(row);
     }
     root.appendChild(col);
   }
@@ -2877,61 +1863,40 @@ function buildStats(root, groups) {
 function buildHealth() {
   const root = document.getElementById('health');
   root.innerHTML = '';
-
-  if (!state.health || state.health.length !== HEALTH_LEVELS.length) {
-    state.health = new Array(HEALTH_LEVELS.length).fill('none');
-  }
+  if (!state.health || state.health.length !== HEALTH_LEVELS.length) state.health = new Array(HEALTH_LEVELS.length).fill('none');
   state.health = state.health.map(v => {
     if (v === true) return 'cross';
     if (v === false || v == null) return 'none';
     if (typeof v === 'string' && HEALTH_STATES.includes(v)) return v;
     return 'none';
   });
-
   HEALTH_LEVELS.forEach(([name, pen], i) => {
-    const row = document.createElement('div');
-    row.className = 'health-row';
-
-    const box = document.createElement('span');
-    box.className = 'health-box';
+    const row = document.createElement('div'); row.className = 'health-row';
+    const box = document.createElement('span'); box.className = 'health-box';
     box.dataset.state = state.health[i];
     box.title = 'ЛКМ — сменить тип урона • ПКМ — очистить всё';
-
-    const nm = document.createElement('span');
-    nm.className = 'health-name';
-    nm.textContent = name;
-
-    const pn = document.createElement('span');
-    pn.className = 'health-pen';
-    pn.textContent = pen;
-
+    const nm = document.createElement('span'); nm.className = 'health-name'; nm.textContent = name;
+    const pn = document.createElement('span'); pn.className = 'health-pen'; pn.textContent = pen;
     row.appendChild(box); row.appendChild(nm); row.appendChild(pn);
-
     row.addEventListener('click', () => {
       const cur = state.health[i] || 'none';
       const idx = HEALTH_STATES.indexOf(cur);
-      const next = HEALTH_STATES[(idx + 1) % HEALTH_STATES.length];
-      state.health[i] = next;
-      buildHealth();
-      save();
+      state.health[i] = HEALTH_STATES[(idx + 1) % HEALTH_STATES.length];
+      buildHealth(); save();
     });
-
     row.addEventListener('contextmenu', e => {
       e.preventDefault();
       state.health = new Array(HEALTH_LEVELS.length).fill('none');
-      buildHealth();
-      save();
+      buildHealth(); save();
       if (typeof flashToast === 'function') flashToast('Здоровье очищено', 'info', 1200);
     });
-
     root.appendChild(row);
   });
 }
 
 function recomputeForms() {
   document.querySelectorAll('.form-card').forEach(card => {
-    const form = FORMS.find(f => f.id === card.dataset.form);
-    if (!form) return;
+    const form = FORMS.find(f => f.id === card.dataset.form); if (!form) return;
     card.querySelectorAll('.form-mod').forEach(el => {
       const attrKey = el.dataset.attr;
       const base = (state.dots && state.dots[attrKey]) || 0;
@@ -2944,120 +1909,75 @@ function recomputeForms() {
   });
 }
 function buildForms() {
-  const root = document.getElementById('forms');
-  root.innerHTML = '';
+  const root = document.getElementById('forms'); root.innerHTML = '';
   FORMS.forEach(form => {
-    const card = document.createElement('div');
-    card.className = 'form-card'; card.dataset.form = form.id;
-    const h = document.createElement('h4'); h.textContent = form.name;
-    card.appendChild(h);
+    const card = document.createElement('div'); card.className = 'form-card'; card.dataset.form = form.id;
+    const h = document.createElement('h4'); h.textContent = form.name; card.appendChild(h);
     [['attr_strength','Сила'],['attr_dexterity','Ловкость'],['attr_stamina','Вынос.'],['attr_appearance','Внешн.'],['attr_manipulation','Манипул.']].forEach(([key, label]) => {
       const mod = form.mods[key] || 0;
-      const row = document.createElement('div');
-      row.className = 'form-mod'; row.dataset.attr = key; row.dataset.label = label;
+      const row = document.createElement('div'); row.className = 'form-mod'; row.dataset.attr = key; row.dataset.label = label;
       row.innerHTML = `<span class="mod-label">${label} (${mod > 0 ? '+'+mod : mod})</span><span class="mod-value">0</span>`;
       card.appendChild(row);
     });
-    if (form.id === 'homid') card.querySelectorAll('.form-mod').forEach(el => {
-      el.querySelector('.mod-label').textContent = 'Без изменений';
-      el.querySelector('.mod-value').textContent = '—';
-    });
-    const d = document.createElement('div');
-    d.className = 'form-diff';
-    d.innerHTML = `Сложность: <b>${form.diff}</b>`;
-    card.appendChild(d);
-    if (form.note) {
-      const n = document.createElement('div');
-      n.style.cssText = 'font-size:10px;color:var(--ink-faint);text-align:center;margin-top:5px;font-style:italic;';
-      n.textContent = form.note;
-      card.appendChild(n);
-    }
+    if (form.id === 'homid') card.querySelectorAll('.form-mod').forEach(el => { el.querySelector('.mod-label').textContent = 'Без изменений'; el.querySelector('.mod-value').textContent = '—'; });
+    const d = document.createElement('div'); d.className = 'form-diff'; d.innerHTML = `Сложность: <b>${form.diff}</b>`; card.appendChild(d);
+    if (form.note) { const n = document.createElement('div'); n.style.cssText = 'font-size:10px;color:var(--ink-faint);text-align:center;margin-top:5px;font-style:italic;'; n.textContent = form.note; card.appendChild(n); }
     root.appendChild(card);
   });
   recomputeForms();
 }
 
-/* ============ LISTS / FETISHES / COMBAT / MERITS ============ */
 function renderList(key) {
   const conf = LISTS[key];
-  const container = document.getElementById('list_' + key);
-  if (!container) return;
+  const container = document.getElementById('list_' + key); if (!container) return;
   container.innerHTML = '';
   state.lists = state.lists || {};
   state.lists[key] = state.lists[key] || [];
   state.lists[key].forEach((item, idx) => {
-    const row = document.createElement('div');
-    row.className = 'list-row';
-    const input = document.createElement('input');
-    input.type = 'text'; input.value = item.name || '';
-    input.placeholder = conf.placeholder;
+    const row = document.createElement('div'); row.className = 'list-row';
+    const input = document.createElement('input'); input.type = 'text'; input.value = item.name || ''; input.placeholder = conf.placeholder;
     input.addEventListener('input', () => { state.lists[key][idx].name = input.value; save(); });
-    const dots = document.createElement('div');
-    dots.className = 'dots';
+    const dots = document.createElement('div'); dots.className = 'dots';
     for (let i = 0; i < conf.max; i++) {
-      const d = document.createElement('span');
-      d.className = 'dot';
+      const d = document.createElement('span'); d.className = 'dot';
       if (i < (item.value || 0)) d.classList.add('filled');
-      d.addEventListener('click', () => {
-        const cur = state.lists[key][idx].value || 0;
-        state.lists[key][idx].value = (cur === i + 1) ? i : i + 1;
-        renderList(key); save();
-      });
+      d.addEventListener('click', () => { const cur = state.lists[key][idx].value || 0; state.lists[key][idx].value = (cur === i + 1) ? i : i + 1; renderList(key); save(); });
       dots.appendChild(d);
     }
-    const rm = document.createElement('button');
-    rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
-    rm.addEventListener('click', () => {
-      state.lists[key].splice(idx, 1);
-      renderList(key); save();
-    });
+    const rm = document.createElement('button'); rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
+    rm.addEventListener('click', () => { state.lists[key].splice(idx, 1); renderList(key); save(); });
     row.appendChild(input); row.appendChild(dots); row.appendChild(rm);
     container.appendChild(row);
   });
 }
 function addListItem(key) {
-  state.lists = state.lists || {};
-  state.lists[key] = state.lists[key] || [];
-  state.lists[key].push({ name:'', value:0 });
-  renderList(key); save();
+  state.lists = state.lists || {}; state.lists[key] = state.lists[key] || [];
+  state.lists[key].push({ name:'', value:0 }); renderList(key); save();
 }
 function renderFetishes() {
-  const root = document.getElementById('fetishes');
-  root.innerHTML = '';
+  const root = document.getElementById('fetishes'); root.innerHTML = '';
   state.fetishes = state.fetishes || [];
   state.fetishes.forEach((f, idx) => {
-    const row = document.createElement('div');
-    row.className = 'fetish-row';
-    row.innerHTML = `
-      <input type="text" placeholder="Название" value="${(f.name||'').replace(/"/g,'&quot;')}">
-      <label><input type="checkbox" ${f.bound?'checked':''}> Прив.</label>
-      <input type="number" placeholder="Ур." min="1" max="5" value="${f.level||''}">
-      <input type="number" placeholder="Гн." min="1" max="10" value="${f.gnosis||''}">
-    `;
+    const row = document.createElement('div'); row.className = 'fetish-row';
+    row.innerHTML = `<input type="text" placeholder="Название" value="${(f.name||'').replace(/"/g,'&quot;')}"><label><input type="checkbox" ${f.bound?'checked':''}> Прив.</label><input type="number" placeholder="Ур." min="1" max="5" value="${f.level||''}"><input type="number" placeholder="Гн." min="1" max="10" value="${f.gnosis||''}">`;
     row.querySelectorAll('input')[0].addEventListener('input', e => { state.fetishes[idx].name = e.target.value; save(); });
     row.querySelectorAll('input')[1].addEventListener('change', e => { state.fetishes[idx].bound = e.target.checked; save(); });
     row.querySelectorAll('input')[2].addEventListener('input', e => { state.fetishes[idx].level = e.target.value; save(); });
     row.querySelectorAll('input')[3].addEventListener('input', e => { state.fetishes[idx].gnosis = e.target.value; save(); });
-    const rm = document.createElement('button');
-    rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
-    rm.addEventListener('click', () => {
-      state.fetishes.splice(idx, 1);
-      renderFetishes(); save();
-    });
+    const rm = document.createElement('button'); rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
+    rm.addEventListener('click', () => { state.fetishes.splice(idx, 1); renderFetishes(); save(); });
     row.appendChild(rm); root.appendChild(row);
   });
 }
 function renderCombat() {
-  const tbody = document.getElementById('combat-rows');
-  tbody.innerHTML = '';
+  const tbody = document.getElementById('combat-rows'); tbody.innerHTML = '';
   state.combat = state.combat || [];
   while (state.combat.length < 8) state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' });
   state.combat.forEach((rowData, idx) => {
     const tr = document.createElement('tr');
     ['w','a','b','c','d','e','f','g'].forEach(k => {
       const td = document.createElement('td');
-      const inp = document.createElement('input');
-      inp.type = 'text'; inp.value = rowData[k] || '';
+      const inp = document.createElement('input'); inp.type = 'text'; inp.value = rowData[k] || '';
       inp.addEventListener('input', () => { state.combat[idx][k] = inp.value; save(); });
       td.appendChild(inp); tr.appendChild(td);
     });
@@ -3065,16 +1985,14 @@ function renderCombat() {
   });
 }
 function renderMeritsFlaws(kind, tbodyId) {
-  const tbody = document.getElementById(tbodyId);
-  tbody.innerHTML = '';
+  const tbody = document.getElementById(tbodyId); tbody.innerHTML = '';
   state[kind] = state[kind] || [];
   while (state[kind].length < 8) state[kind].push({ n:'',t:'',c:'' });
   state[kind].forEach((rowData, idx) => {
     const tr = document.createElement('tr');
     ['n','t','c'].forEach(k => {
       const td = document.createElement('td');
-      const inp = document.createElement('input');
-      inp.type = 'text'; inp.value = rowData[k] || '';
+      const inp = document.createElement('input'); inp.type = 'text'; inp.value = rowData[k] || '';
       inp.addEventListener('input', () => { state[kind][idx][k] = inp.value; save(); });
       td.appendChild(inp); tr.appendChild(td);
     });
@@ -3082,7 +2000,6 @@ function renderMeritsFlaws(kind, tbodyId) {
   });
 }
 
-/* ============ TEXT FIELDS / TABS / BUTTONS ============ */
 function initTextFields() {
   document.querySelectorAll('input, textarea, select').forEach(el => {
     if (el.closest('.list') || el.closest('.fetish-row')) return;
@@ -3090,8 +2007,8 @@ function initTextFields() {
     if (el.closest('.gift-filters') || el.closest('.gift-only-mine') || el.closest('.rite-filters')) return;
     if (el.closest('.char-bar')) return;
     if (el.type === 'file' || el.type === 'checkbox') return;
-    const key = el.id;
-    if (!key) return;
+    if (el.id === 'f_rank_select') return;
+    const key = el.id; if (!key) return;
     if (state.text && state.text[key] !== undefined) el.value = state.text[key];
     el.addEventListener('input', () => {
       state.text = state.text || {};
@@ -3099,7 +2016,31 @@ function initTextFields() {
       save();
     });
   });
+
+  const rankSelect = document.getElementById('f_rank_select');
+  if (rankSelect) {
+    if (state.rank) rankSelect.value = String(state.rank);
+    rankSelect.addEventListener('change', () => {
+      state.rank = parseInt(rankSelect.value, 10) || 1;
+      save();
+      renderGiftList();
+      renderRiteList();
+      renderRankInfo();
+    });
+  }
+
+  const btnRankInfo = document.getElementById('btn-rank-info');
+  if (btnRankInfo) {
+    btnRankInfo.addEventListener('click', () => {
+      const panel = document.getElementById('rank-info-panel');
+      if (panel) {
+        panel.classList.toggle('show');
+        if (panel.classList.contains('show')) renderRankInfo();
+      }
+    });
+  }
 }
+
 function initTabs() {
   document.querySelectorAll('.tabs button').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -3113,27 +2054,19 @@ function initTabs() {
 }
 function initCheatSheets() {
   document.querySelectorAll('.cheat-section').forEach(sec => {
-    const header = sec.querySelector('.cheat-header');
-    if (!header) return;
-    header.addEventListener('click', () => {
-      sec.dataset.open = (sec.dataset.open === 'true') ? 'false' : 'true';
-    });
+    const header = sec.querySelector('.cheat-header'); if (!header) return;
+    header.addEventListener('click', () => { sec.dataset.open = (sec.dataset.open === 'true') ? 'false' : 'true'; });
   });
   document.querySelectorAll('.cheat-nav button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const sec = document.getElementById(btn.dataset.jump);
-      if (!sec) return;
+      const sec = document.getElementById(btn.dataset.jump); if (!sec) return;
       sec.dataset.open = 'true';
       setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     });
   });
 }
 
-/* ============ ГАЙД ============ */
-function loadGuideProgress() {
-  try { return JSON.parse(localStorage.getItem(GUIDE_KEY)) || {}; }
-  catch (e) { return {}; }
-}
+function loadGuideProgress() { try { return JSON.parse(localStorage.getItem(GUIDE_KEY)) || {}; } catch (e) { return {}; } }
 function saveGuideProgress(p) { localStorage.setItem(GUIDE_KEY, JSON.stringify(p)); }
 
 function updateGuideProgress() {
@@ -3142,14 +2075,8 @@ function updateGuideProgress() {
   document.querySelectorAll('.guide-step').forEach(step => {
     const n = step.dataset.step;
     const check = step.querySelector('.guide-step-check');
-    if (progress[n]) {
-      step.classList.add('done');
-      if (check) check.checked = true;
-      done++;
-    } else {
-      step.classList.remove('done');
-      if (check) check.checked = false;
-    }
+    if (progress[n]) { step.classList.add('done'); if (check) check.checked = true; done++; }
+    else { step.classList.remove('done'); if (check) check.checked = false; }
   });
   const total = document.querySelectorAll('.guide-step').length || 5;
   const text = document.getElementById('guide-progress-text');
@@ -3163,42 +2090,23 @@ function initCreationGuide() {
     const head = step.querySelector('.guide-step-head');
     const check = step.querySelector('.guide-step-check');
     const toggle = step.querySelector('.guide-step-toggle');
-
-    head.addEventListener('click', e => {
-      if (e.target === check) return;
-      step.dataset.open = (step.dataset.open === 'true') ? 'false' : 'true';
+    head.addEventListener('click', e => { if (e.target === check) return; step.dataset.open = (step.dataset.open === 'true') ? 'false' : 'true'; });
+    if (check) check.addEventListener('change', e => {
+      e.stopPropagation();
+      const progress = loadGuideProgress();
+      const n = step.dataset.step;
+      if (check.checked) progress[n] = true; else delete progress[n];
+      saveGuideProgress(progress); updateGuideProgress();
     });
-
-    if (check) {
-      check.addEventListener('change', e => {
-        e.stopPropagation();
-        const progress = loadGuideProgress();
-        const n = step.dataset.step;
-        if (check.checked) progress[n] = true;
-        else delete progress[n];
-        saveGuideProgress(progress);
-        updateGuideProgress();
-      });
-    }
-
-    if (toggle) {
-      toggle.addEventListener('click', e => {
-        e.stopPropagation();
-        step.dataset.open = (step.dataset.open === 'true') ? 'false' : 'true';
-      });
-    }
+    if (toggle) toggle.addEventListener('click', e => { e.stopPropagation(); step.dataset.open = (step.dataset.open === 'true') ? 'false' : 'true'; });
   });
-
   const resetBtn = document.getElementById('btn-reset-guide');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      if (!confirm('Сбросить прогресс прохождения гайда?')) return;
-      localStorage.removeItem(GUIDE_KEY);
-      document.querySelectorAll('.guide-step').forEach(step => { step.dataset.open = 'false'; });
-      updateGuideProgress();
-    });
-  }
-
+  if (resetBtn) resetBtn.addEventListener('click', () => {
+    if (!confirm('Сбросить прогресс прохождения гайда?')) return;
+    localStorage.removeItem(GUIDE_KEY);
+    document.querySelectorAll('.guide-step').forEach(step => { step.dataset.open = 'false'; });
+    updateGuideProgress();
+  });
   updateGuideProgress();
 }
 
@@ -3216,8 +2124,7 @@ function initButtons() {
   });
   document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-input').click());
   document.getElementById('file-input').addEventListener('change', e => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
+    const file = e.target.files && e.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       try {
@@ -3228,10 +2135,7 @@ function initButtons() {
         const now = new Date().toISOString();
         const name = (parsed.text && parsed.text.f_name) || 'Импортированный персонаж';
         list.push({ id, name, createdAt: now, updatedAt: now });
-        setCharList(list);
-        saveCharData(id, parsed);
-        setActiveCharId(id);
-        location.reload();
+        setCharList(list); saveCharData(id, parsed); setActiveCharId(id); location.reload();
       } catch (err) { alert('Некорректный файл экспорта.'); }
     };
     reader.readAsText(file);
@@ -3243,34 +2147,20 @@ function initButtons() {
   });
   document.getElementById('btn-reset').addEventListener('click', () => {
     if (confirm('Очистить текущий лист? Персонаж останется в списке, но все данные будут удалены.')) {
-      const id = getActiveCharId();
-      if (id) saveCharData(id, {});
-      location.reload();
+      const id = getActiveCharId(); if (id) saveCharData(id, {}); location.reload();
     }
   });
   document.querySelectorAll('.add-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.add;
-      if (key === 'fetishes') {
-        state.fetishes = state.fetishes || [];
-        state.fetishes.push({ name:'', bound:false, level:'', gnosis:'' });
-        renderFetishes(); save();
-      } else if (key === 'combat') {
-        state.combat = state.combat || [];
-        state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' });
-        renderCombat(); save();
-      } else if (key === 'merits' || key === 'flaws') {
-        state[key] = state[key] || [];
-        state[key].push({ n:'',t:'',c:'' });
-        renderMeritsFlaws(key, key + '-rows'); save();
-      } else {
-        addListItem(key);
-      }
+      if (key === 'fetishes') { state.fetishes = state.fetishes || []; state.fetishes.push({ name:'', bound:false, level:'', gnosis:'' }); renderFetishes(); save(); }
+      else if (key === 'combat') { state.combat = state.combat || []; state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' }); renderCombat(); save(); }
+      else if (key === 'merits' || key === 'flaws') { state[key] = state[key] || []; state[key].push({ n:'',t:'',c:'' }); renderMeritsFlaws(key, key + '-rows'); save(); }
+      else addListItem(key);
     });
   });
 }
 
-/* ============ ДАРЫ ============ */
 function flattenGifts() {
   const out = [];
   Object.keys(GIFT_DATA.breeds).forEach(s => GIFT_DATA.breeds[s].forEach(g => out.push({ ...g, source:s, sourceType:'breeds', sourceLabel:'Порода' })));
@@ -3287,10 +2177,7 @@ function getMySources() {
     tribeKey: normalizeKey(document.getElementById('f_tribe').value, TRIBES)
   };
 }
-function hasAnyMySource() {
-  const s = getMySources();
-  return !!(s.breedKey || s.auspiceKey || s.tribeKey);
-}
+function hasAnyMySource() { const s = getMySources(); return !!(s.breedKey || s.auspiceKey || s.tribeKey); }
 function isGiftMine(g, s) {
   if (g.sourceType === 'breeds' && s.breedKey && g.source === s.breedKey) return true;
   if (g.sourceType === 'auspices' && s.auspiceKey && g.source === s.auspiceKey) return true;
@@ -3316,8 +2203,7 @@ function getSourceOptions() {
   }
   select.innerHTML = '';
   options.forEach(o => {
-    const opt = document.createElement('option');
-    opt.value = o.value; opt.textContent = o.label;
+    const opt = document.createElement('option'); opt.value = o.value; opt.textContent = o.label;
     if (o.value.startsWith('__')) opt.disabled = true;
     select.appendChild(opt);
   });
@@ -3325,8 +2211,7 @@ function getSourceOptions() {
   else select.value = 'all';
 }
 function updateOnlyMineHint() {
-  const hint = document.getElementById('gift-only-mine-hint');
-  if (!hint) return;
+  const hint = document.getElementById('gift-only-mine-hint'); if (!hint) return;
   const s = getMySources();
   const parts = [];
   if (s.breedKey) parts.push(s.breedKey);
@@ -3356,6 +2241,11 @@ function renderGiftList() {
   }
   if (lvlFilter !== 'all') items = items.filter(g => String(g.l) === String(lvlFilter));
   if (search) items = items.filter(g => g.n.toLowerCase().includes(search) || (g.d && g.d.toLowerCase().includes(search)) || g.source.toLowerCase().includes(search));
+
+  const onlyAvailable = document.getElementById('gift-only-available');
+  const currentRank = getCurrentRank();
+  if (onlyAvailable && onlyAvailable.checked) items = items.filter(g => g.l <= currentRank);
+
   const typeOrder = { breeds:0, auspices:1, tribes:2 };
   items.sort((a,b) => {
     if (typeOrder[a.sourceType] !== typeOrder[b.sourceType]) return typeOrder[a.sourceType] - typeOrder[b.sourceType];
@@ -3366,21 +2256,30 @@ function renderGiftList() {
   const list = document.getElementById('gift-list');
   const stats = document.getElementById('gift-stats');
   list.innerHTML = '';
-  stats.textContent = (onlyMine && hasAnyMySource()) ? `🎯 Найдено «моих» Даров: ${items.length}` : `Найдено: ${items.length} из ${ALL_GIFTS.length} Даров`;
+  const rankHint = ` · Ранг ${currentRank}`;
+  stats.textContent = (onlyMine && hasAnyMySource()) ? `🎯 Найдено «моих» Даров: ${items.length}${rankHint}` : `Найдено: ${items.length} из ${ALL_GIFTS.length} Даров${rankHint}`;
   if (items.length === 0) { list.innerHTML = '<div class="gift-empty">Ничего не найдено. Попробуй изменить фильтры.</div>'; return; }
   items.slice(0, 300).forEach(g => {
-    const card = document.createElement('div');
-    card.className = 'gift-card';
+    const card = document.createElement('div'); card.className = 'gift-card';
     const typeColor = g.sourceType === 'breeds' ? '#8b6b3a' : g.sourceType === 'auspices' ? '#8a6b14' : '#4a6b1f';
     card.style.borderLeftColor = typeColor;
     if (isGiftMine(g, mySources)) card.classList.add('mine');
-    const canAdd = hasFreeSlot();
+
+    const availableByRank = g.l <= currentRank;
+    if (!availableByRank) card.classList.add('rank-locked');
+
+    const canAdd = hasFreeSlot() && availableByRank;
+    const btnText = !availableByRank ? `🔒 Нужен ранг ${g.l}` : (canAdd ? '+ В лист' : 'Списки полны');
+    const btnTitle = !availableByRank ? `Требуется ранг ${g.l} (у тебя ${currentRank})` : '';
     card.innerHTML = `
-      <div class="gift-head"><span class="gift-name">${escapeHtml(g.n)}</span><span class="gift-level">Ур. ${g.l}</span></div>
+      <div class="gift-head">
+        <span class="gift-name">${escapeHtml(g.n)}</span>
+        <span class="gift-level ${!availableByRank ? 'locked' : ''}">Ур. ${g.l}${!availableByRank ? ' 🔒' : ''}</span>
+      </div>
       <div class="gift-source" style="color:${typeColor}">${g.sourceLabel}: ${escapeHtml(g.source)}</div>
       <div class="gift-desc">${escapeHtml(g.d || '')}</div>
       ${g.s ? `<div class="gift-system">📖 ${escapeHtml(g.s)}</div>` : ''}
-      <div class="gift-actions"><button class="add-gift-btn" data-gift="${escapeHtml(g.n)}" data-level="${g.l}" ${canAdd ? '' : 'disabled'}>${canAdd ? '+ В лист' : 'Списки полны'}</button></div>
+      <div class="gift-actions"><button class="add-gift-btn" data-gift="${escapeHtml(g.n)}" data-level="${g.l}" ${canAdd ? '' : 'disabled'} title="${btnTitle}">${btnText}</button></div>
     `;
     list.appendChild(card);
   });
@@ -3398,9 +2297,7 @@ function addGiftToSheet(name, level) {
   state.lists = state.lists || {};
   state.lists.gifts1 = state.lists.gifts1 || [];
   state.lists.gifts2 = state.lists.gifts2 || [];
-  if ([...state.lists.gifts1, ...state.lists.gifts2].some(g => g.name === name)) {
-    flashToast(`«${name}» уже в листе`); return;
-  }
+  if ([...state.lists.gifts1, ...state.lists.gifts2].some(g => g.name === name)) { flashToast(`«${name}» уже в листе`); return; }
   let target = null;
   if (state.lists.gifts1.length < 5) target = 'gifts1';
   else if (state.lists.gifts2.length < 5) target = 'gifts2';
@@ -3417,10 +2314,12 @@ function initGiftReference() {
   document.getElementById('gift-level').addEventListener('change', renderGiftList);
   document.getElementById('gift-search').addEventListener('input', renderGiftList);
   document.getElementById('gift-only-mine').addEventListener('change', () => { updateOnlyMineHint(); renderGiftList(); });
+  const availableCb = document.getElementById('gift-only-available');
+  if (availableCb) availableCb.addEventListener('change', renderGiftList);
   updateOnlyMineHint();
+  updateAvailableHint();
 }
 
-/* ============ ОБРЯДЫ ============ */
 function flattenRites() {
   const out = [];
   Object.keys(RITE_DATA).forEach(key => {
@@ -3435,8 +2334,7 @@ function initRiteTypeFilter() {
   const sel = document.getElementById('rite-type-filter');
   sel.innerHTML = '<option value="all">Все типы</option>';
   Object.keys(RITE_DATA).forEach(k => {
-    const opt = document.createElement('option');
-    opt.value = k; opt.textContent = RITE_DATA[k].label;
+    const opt = document.createElement('option'); opt.value = k; opt.textContent = RITE_DATA[k].label;
     sel.appendChild(opt);
   });
 }
@@ -3459,17 +2357,36 @@ function renderRiteList() {
   list.innerHTML = '';
   stats.textContent = `Найдено: ${items.length} из ${ALL_RITES.length} обрядов`;
   if (items.length === 0) { list.innerHTML = '<div class="gift-empty">Ничего не найдено. Попробуй изменить фильтры.</div>'; return; }
+
+  const ritualAbility = (state.dots && state.dots.ab_rituals) || 0;
+  const currentRank = getCurrentRank();
+
   items.forEach(r => {
-    const card = document.createElement('div');
-    card.className = 'rite-card';
+    const card = document.createElement('div'); card.className = 'rite-card';
     const canAdd = hasFreeRiteSlot();
     const exists = (state.lists && state.lists.rites || []).some(x => x.name === r.n);
+    const isMinor = r.l === 0;
+    const hasRitualsSkill = ritualAbility >= r.l;
+    const rankOk = currentRank >= r.l;
+    const available = isMinor || (hasRitualsSkill && rankOk);
+
+    if (!available) card.classList.add('rank-locked');
+
+    let btnText, btnTitle;
+    if (exists) { btnText = 'Уже в листе'; btnTitle = ''; }
+    else if (!hasRitualsSkill) { btnText = `🔒 Ритуалы ${r.l}+`; btnTitle = `Нужно познание «Ритуалы» ${r.l} (у тебя ${ritualAbility})`; }
+    else if (!rankOk) { btnText = `🔒 Ранг ${r.l}+`; btnTitle = `Нужен ранг ${r.l} (у тебя ${currentRank})`; }
+    else if (!canAdd) { btnText = 'Список полон'; btnTitle = ''; }
+    else { btnText = '+ В лист ритуалов'; btnTitle = ''; }
+
+    const disabled = exists || !available || !canAdd;
+
     card.innerHTML = `
-      <div class="rite-head"><span class="rite-name">${escapeHtml(r.n)}</span><span class="rite-level">${r.l === 0 ? 'Малый' : 'Ур. ' + r.l}</span></div>
+      <div class="rite-head"><span class="rite-name">${escapeHtml(r.n)}</span><span class="rite-level ${!available ? 'locked' : ''}">${r.l === 0 ? 'Малый' : 'Ур. ' + r.l}${!available ? ' 🔒' : ''}</span></div>
       <div class="rite-type">${r.typeLabel}</div>
       <div class="rite-desc">${escapeHtml(r.d || '')}</div>
       ${r.s ? `<div class="rite-system">📖 ${escapeHtml(r.s)}</div>` : ''}
-      <button class="add-rite-btn" data-rite="${escapeHtml(r.n)}" data-level="${r.l}" ${(!canAdd || exists) ? 'disabled' : ''}>${exists ? 'Уже в листе' : (canAdd ? '+ В лист ритуалов' : 'Список полон')}</button>
+      <button class="add-rite-btn" data-rite="${escapeHtml(r.n)}" data-level="${r.l}" ${disabled ? 'disabled' : ''} title="${btnTitle}">${btnText}</button>
     `;
     list.appendChild(card);
   });
@@ -3485,12 +2402,8 @@ function hasFreeRiteSlot() {
 function addRiteToSheet(name, level) {
   state.lists = state.lists || {};
   state.lists.rites = state.lists.rites || [];
-  if (state.lists.rites.some(r => r.name === name)) {
-    flashToast(`«${name}» уже в листе ритуалов`); return;
-  }
-  if (state.lists.rites.length >= 5) {
-    flashToast('Список ритуалов заполнен'); return;
-  }
+  if (state.lists.rites.some(r => r.name === name)) { flashToast(`«${name}» уже в листе ритуалов`); return; }
+  if (state.lists.rites.length >= 5) { flashToast('Список ритуалов заполнен'); return; }
   state.lists.rites.push({ name, value: level });
   renderList('rites'); save();
   flashToast(`✓ «${name}» добавлен в ритуалы`, 'purple');
@@ -3503,10 +2416,8 @@ function initRiteReference() {
   document.getElementById('rite-search').addEventListener('input', renderRiteList);
 }
 
-/* ============ UTILS ============ */
 function flashToast(text, type='', duration=1800) {
-  const t = document.getElementById('toast');
-  if (!t) return;
+  const t = document.getElementById('toast'); if (!t) return;
   t.textContent = text;
   t.className = 'toast' + (type === 'info' ? ' info' : type === 'purple' ? ' purple' : '');
   requestAnimationFrame(() => t.classList.add('show'));
@@ -3517,10 +2428,8 @@ function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-/* ============ INIT ============ */
 function init() {
   migrateOldState();
-
   let list = getCharList();
   if (list.length === 0) {
     const id = genCharId();
@@ -3530,9 +2439,7 @@ function init() {
     setActiveCharId(id);
   }
   let activeId = getActiveCharId();
-  if (!activeId || !list.find(c => c.id === activeId)) {
-    setActiveCharId(list[0].id);
-  }
+  if (!activeId || !list.find(c => c.id === activeId)) setActiveCharId(list[0].id);
 
   state = loadCharData(getActiveCharId());
   if (!state || typeof state !== 'object') state = {};
@@ -3552,6 +2459,7 @@ function init() {
   initTextFields(); initButtons(); initTabs();
   initCheatSheets(); initCreationGuide();
   initGiftReference(); initRiteReference(); initAutoFill();
+  renderRankInfo();
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
