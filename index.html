@@ -5,277 +5,1317 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Лист персонажа — Werewolf: The Apocalypse</title>
 <style>
-  :root {
-    --bg: #0e0b08; --panel: #1b1610; --panel-2: #221b14;
-    --border: #3a2e21; --text: #e8ddc9; --muted: #968772;
-    --gold: #c9a227; --gold-bright: #f2cd52; --red: #8b2a2a; --green: #6b8f4e;
-    --blue: #4a7fa5; --purple: #8b6bb0;
-  }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --paper-1: #f3e9cb;
+  --paper-2: #ecdfbc;
+  --paper-glow: rgba(139, 100, 60, 0.10);
+  --ink: #1e1811;
+  --ink-soft: #3d3327;
+  --ink-faint: #6b5c44;
+  --line: #8f7e57;
+  --line-soft: #b5a37a;
+  --border-ink: #2a2016;
+  --gold: #8a6b14;
+  --gold-bright: #a8842a;
+  --red: #8b1a1a;
+  --green: #4a6b1f;
+  --blue: #2a4d6b;
+  --purple: #5c3b7a;
+  --bg-dark: #1a130c;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--ink);
+  background: var(--bg-dark);
+  background-image: radial-gradient(ellipse at center, #2a1f14 0%, #0f0a06 80%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+button, input, textarea, select { font-family: inherit; }
+
+/* ---------- TOOLBAR ---------- */
+.toolbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 20px;
+  background: rgba(15, 10, 6, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #3a2a18;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.7);
+  flex-wrap: wrap;
+  color: #e8ddc9;
+}
+.brand {
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700; letter-spacing: 2px;
+  color: #c9a227; font-size: 14px;
+  text-transform: uppercase; white-space: nowrap;
+}
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tabs button {
+  background: transparent; color: #968772;
+  border: 1px solid #3a2e21;
+  padding: 5px 12px; border-radius: 3px;
+  cursor: pointer; font-size: 12px;
+  letter-spacing: 0.5px;
+  transition: all .15s;
+}
+.tabs button.active {
+  background: #c9a227; color: #1a1209;
+  border-color: #f2cd52; font-weight: 600;
+}
+.tabs button:hover:not(.active) { color: #f2cd52; }
+.tools { display: flex; gap: 6px; margin-left: auto; }
+.tools button {
+  background: #221b14; color: #e8ddc9;
+  border: 1px solid #3a2e21;
+  padding: 5px 11px; border-radius: 3px;
+  cursor: pointer; font-size: 13px;
+  transition: all .15s;
+}
+.tools button:hover { border-color: #c9a227; color: #f2cd52; }
+.tools button.danger:hover { border-color: #8b2a2a; color: #ff7a7a; }
+.tools button.pdf:hover { border-color: #4a7fa5; color: #7db8e0; }
+#save-indicator {
+  color: #c9a227; font-size: 11px;
+  opacity: 0; transition: opacity .3s;
+  white-space: nowrap;
+}
+#save-indicator.show { opacity: 1; }
+
+/* ---------- CHARACTER BAR ---------- */
+.char-bar {
+  position: sticky; top: 47px; z-index: 49;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: rgba(15, 10, 6, 0.97);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #3a2a18;
+  flex-wrap: wrap;
+  color: #e8ddc9;
+}
+.char-bar .char-label {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 11px; color: #c9a227;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  white-space: nowrap; font-weight: 600;
+}
+.char-bar select {
+  background: #221b14; border: 1px solid #3a2e21;
+  color: #e8ddc9; padding: 5px 10px; border-radius: 3px;
+  font-size: 12.5px; min-width: 220px; cursor: pointer;
+  outline: none;
+}
+.char-bar select:focus { border-color: #c9a227; }
+.char-btn {
+  background: transparent; border: 1px solid #3a2e21;
+  color: #968772; padding: 5px 11px; border-radius: 3px;
+  cursor: pointer; font-size: 11px; letter-spacing: 0.5px;
+  transition: all .15s; white-space: nowrap;
+}
+.char-btn:hover { border-color: #c9a227; color: #f2cd52; }
+.char-btn.danger:hover { border-color: #8b2a2a; color: #ff7a7a; }
+.char-meta {
+  font-size: 10px; color: #968772;
+  margin-left: auto; font-style: italic; white-space: nowrap;
+}
+
+/* ---------- SHEET (PAPER PAGE) ---------- */
+.sheet { max-width: 1320px; margin: 24px auto; padding: 0 16px; }
+.page {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  padding: 34px 44px 42px;
+  background:
+    radial-gradient(ellipse at 15% 10%, var(--paper-glow), transparent 45%),
+    radial-gradient(ellipse at 85% 90%, var(--paper-glow), transparent 45%),
+    linear-gradient(180deg, var(--paper-1) 0%, var(--paper-2) 100%);
+  border: 2px solid var(--border-ink);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 0 0 1px #e8dcb8,
+    inset 0 0 90px rgba(139, 100, 60, 0.14),
+    0 20px 60px rgba(0,0,0,0.75),
+    0 4px 20px rgba(0,0,0,0.5);
+  position: relative;
+}
+.page.active { display: flex; }
+.page::before, .page::after {
+  content: ""; position: absolute;
+  width: 24px; height: 24px;
+  border: 1px solid var(--line);
+  pointer-events: none;
+}
+.page::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+.page::after { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+.panel {
+  background: transparent; border: none;
+  border-radius: 0; padding: 0;
+  box-shadow: none; margin-bottom: 22px;
+}
+.panel:last-child { margin-bottom: 0; }
+
+.panel > h2 {
+  margin: 0 0 16px; padding: 6px 0;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+  display: flex; align-items: center;
+  justify-content: center; gap: 14px;
+  border-top: 2px solid var(--border-ink);
+  border-bottom: 1px solid var(--border-ink);
+}
+.panel > h2::before, .panel > h2::after {
+  content: "❖";
+  color: var(--gold);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+.panel h3 {
+  margin: 12px 0 6px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+}
+.panel h3:first-child { margin-top: 0; }
+
+.sheet-title {
+  text-align: center;
+  margin: 0 0 22px;
+  padding: 2px 0 16px;
+  border-bottom: 1px solid var(--border-ink);
+}
+.sheet-title-main {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 38px; font-weight: 900;
+  letter-spacing: 12px;
+  color: var(--ink);
+  text-transform: uppercase;
+  line-height: 1;
+  text-shadow: 2px 2px 0 rgba(139, 100, 60, 0.22);
+}
+.sheet-title-sub {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 11px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 8px;
+  padding-left: 11px;
+}
+
+.id-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px 26px;
+}
+.id-grid > div { display: flex; flex-direction: column; gap: 2px; }
+
+label {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+input[type=text], input[type=number], textarea, select {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-ink);
+  border-radius: 0;
+  color: var(--ink);
+  padding: 3px 4px;
+  outline: none;
+  font-size: 14.5px;
+  width: 100%;
+  transition: all .15s;
+}
+input[type=text]:focus, textarea:focus, select:focus {
+  background: rgba(139, 100, 60, 0.08);
+  border-bottom-color: var(--gold);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+  opacity: 0.6;
+}
+textarea {
+  border: 1px solid var(--border-ink);
+  padding: 6px 8px;
+  border-radius: 2px;
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+  background: rgba(255, 250, 235, 0.4);
+}
+select {
+  background: rgba(255, 250, 235, 0.6);
+  border: 1px solid var(--border-ink);
+  border-radius: 2px;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.triple {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.col { display: flex; flex-direction: column; gap: 1px; }
+.col h3 {
+  margin: 0 0 8px;
+  padding: 3px 0 6px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+  border-bottom: 1px dashed var(--border-ink);
+}
+
+.stat {
+  display: flex; align-items: center;
+  gap: 6px; padding: 1px 0;
+  min-height: 21px;
+}
+.stat-name {
+  order: 1;
+  font-size: 13.5px;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.stat::before {
+  content: "";
+  order: 2;
+  flex: 1 1 auto;
+  min-width: 10px;
+  height: 1px;
+  margin-top: 4px;
+  align-self: center;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--line-soft) 0, var(--line-soft) 2px,
+    transparent 2px, transparent 6px
+  );
+}
+.stat .dots { order: 3; }
+
+.dots {
+  display: flex; gap: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+}
+.dot {
+  display: inline-block;
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  border: 1.3px solid var(--ink);
+  background: transparent;
+  transition: all .1s;
+}
+.dot:hover {
+  border-color: var(--gold);
+  transform: scale(1.15);
+}
+.dot.filled {
+  background: radial-gradient(circle at 35% 35%, #4a3a20, #1a1208 85%);
+  border-color: var(--ink);
+  box-shadow: inset 0 0 3px rgba(0,0,0,0.6);
+}
+.dot.auto {
+  background: radial-gradient(circle at 35% 35%, #6b8f4e, #2b401a 85%);
+  border-color: #2b401a;
+}
+.dot.locked { cursor: not-allowed; }
+
+.squares {
+  display: flex; gap: 4px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+  margin-top: 3px;
+}
+.sq {
+  display: inline-block;
+  width: 13px; height: 13px;
+  border: 1.3px solid var(--ink);
+  border-radius: 2px;
+  background: transparent;
+  transition: all .1s;
+}
+.sq:hover { border-color: var(--gold); }
+.sq.filled {
+  background: linear-gradient(135deg, #4a3a20, #1a1208);
+  border-color: var(--ink);
+}
+
+.bottom-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 26px; align-items: start;
+}
+.pool-block {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  margin-bottom: 12px;
+  padding: 4px 0 8px;
+  border-bottom: 1px dotted var(--line-soft);
+}
+.pool-block:last-child { border-bottom: none; padding-bottom: 0; }
+.pool-block .stat-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-align: center;
+  order: 0;
+}
+.pool-block .auto-hint {
+  font-size: 10px;
+  color: var(--green);
+  font-style: italic;
+  text-align: center;
+  min-height: 12px;
+}
+
+/* ---------- HEALTH ---------- */
+.health { display: flex; flex-direction: column; gap: 0; }
+.health-row {
+  display: flex; align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 5px 0;
+  user-select: none;
+  border-bottom: 1px dotted var(--line-soft);
+}
+.health-row:last-child { border-bottom: none; }
+.health-row:hover .health-box {
+  border-color: var(--gold);
+  box-shadow: 0 0 4px rgba(138, 107, 20, 0.3);
+}
+.health-box {
+  position: relative;
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--ink);
+  background: transparent;
+  border-radius: 2px;
+  flex-shrink: 0;
+  transition: all .12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.health-box[data-state="slash"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='3' y1='17' x2='17' y2='3' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/></svg>");
+}
+.health-box[data-state="cross"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='3' y1='3' x2='17' y2='17' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/><line x1='17' y1='3' x2='3' y2='17' stroke='%23b02020' stroke-width='2.5' stroke-linecap='round'/></svg>");
+}
+.health-box[data-state="star"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><line x1='10' y1='2' x2='10' y2='18' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/><line x1='3.5' y1='6' x2='16.5' y2='14' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/><line x1='16.5' y1='6' x2='3.5' y2='14' stroke='%23b02020' stroke-width='2' stroke-linecap='round'/></svg>");
+}
+.health-name {
+  flex: 1; font-size: 13.5px;
+  color: var(--ink);
+}
+.health-pen {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 700;
+  min-width: 26px;
+  text-align: right;
+}
+
+/* ---------- LISTS ---------- */
+.list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+.list-row { display: flex; align-items: center; gap: 6px; }
+.list-row input[type=text] {
+  flex: 1; min-width: 0;
+  border-bottom: 1px solid var(--line);
+}
+.list-row .rm {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  border-radius: 2px;
+  cursor: pointer;
+  width: 22px; height: 22px;
+  font-size: 14px; line-height: 1;
+  flex-shrink: 0; padding: 0;
+  transition: all .15s;
+}
+.list-row .rm:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(139, 26, 26, 0.08);
+}
+.add-btn {
+  background: transparent;
+  border: 1px dashed var(--line);
+  color: var(--ink-soft);
+  padding: 3px 10px; border-radius: 3px;
+  cursor: pointer; font-size: 11px;
+  letter-spacing: 0.5px;
+  transition: all .15s;
+}
+.add-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(138, 107, 20, 0.06);
+}
+
+/* ---------- FORMS ---------- */
+.forms-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.form-card {
+  border: 1px solid var(--border-ink);
+  border-radius: 3px;
+  padding: 10px 12px;
+  background: rgba(255, 250, 235, 0.4);
+}
+.form-card h4 {
+  margin: 0 0 8px;
+  text-align: center;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1px dashed var(--border-ink);
+  padding-bottom: 6px;
+}
+.form-mod {
+  display: flex; justify-content: space-between;
+  font-size: 12px; padding: 1px 0; gap: 4px;
+}
+.form-mod .mod-label { color: var(--ink-soft); }
+.form-mod .mod-value {
+  color: var(--ink); font-weight: 700;
+  font-family: 'Courier New', monospace;
+}
+.form-diff {
+  margin-top: 8px; text-align: center;
+  font-size: 11.5px; color: var(--ink-soft);
+  border-top: 1px dashed var(--border-ink);
+  padding-top: 6px;
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 1px;
+}
+.form-diff b { color: var(--ink); font-weight: 700; }
+
+/* ---------- TABLES ---------- */
+.combat-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; }
+table.combat {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+table.combat th {
+  font-family: 'Cinzel', Georgia, serif;
+  color: var(--ink);
+  font-weight: 700; font-size: 10.5px;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  padding: 5px 3px;
+  border-top: 1px solid var(--border-ink);
+  border-bottom: 1px solid var(--border-ink);
+  text-align: center;
+  background: rgba(139, 100, 60, 0.06);
+}
+table.combat td {
+  padding: 1px;
+  border-bottom: 1px dotted var(--line-soft);
+}
+table.combat td input {
+  background: transparent; border: none;
+  color: var(--ink); width: 100%;
+  padding: 4px 5px; font-size: 12.5px;
+  outline: none;
+}
+table.combat td input:focus {
+  background: rgba(139, 100, 60, 0.1);
+}
+
+/* ---------- FETISHES ---------- */
+.fetish-row {
+  display: grid;
+  grid-template-columns: 2fr 30px 40px 40px 30px;
+  gap: 6px; align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--line-soft);
+}
+.fetish-row input[type=text] { padding: 2px 4px; border-bottom: 1px solid var(--line); }
+.fetish-row label {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 11px; letter-spacing: 0;
+  text-transform: none; font-weight: 400;
+  color: var(--ink-soft);
+  display: flex; align-items: center; gap: 3px;
+}
+.fetish-row input[type=number] { padding: 2px 4px; text-align: center; border-bottom: 1px solid var(--line); }
+
+.grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.misc-block { display: flex; flex-direction: column; gap: 6px; }
+.misc-block > label {
+  color: var(--ink);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  border-bottom: 1px dashed var(--border-ink);
+  padding-bottom: 4px;
+  margin-top: 4px;
+}
+
+/* ---------- AUTOFILL ---------- */
+.autofill-banner {
+  display: none;
+  background: rgba(74, 107, 31, 0.1);
+  border: 1px solid var(--green);
+  border-left: 4px solid var(--green);
+  padding: 10px 14px;
+  border-radius: 0 3px 3px 0;
+  font-size: 12.5px;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.autofill-banner.show { display: block; }
+.autofill-banner strong { color: var(--green); font-family: 'Cinzel', Georgia, serif; letter-spacing: 1px; }
+.autofill-banner .gift-list { margin-top: 6px; padding-left: 18px; font-size: 12px; color: var(--ink-soft); }
+.autofill-banner .gift-list li { margin: 1px 0; }
+.autofill-banner .reset-auto {
+  background: transparent;
+  border: 1px solid var(--green);
+  color: var(--green);
+  padding: 3px 10px; border-radius: 3px;
+  cursor: pointer; font-size: 10px;
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+.autofill-banner .reset-auto:hover { background: rgba(74, 107, 31, 0.15); }
+
+/* ---------- GIFTS ---------- */
+.gift-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  gap: 10px; margin-bottom: 12px;
+}
+.gift-filters select, .gift-filters input {
+  border: 1px solid var(--border-ink);
+  background: rgba(255, 250, 235, 0.6);
+  color: var(--ink);
+  padding: 6px 8px; border-radius: 2px;
+  font-size: 12.5px;
+  outline: none;
+}
+.gift-filters select:focus, .gift-filters input:focus { border-color: var(--gold); }
+.gift-only-mine {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; margin-bottom: 16px;
+  background: rgba(138, 107, 20, 0.08);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-size: 12.5px;
+  cursor: pointer; user-select: none;
+  transition: all .15s;
+}
+.gift-only-mine:hover { border-color: var(--gold); }
+.gift-only-mine input[type=checkbox] {
+  width: 16px; height: 16px;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+.gift-only-mine .hint {
+  color: var(--ink-faint); font-size: 11.5px;
+  margin-left: auto; font-style: italic;
+}
+.gift-only-mine .hint.ok { color: var(--green); font-weight: 600; }
+.gift-stats {
+  font-size: 11.5px; color: var(--ink-soft);
+  margin-bottom: 12px; text-align: right;
+  font-style: italic;
+}
+.gift-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px; max-height: 72vh;
+  overflow-y: auto; padding-right: 6px;
+}
+.gift-card {
+  background: rgba(255, 250, 235, 0.5);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--gold);
+  border-radius: 3px;
+  padding: 10px 12px;
+  transition: all .15s;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.gift-card:hover {
+  background: rgba(255, 250, 235, 0.85);
+  box-shadow: 0 2px 8px rgba(139, 100, 60, 0.15);
+}
+.gift-card.mine {
+  box-shadow: 0 0 0 1px rgba(138, 107, 20, 0.35), 0 0 12px rgba(138, 107, 20, 0.15);
+  background: rgba(255, 248, 220, 0.7);
+}
+.gift-card .gift-head {
+  display: flex; justify-content: space-between;
+  align-items: baseline; gap: 6px;
+}
+.gift-card .gift-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700; color: var(--ink);
+  font-size: 13px; line-height: 1.2;
+  letter-spacing: 0.5px;
+}
+.gift-card .gift-level {
+  font-size: 10px; color: var(--ink-soft);
+  letter-spacing: 1px;
+  background: rgba(139, 100, 60, 0.15);
+  border: 1px solid var(--line);
+  padding: 1px 6px; border-radius: 10px;
+  white-space: nowrap;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+}
+.gift-card .gift-source {
+  font-size: 10.5px; color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+}
+.gift-card .gift-desc {
+  font-size: 12.5px; color: var(--ink);
+  line-height: 1.45;
+}
+.gift-card .gift-system {
+  font-size: 11.5px; color: var(--ink-faint);
+  font-style: italic;
+  border-top: 1px dashed var(--line);
+  padding-top: 4px; margin-top: 3px;
+}
+.gift-card .gift-actions {
+  display: flex; justify-content: flex-end;
+  margin-top: 4px; gap: 6px;
+}
+.gift-card .add-gift-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 3px 12px; border-radius: 3px;
+  cursor: pointer; font-size: 10px;
+  letter-spacing: 0.5px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+  transition: all .15s;
+}
+.gift-card .add-gift-btn:hover {
+  background: var(--gold); color: var(--paper-1);
+}
+.gift-card .add-gift-btn:disabled {
+  opacity: 0.4; cursor: not-allowed;
+  border-color: var(--line);
+  color: var(--ink-faint);
+}
+.gift-empty {
+  text-align: center; color: var(--ink-faint);
+  padding: 30px 10px; font-style: italic;
+}
+
+/* ---------- RITES ---------- */
+.rite-info {
+  background: rgba(92, 59, 122, 0.08);
+  border: 1px solid var(--purple);
+  border-left: 4px solid var(--purple);
+  padding: 12px 16px;
+  border-radius: 0 3px 3px 0;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.rite-info strong {
+  color: var(--purple);
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 1px;
+}
+.rite-info code {
+  background: rgba(0,0,0,0.06);
+  border: 1px solid var(--line);
+  padding: 0 5px; border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px; color: var(--ink);
+}
+.rite-info ul { margin: 6px 0; padding-left: 22px; }
+.rite-info ul li::marker { color: var(--purple); }
+.rite-info .rolls-table {
+  width: 100%; border-collapse: collapse;
+  margin: 8px 0 4px; font-size: 12px;
+}
+.rite-info .rolls-table th {
+  background: rgba(92, 59, 122, 0.15);
+  color: var(--purple);
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700; text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-ink);
+  font-size: 10.5px; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.rite-info .rolls-table td {
+  padding: 3px 8px;
+  border-bottom: 1px dotted var(--line);
+}
+
+.rite-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 10px; margin-bottom: 14px;
+}
+.rite-filters select, .rite-filters input {
+  border: 1px solid var(--border-ink);
+  background: rgba(255, 250, 235, 0.6);
+  color: var(--ink);
+  padding: 6px 8px; border-radius: 2px;
+  font-size: 12.5px;
+  outline: none;
+}
+.rite-filters select:focus, .rite-filters input:focus { border-color: var(--purple); }
+
+.rite-stats {
+  font-size: 11.5px; color: var(--ink-soft);
+  margin-bottom: 12px; text-align: right;
+  font-style: italic;
+}
+.rite-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px; max-height: 72vh;
+  overflow-y: auto; padding-right: 6px;
+}
+.rite-card {
+  background: rgba(255, 250, 235, 0.5);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--purple);
+  border-radius: 3px;
+  padding: 10px 12px;
+  transition: all .15s;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.rite-card:hover {
+  background: rgba(255, 250, 235, 0.85);
+  box-shadow: 0 2px 8px rgba(92, 59, 122, 0.15);
+}
+.rite-card .rite-head {
+  display: flex; justify-content: space-between;
+  align-items: baseline; gap: 6px;
+}
+.rite-card .rite-name {
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700; color: var(--ink);
+  font-size: 13px; line-height: 1.2;
+  letter-spacing: 0.5px;
+}
+.rite-card .rite-level {
+  font-size: 10px; color: var(--ink-soft);
+  letter-spacing: 1px;
+  background: rgba(92, 59, 122, 0.15);
+  border: 1px solid var(--purple);
+  padding: 1px 6px; border-radius: 10px;
+  white-space: nowrap;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+}
+.rite-card .rite-type {
+  font-size: 10.5px; color: var(--purple);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+}
+.rite-card .rite-desc {
+  font-size: 12.5px; color: var(--ink);
+  line-height: 1.45;
+}
+.rite-card .rite-system {
+  font-size: 11.5px; color: var(--ink-faint);
+  font-style: italic;
+  border-top: 1px dashed var(--line);
+  padding-top: 4px; margin-top: 3px;
+}
+.rite-card .add-rite-btn {
+  background: transparent;
+  border: 1px solid var(--purple);
+  color: var(--purple);
+  padding: 3px 12px; border-radius: 3px;
+  cursor: pointer; font-size: 10px;
+  letter-spacing: 0.5px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+  transition: all .15s;
+  margin-top: 4px; align-self: flex-end;
+}
+.rite-card .add-rite-btn:hover {
+  background: var(--purple); color: var(--paper-1);
+}
+.rite-card .add-rite-btn:disabled {
+  opacity: 0.4; cursor: not-allowed;
+  border-color: var(--line);
+  color: var(--ink-faint);
+}
+
+/* ---------- CHEATS ---------- */
+.cheat-nav {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line);
+}
+.cheat-nav button {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 4px 12px; border-radius: 3px;
+  cursor: pointer; font-size: 11.5px;
+  letter-spacing: 0.5px;
+  transition: all .15s;
+}
+.cheat-nav button:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(138, 107, 20, 0.06);
+}
+.cheat-accordion { display: flex; flex-direction: column; gap: 8px; }
+.cheat-section {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: rgba(255, 250, 235, 0.4);
+  overflow: hidden;
+  transition: all .2s;
+}
+.cheat-section[data-open="true"] {
+  border-color: var(--border-ink);
+  background: rgba(255, 250, 235, 0.7);
+}
+.cheat-header {
+  display: flex; justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer; user-select: none;
+  background: rgba(139, 100, 60, 0.06);
+  transition: all .15s;
+}
+.cheat-header:hover { background: rgba(139, 100, 60, 0.12); }
+.cheat-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13.5px; font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.cheat-title .emoji {
+  margin-right: 8px; font-size: 15px;
+}
+.cheat-toggle {
+  color: var(--ink-soft); font-size: 16px;
+  transition: transform .2s;
+}
+.cheat-section[data-open="true"] .cheat-toggle {
+  transform: rotate(90deg); color: var(--gold);
+}
+.cheat-body {
+  display: none;
+  padding: 6px 18px 16px 18px;
+  font-size: 13px; line-height: 1.55;
+}
+.cheat-section[data-open="true"] .cheat-body { display: block; }
+.cheat-body h4 {
+  margin: 14px 0 6px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 11.5px; letter-spacing: 2px;
+  color: var(--ink);
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--border-ink);
+  padding-bottom: 3px;
+  font-weight: 700;
+}
+.cheat-body h4:first-child { margin-top: 4px; }
+.cheat-body p { margin: 5px 0; }
+.cheat-body ul, .cheat-body ol { margin: 5px 0; padding-left: 24px; }
+.cheat-body li { margin: 2px 0; }
+.cheat-body ul li::marker { color: var(--gold); }
+.cheat-body strong { color: var(--ink); font-weight: 700; }
+.cheat-body em { color: var(--ink-faint); font-style: italic; }
+.cheat-body code {
+  background: rgba(0,0,0,0.06);
+  border: 1px solid var(--line);
+  padding: 0 5px; border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px; color: var(--ink);
+}
+.cheat-body table {
+  width: 100%; border-collapse: collapse;
+  margin: 8px 0; font-size: 12px;
+}
+.cheat-body table th {
+  background: rgba(139, 100, 60, 0.1);
+  color: var(--ink);
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700; text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-ink);
+  font-size: 10.5px; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.cheat-body table td {
+  padding: 3px 8px;
+  border-bottom: 1px dotted var(--line);
+}
+.cheat-body table tr:last-child td { border-bottom: none; }
+.cheat-body .pill {
+  display: inline-block;
+  padding: 1px 8px; border-radius: 10px;
+  font-size: 10.5px; letter-spacing: 0.5px;
+  margin-right: 4px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 600;
+}
+.cheat-body .pill.rage { background: rgba(139,26,26,0.12); color: var(--red); border: 1px solid rgba(139,26,26,0.3); }
+.cheat-body .pill.wp { background: rgba(42,77,107,0.12); color: var(--blue); border: 1px solid rgba(42,77,107,0.3); }
+.cheat-body .pill.gnosis { background: rgba(74,107,31,0.12); color: var(--green); border: 1px solid rgba(74,107,31,0.3); }
+.cheat-body .note {
+  background: rgba(42, 77, 107, 0.08);
+  border-left: 3px solid var(--blue);
+  padding: 8px 12px; margin: 10px 0;
+  font-size: 12px;
+  border-radius: 0 3px 3px 0;
+}
+.cheat-body .warn {
+  background: rgba(139, 26, 26, 0.08);
+  border-left: 3px solid var(--red);
+  padding: 8px 12px; margin: 10px 0;
+  font-size: 12px;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ---------- GUIDE ---------- */
+.guide-intro {
+  background: rgba(138, 107, 20, 0.08);
+  border-left: 4px solid var(--gold);
+  padding: 12px 16px;
+  border-radius: 0 3px 3px 0;
+  font-size: 13px;
+  margin-bottom: 16px;
+  line-height: 1.55;
+}
+.guide-intro strong {
+  color: var(--gold);
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 1px;
+}
+.guide-progress {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; margin-bottom: 18px;
+  background: rgba(255, 250, 235, 0.5);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+.guide-progress .bar {
+  flex: 1; height: 8px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 4px; overflow: hidden;
+}
+.guide-progress .bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  transition: width .4s ease;
+  box-shadow: 0 0 8px rgba(138, 107, 20, 0.5);
+}
+.guide-progress .bar-text {
+  font-size: 12px; color: var(--ink);
+  font-weight: 700; white-space: nowrap;
+  font-family: 'Courier New', monospace;
+}
+.guide-progress .reset-guide {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 3px 10px; border-radius: 3px;
+  cursor: pointer; font-size: 10px;
+  letter-spacing: 0.5px;
+  transition: all .15s;
+}
+.guide-progress .reset-guide:hover {
+  border-color: var(--red); color: var(--red);
+  background: rgba(139, 26, 26, 0.06);
+}
+
+.guide-step {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: all .2s;
+  background: rgba(255, 250, 235, 0.4);
+}
+.guide-step[data-open="true"] {
+  border-color: var(--border-ink);
+  background: rgba(255, 250, 235, 0.7);
+}
+.guide-step.done {
+  border-left: 4px solid var(--green);
+  background: rgba(74, 107, 31, 0.06);
+}
+.guide-step-head {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer; user-select: none;
+  background: rgba(139, 100, 60, 0.06);
+  transition: all .15s;
+}
+.guide-step-head:hover { background: rgba(139, 100, 60, 0.12); }
+.guide-step-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 14px; font-weight: 700;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+  transition: all .2s;
+}
+.guide-step[data-open="true"] .guide-step-num {
+  border-color: var(--gold); color: var(--gold);
+  background: rgba(138, 107, 20, 0.1);
+  box-shadow: 0 0 10px rgba(138, 107, 20, 0.3);
+}
+.guide-step.done .guide-step-num {
+  background: var(--green); border-color: var(--green);
+  color: var(--paper-1);
+}
+.guide-step-title {
+  flex: 1; font-size: 14px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.guide-step.done .guide-step-title { color: var(--green); }
+.guide-step-actions {
+  display: flex; align-items: center; gap: 6px;
+}
+.guide-step-check {
+  width: 20px; height: 20px;
+  cursor: pointer;
+  accent-color: var(--green);
+  flex-shrink: 0;
+}
+.guide-step-toggle {
+  color: var(--ink-soft); font-size: 16px;
+  transition: transform .2s;
+}
+.guide-step[data-open="true"] .guide-step-toggle {
+  transform: rotate(90deg); color: var(--gold);
+}
+.guide-step-body {
+  display: none;
+  padding: 6px 18px 16px 58px;
+  font-size: 13px; line-height: 1.55;
+}
+.guide-step[data-open="true"] .guide-step-body { display: block; }
+.guide-step-body h4 {
+  margin: 14px 0 6px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 11.5px; letter-spacing: 2px;
+  color: var(--ink);
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--border-ink);
+  padding-bottom: 3px;
+  font-weight: 700;
+}
+.guide-step-body h4:first-child { margin-top: 4px; }
+.guide-step-body p { margin: 5px 0; }
+.guide-step-body ul, .guide-step-body ol { margin: 5px 0; padding-left: 24px; }
+.guide-step-body li { margin: 3px 0; }
+.guide-step-body ul li::marker { color: var(--gold); }
+.guide-step-body ol li::marker { color: var(--gold); font-weight: 700; }
+.guide-step-body strong { color: var(--ink); font-weight: 700; }
+.guide-step-body em { color: var(--ink-faint); font-style: italic; }
+.guide-step-body code {
+  background: rgba(0,0,0,0.06);
+  border: 1px solid var(--line);
+  padding: 0 5px; border-radius: 2px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px; color: var(--ink);
+}
+.guide-step-body table {
+  width: 100%; border-collapse: collapse;
+  margin: 8px 0; font-size: 12px;
+}
+.guide-step-body table th {
+  background: rgba(139, 100, 60, 0.1);
+  color: var(--ink);
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700; text-align: left;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border-ink);
+  font-size: 10.5px; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.guide-step-body table td {
+  padding: 4px 8px;
+  border-bottom: 1px dotted var(--line);
+}
+.guide-step-body table tr:last-child td { border-bottom: none; }
+.guide-step-body .note {
+  background: rgba(42, 77, 107, 0.08);
+  border-left: 3px solid var(--blue);
+  padding: 8px 12px; margin: 10px 0;
+  font-size: 12px;
+  border-radius: 0 3px 3px 0;
+}
+.guide-step-body .warn {
+  background: rgba(139, 26, 26, 0.08);
+  border-left: 3px solid var(--red);
+  padding: 8px 12px; margin: 10px 0;
+  font-size: 12px;
+  border-radius: 0 3px 3px 0;
+}
+.guide-step-body .hint-green {
+  background: rgba(74, 107, 31, 0.08);
+  border-left: 3px solid var(--green);
+  padding: 8px 12px; margin: 10px 0;
+  font-size: 12px;
+  border-radius: 0 3px 3px 0;
+}
+.guide-step-body .example {
+  background: rgba(139, 100, 60, 0.06);
+  border: 1px dashed var(--line);
+  padding: 8px 12px; margin: 10px 0;
+  font-size: 12px;
+  border-radius: 3px;
+  font-style: italic;
+  color: var(--ink);
+}
+.guide-step-body .example strong {
+  color: var(--gold); font-style: normal;
+  font-family: 'Cinzel', Georgia, serif;
+  letter-spacing: 0.5px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+  .triple, .id-grid { grid-template-columns: 1fr; }
+  .bottom-grid { grid-template-columns: 1fr; }
+  .forms-grid { grid-template-columns: repeat(2, 1fr); }
+  .grid-2col { grid-template-columns: 1fr; }
+  .combat-wrap { grid-template-columns: 1fr; }
+  .gift-filters, .rite-filters { grid-template-columns: 1fr 1fr; }
+  .page { padding: 22px 20px 30px; }
+  .sheet-title-main { font-size: 28px; letter-spacing: 8px; }
+  .sheet-title-sub { font-size: 11px; letter-spacing: 7px; }
+}
+@media (max-width: 520px) {
+  .forms-grid { grid-template-columns: 1fr; }
+  .gift-filters, .rite-filters { grid-template-columns: 1fr; }
+  .char-bar { top: 0; position: static; }
+  .char-bar select { min-width: 140px; flex: 1; }
+  .char-meta { display: none; }
+  .guide-step-body { padding-left: 16px; }
+  .guide-step-num { width: 26px; height: 26px; font-size: 12px; }
+  .guide-step-title { font-size: 11px; letter-spacing: 0.5px; }
+}
+
+/* ---------- PRINT ---------- */
+@media print {
+  @page { size: A4; margin: 8mm; }
+  .toolbar, .char-bar, .add-btn, .rm, #save-indicator, .autofill-banner,
+  .gift-filters, .gift-actions, .gift-only-mine, .cheat-nav,
+  .cheat-toggle, .toast, .rite-filters, .add-rite-btn, .guide-progress,
+  .guide-step-check, .guide-step-toggle, .reset-guide { display: none !important; }
   body {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    background: radial-gradient(ellipse at top, #1c1610 0%, #0e0b08 70%) #0e0b08;
-    background-attachment: fixed; color: var(--text);
-    line-height: 1.4; min-height: 100vh; padding-bottom: 60px; font-size: 13px;
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0;
+    font-size: 10px;
   }
-  button, input, textarea, select { font-family: inherit; }
-
-  .toolbar {
-    position: sticky; top: 0; z-index: 50;
-    display: flex; align-items: center; gap: 14px;
-    padding: 10px 18px; background: rgba(14, 11, 8, 0.94);
-    backdrop-filter: blur(6px); border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
+  .sheet { margin: 0; padding: 0; max-width: 100%; }
+  .page {
+    display: none;
+    gap: 8px;
+    page-break-after: always;
+    background: #fff !important;
+    border: 1px solid #333 !important;
+    box-shadow: none !important;
+    padding: 10px 14px;
+    border-radius: 0;
   }
-  .brand { font-weight: bold; letter-spacing: 1px; color: var(--gold); font-size: 14px; text-transform: uppercase; white-space: nowrap; }
-  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
-  .tabs button {
-    background: transparent; color: var(--muted); border: 1px solid var(--border);
-    padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;
-    letter-spacing: 0.5px; transition: all .15s;
+  .page.active { display: flex !important; }
+  .page:last-child { page-break-after: auto; }
+  .page::before, .page::after { display: none !important; }
+  .panel > h2 { color: #000; border-top-color: #000; border-bottom-color: #000; font-size: 12px; }
+  .panel > h2::before, .panel > h2::after { color: #000; }
+  .col h3 { color: #000; border-bottom-color: #000; }
+  label { color: #333; }
+  input, textarea, select {
+    background: #fff !important; color: #000 !important;
+    border-color: #666 !important;
   }
-  .tabs button.active { background: var(--gold); color: #1a1209; border-color: var(--gold-bright); font-weight: bold; }
-  .tabs button:hover:not(.active) { color: var(--gold-bright); }
-  .tools { display: flex; gap: 6px; margin-left: auto; }
-  .tools button {
-    background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-    padding: 5px 11px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all .15s;
-  }
-  .tools button:hover { border-color: var(--gold); color: var(--gold-bright); }
-  .tools button.danger:hover { border-color: var(--red); color: #ff7a7a; }
-  .tools button.pdf:hover { border-color: var(--blue); color: #7db8e0; }
-  #save-indicator { color: var(--gold); font-size: 11px; opacity: 0; transition: opacity .3s; white-space: nowrap; }
-  #save-indicator.show { opacity: 1; }
+  .dot { border-color: #000; background: #fff; }
+  .dot.filled, .dot.auto { background: #000 !important; border-color: #000; box-shadow: none; }
+  .sq { border-color: #000; background: #fff; }
+  .sq.filled { background: #000 !important; border-color: #000; }
+  .health-box { border-color: #000; background: #fff; }
+  .form-card { background: #fff; border-color: #666; }
+  .form-card h4 { color: #000; }
+  .sheet-title-main, .sheet-title-sub { color: #000; text-shadow: none; }
+  .stat::before { background: repeating-linear-gradient(90deg, #666 0, #666 2px, transparent 2px, transparent 6px); }
+  table.combat th { color: #000; background: #eee; border-color: #000; }
+  .guide-step, .gift-card, .rite-card { background: #fff !important; border-color: #666 !important; }
+}
 
-  .sheet { max-width: 1200px; margin: 20px auto; padding: 0 16px; }
-  .page { display: none; flex-direction: column; gap: 14px; }
-  .page.active { display: flex; }
-
-  .panel {
-    background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
-    border: 1px solid var(--border); border-radius: 5px;
-    padding: 14px 16px 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.02);
-  }
-  .panel > h2 {
-    margin: 0 0 12px; font-size: 15px; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--gold);
-    border-bottom: 1px solid var(--border); padding-bottom: 6px;
-    text-align: center; font-variant: small-caps;
-  }
-  .panel h3 { margin: 10px 0 6px; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); text-align: center; font-variant: small-caps; }
-  .panel h3:first-child { margin-top: 0; }
-
-  .id-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 20px; }
-  .id-grid > div { display: flex; flex-direction: column; gap: 2px; }
-  label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
-  input[type=text], input[type=number], textarea, select {
-    background: rgba(0,0,0,0.3); border: none; border-bottom: 1px solid var(--border);
-    border-radius: 0; color: var(--text); padding: 3px 4px; outline: none;
-    font-size: 13px; transition: border-color .15s; width: 100%;
-  }
-  input[type=text]:focus, textarea:focus, select:focus { border-bottom-color: var(--gold); background: rgba(201, 162, 39, 0.06); }
-  textarea { border: 1px solid var(--border); border-radius: 3px; min-height: 60px; resize: vertical; font-family: inherit; line-height: 1.4; }
-
-  .triple { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .col { display: flex; flex-direction: column; gap: 3px; }
-  .col h3 { margin: 0 0 6px; padding-bottom: 4px; border-bottom: 1px dashed var(--border); font-size: 12px; color: var(--gold); letter-spacing: 1.5px; text-align: center; font-variant: small-caps; }
-
-  .stat { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 1px 0; min-height: 18px; }
-  .stat-name { font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  .dots { display: flex; gap: 3px; flex-shrink: 0; cursor: pointer; user-select: none; }
-  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; border: 1.4px solid #6b5a44; background: rgba(0,0,0,0.4); transition: all .1s; }
-  .dot:hover { border-color: var(--gold-bright); transform: scale(1.15); }
-  .dot.filled { background: radial-gradient(circle at 35% 30%, var(--gold-bright), var(--gold) 65%, #86690f); border-color: var(--gold-bright); box-shadow: 0 0 5px rgba(201,162,39,0.55); }
-  .dot.locked { cursor: not-allowed; opacity: 0.85; }
-  .dot.auto { background: radial-gradient(circle at 35% 30%, #8fc260, #4a6b2f 65%, #2b401a); border-color: #8fc260; box-shadow: 0 0 5px rgba(140, 194, 96, 0.6); }
-  .squares { display: flex; gap: 3px; flex-shrink: 0; cursor: pointer; user-select: none; margin-top: 2px; }
-  .sq { width: 12px; height: 12px; border: 1.4px solid #6b5a44; border-radius: 2px; background: rgba(0,0,0,0.4); transition: all .1s; }
-  .sq:hover { border-color: var(--gold-bright); }
-  .sq.filled { background: linear-gradient(135deg, #d4ad34, #8a6f14); border-color: var(--gold-bright); box-shadow: 0 0 4px rgba(201,162,39,0.5); }
-
-  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
-  .pool-block { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; }
-  .pool-block .stat-name { text-align: center; font-size: 12px; color: var(--gold); letter-spacing: 1px; margin-bottom: 2px; font-variant: small-caps; }
-  .pool-block .dots, .pool-block .squares { justify-content: center; }
-  .pool-block .auto-hint { text-align: center; font-size: 10px; color: var(--green); font-style: italic; min-height: 12px; }
-
-  .health { display: flex; flex-direction: column; gap: 3px; }
-  .health-row { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 1px 0; user-select: none; }
-  .health-row:hover .health-box { border-color: var(--gold-bright); }
-  .health-box { width: 15px; height: 15px; border: 1.4px solid #6b5a44; border-radius: 2px; background: rgba(0,0,0,0.4); flex-shrink: 0; transition: all .12s; }
-  .health-box.filled { background: linear-gradient(135deg, #b03030, #6b1a1a); border-color: #e05050; box-shadow: 0 0 6px rgba(200,50,50,0.5); }
-  .health-name { flex: 1; font-size: 12.5px; }
-  .health-pen { color: var(--muted); font-size: 12px; font-family: 'Consolas', monospace; min-width: 24px; text-align: right; }
-
-  .list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
-  .list-row { display: flex; align-items: center; gap: 6px; }
-  .list-row input[type=text] { flex: 1; min-width: 0; }
-  .list-row .rm { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 2px; cursor: pointer; width: 22px; height: 22px; font-size: 14px; line-height: 1; flex-shrink: 0; padding: 0; transition: all .15s; }
-  .list-row .rm:hover { border-color: var(--red); color: #ff7a7a; }
-  .add-btn { background: transparent; border: 1px dashed var(--border); color: var(--muted); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all .15s; }
-  .add-btn:hover { border-color: var(--gold); color: var(--gold-bright); }
-
-  .forms-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-  .form-card { border: 1px solid var(--border); border-radius: 4px; padding: 10px; background: rgba(0,0,0,0.2); }
-  .form-card h4 { margin: 0 0 8px; text-align: center; color: var(--gold); letter-spacing: 1.5px; font-variant: small-caps; font-size: 13px; border-bottom: 1px dashed var(--border); padding-bottom: 5px; }
-  .form-mod { display: flex; justify-content: space-between; font-size: 11px; padding: 1px 0; gap: 4px; }
-  .form-mod .mod-label { color: var(--muted); }
-  .form-mod .mod-value { color: var(--gold-bright); font-family: 'Consolas', monospace; font-weight: bold; }
-  .form-diff { margin-top: 8px; text-align: center; font-size: 11px; color: var(--muted); border-top: 1px dashed var(--border); padding-top: 6px; }
-  .form-diff b { color: var(--gold); }
-
-  .combat-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-  table.combat { width: 100%; border-collapse: collapse; font-size: 12px; }
-  table.combat th { color: var(--gold); font-weight: normal; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; padding: 4px 2px; border-bottom: 1px solid var(--border); text-align: center; }
-  table.combat td { padding: 1px; border-bottom: 1px solid rgba(58,46,33,0.5); }
-  table.combat td input { background: transparent; border: none; color: var(--text); width: 100%; padding: 3px 4px; font-size: 12px; outline: none; }
-  table.combat td input:focus { background: rgba(201,162,39,0.08); }
-
-  .fetish-row { display: grid; grid-template-columns: 2fr 30px 40px 40px 30px; gap: 6px; align-items: center; padding: 2px 0; border-bottom: 1px dashed rgba(58,46,33,0.4); font-size: 11px; }
-  .fetish-row input[type=text] { padding: 2px 4px; }
-  .fetish-row label { font-size: 10px; display: flex; align-items: center; gap: 3px; color: var(--muted); }
-  .fetish-row input[type=number] { padding: 2px 4px; text-align: center; }
-
-  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .misc-block { display: flex; flex-direction: column; gap: 6px; }
-  .misc-block > label { color: var(--gold); font-size: 11px; letter-spacing: 1px; border-bottom: 1px dashed var(--border); padding-bottom: 3px; font-variant: small-caps; }
-
-  .autofill-banner { display: none; background: linear-gradient(90deg, rgba(107,143,78,0.15), rgba(107,143,78,0.05)); border-left: 3px solid var(--green); padding: 8px 12px; border-radius: 0 4px 4px 0; font-size: 12px; color: var(--text); margin-bottom: 10px; }
-  .autofill-banner.show { display: block; }
-  .autofill-banner strong { color: var(--green); }
-  .autofill-banner .gift-list { margin-top: 4px; padding-left: 16px; font-size: 11px; color: var(--muted); }
-  .autofill-banner .gift-list li { margin: 1px 0; }
-  .autofill-banner .reset-auto { background: transparent; border: 1px solid var(--green); color: var(--green); padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 10px; margin-top: 4px; }
-  .autofill-banner .reset-auto:hover { background: rgba(107,143,78,0.15); }
-
-  .gift-filters { display: grid; grid-template-columns: 1fr 1fr 1fr 2fr; gap: 10px; margin-bottom: 10px; }
-  .gift-filters select, .gift-filters input { border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: var(--text); padding: 6px 8px; border-radius: 3px; font-size: 12px; }
-  .gift-filters select:focus, .gift-filters input:focus { border-color: var(--gold); outline: none; }
-  .gift-only-mine { display: flex; align-items: center; gap: 8px; padding: 8px 12px; margin-bottom: 14px; background: linear-gradient(90deg, rgba(201,162,39,0.08), rgba(201,162,39,0.02)); border: 1px solid var(--border); border-radius: 4px; font-size: 12px; cursor: pointer; user-select: none; transition: all .15s; }
-  .gift-only-mine:hover { border-color: var(--gold); }
-  .gift-only-mine input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--gold); cursor: pointer; }
-  .gift-only-mine .hint { color: var(--muted); font-size: 11px; margin-left: auto; font-style: italic; }
-  .gift-only-mine .hint.ok { color: var(--green); }
-  .gift-stats { font-size: 11px; color: var(--muted); margin-bottom: 10px; text-align: right; }
-  .gift-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; max-height: 72vh; overflow-y: auto; padding-right: 6px; }
-  .gift-card { border: 1px solid var(--border); border-left: 3px solid var(--gold); border-radius: 4px; padding: 8px 10px; background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.05)); transition: all .15s; display: flex; flex-direction: column; gap: 4px; }
-  .gift-card:hover { border-left-color: var(--gold-bright); background: linear-gradient(180deg, rgba(201,162,39,0.08), rgba(0,0,0,0.05)); }
-  .gift-card.mine { box-shadow: 0 0 0 1px rgba(201,162,39,0.35), 0 0 12px rgba(201,162,39,0.12); }
-  .gift-card .gift-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
-  .gift-card .gift-name { font-weight: bold; color: var(--gold-bright); font-size: 13px; line-height: 1.2; }
-  .gift-card .gift-level { font-size: 10px; color: var(--muted); letter-spacing: 1px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 1px 5px; border-radius: 2px; white-space: nowrap; }
-  .gift-card .gift-source { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-  .gift-card .gift-desc { font-size: 11.5px; color: var(--text); line-height: 1.4; }
-  .gift-card .gift-system { font-size: 10.5px; color: var(--muted); font-style: italic; border-top: 1px dashed rgba(58,46,33,0.5); padding-top: 3px; margin-top: 2px; }
-  .gift-card .gift-actions { display: flex; justify-content: flex-end; margin-top: 4px; gap: 6px; }
-  .gift-card .add-gift-btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; letter-spacing: 0.5px; transition: all .15s; }
-  .gift-card .add-gift-btn:hover { background: var(--gold); color: #1a1209; }
-  .gift-card .add-gift-btn:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--muted); color: var(--muted); }
-  .gift-empty { text-align: center; color: var(--muted); padding: 30px 10px; font-style: italic; }
-
-  .rite-info { background: linear-gradient(90deg, rgba(139,107,176,0.12), rgba(139,107,176,0.02)); border-left: 3px solid var(--purple); padding: 10px 14px; border-radius: 0 4px 4px 0; font-size: 12px; margin-bottom: 14px; line-height: 1.55; }
-  .rite-info strong { color: var(--purple); }
-  .rite-info code { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 0 5px; border-radius: 2px; font-family: 'Consolas', monospace; font-size: 11.5px; color: var(--gold-bright); }
-  .rite-info ul { margin: 4px 0; padding-left: 20px; }
-  .rite-info ul li::marker { color: var(--purple); }
-  .rite-info .rolls-table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 11.5px; }
-  .rite-info .rolls-table th { background: rgba(139,107,176,0.15); color: var(--purple); font-weight: normal; text-align: left; padding: 3px 8px; border-bottom: 1px solid var(--border); font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; }
-  .rite-info .rolls-table td { padding: 3px 8px; border-bottom: 1px dashed rgba(58,46,33,0.4); }
-
-  .rite-filters { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 10px; margin-bottom: 12px; }
-  .rite-filters select, .rite-filters input { border: 1px solid var(--border); background: rgba(0,0,0,0.3); color: var(--text); padding: 6px 8px; border-radius: 3px; font-size: 12px; }
-  .rite-filters select:focus, .rite-filters input:focus { border-color: var(--purple); outline: none; }
-  .rite-stats { font-size: 11px; color: var(--muted); margin-bottom: 10px; text-align: right; }
-  .rite-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; max-height: 72vh; overflow-y: auto; padding-right: 6px; }
-  .rite-card { border: 1px solid var(--border); border-left: 3px solid var(--purple); border-radius: 4px; padding: 8px 10px; background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.05)); transition: all .15s; display: flex; flex-direction: column; gap: 4px; }
-  .rite-card:hover { border-left-color: #c09be0; background: linear-gradient(180deg, rgba(139,107,176,0.1), rgba(0,0,0,0.05)); }
-  .rite-card .rite-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
-  .rite-card .rite-name { font-weight: bold; color: #d4b8f0; font-size: 13px; line-height: 1.2; }
-  .rite-card .rite-level { font-size: 10px; color: var(--muted); letter-spacing: 1px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 1px 5px; border-radius: 2px; white-space: nowrap; }
-  .rite-card .rite-type { font-size: 10px; color: var(--purple); text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
-  .rite-card .rite-desc { font-size: 11.5px; color: var(--text); line-height: 1.4; }
-  .rite-card .rite-system { font-size: 10.5px; color: var(--muted); font-style: italic; border-top: 1px dashed rgba(58,46,33,0.5); padding-top: 3px; margin-top: 2px; }
-  .rite-card .add-rite-btn { background: transparent; border: 1px solid var(--purple); color: var(--purple); padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 10px; letter-spacing: 0.5px; transition: all .15s; margin-top: 4px; align-self: flex-end; }
-  .rite-card .add-rite-btn:hover { background: var(--purple); color: #fff; }
-
-  .cheat-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--border); }
-  .cheat-nav button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all .15s; }
-  .cheat-nav button:hover { border-color: var(--gold); color: var(--gold-bright); }
-  .cheat-accordion { display: flex; flex-direction: column; gap: 8px; }
-  .cheat-section { border: 1px solid var(--border); border-radius: 4px; background: rgba(0,0,0,0.15); overflow: hidden; transition: all .2s; }
-  .cheat-section[data-open="true"] { border-color: rgba(201,162,39,0.4); background: rgba(0,0,0,0.25); }
-  .cheat-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; cursor: pointer; user-select: none; background: linear-gradient(180deg, rgba(201,162,39,0.06), transparent); transition: all .15s; }
-  .cheat-header:hover { background: linear-gradient(180deg, rgba(201,162,39,0.12), transparent); }
-  .cheat-title { font-size: 14px; color: var(--gold-bright); letter-spacing: 1px; font-variant: small-caps; font-weight: bold; }
-  .cheat-title .emoji { margin-right: 8px; font-size: 16px; }
-  .cheat-toggle { color: var(--muted); font-size: 16px; transition: transform .2s; }
-  .cheat-section[data-open="true"] .cheat-toggle { transform: rotate(90deg); color: var(--gold); }
-  .cheat-body { display: none; padding: 4px 16px 14px 16px; font-size: 12.5px; line-height: 1.55; }
-  .cheat-section[data-open="true"] .cheat-body { display: block; }
-  .cheat-body h4 { margin: 12px 0 6px; font-size: 12px; letter-spacing: 1.5px; color: var(--gold); text-transform: uppercase; border-bottom: 1px dashed var(--border); padding-bottom: 3px; }
-  .cheat-body h4:first-child { margin-top: 4px; }
-  .cheat-body p { margin: 4px 0; }
-  .cheat-body ul, .cheat-body ol { margin: 4px 0; padding-left: 22px; }
-  .cheat-body li { margin: 2px 0; }
-  .cheat-body ul li::marker { color: var(--gold); }
-  .cheat-body strong { color: var(--gold-bright); }
-  .cheat-body em { color: var(--muted); font-style: italic; }
-  .cheat-body code { background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 0 5px; border-radius: 2px; font-family: 'Consolas', monospace; font-size: 11.5px; color: var(--gold-bright); }
-  .cheat-body table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 11.5px; }
-  .cheat-body table th { background: rgba(201,162,39,0.1); color: var(--gold); font-weight: normal; text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--border); font-size: 10.5px; letter-spacing: 0.5px; text-transform: uppercase; }
-  .cheat-body table td { padding: 3px 8px; border-bottom: 1px dashed rgba(58,46,33,0.4); }
-  .cheat-body table tr:last-child td { border-bottom: none; }
-  .cheat-body .pill { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10.5px; letter-spacing: 0.5px; margin-right: 4px; }
-  .cheat-body .pill.rage { background: rgba(200,50,50,0.2); color: #ff8080; border: 1px solid rgba(200,50,50,0.4); }
-  .cheat-body .pill.wp { background: rgba(80,140,200,0.2); color: #80b8ff; border: 1px solid rgba(80,140,200,0.4); }
-  .cheat-body .pill.gnosis { background: rgba(140,200,90,0.15); color: #a0d670; border: 1px solid rgba(140,200,90,0.4); }
-  .cheat-body .note { background: rgba(74,127,165,0.08); border-left: 3px solid var(--blue); padding: 6px 10px; margin: 8px 0; font-size: 11.5px; border-radius: 0 3px 3px 0; }
-  .cheat-body .warn { background: rgba(139,42,42,0.1); border-left: 3px solid var(--red); padding: 6px 10px; margin: 8px 0; font-size: 11.5px; border-radius: 0 3px 3px 0; }
-
-  @media (max-width: 900px) {
-    .triple, .id-grid { grid-template-columns: 1fr; }
-    .bottom-grid { grid-template-columns: 1fr; }
-    .forms-grid { grid-template-columns: repeat(2, 1fr); }
-    .grid-2col { grid-template-columns: 1fr; }
-    .combat-wrap { grid-template-columns: 1fr; }
-    .gift-filters, .rite-filters { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 520px) {
-    .forms-grid { grid-template-columns: 1fr; }
-    .gift-filters, .rite-filters { grid-template-columns: 1fr; }
-  }
-
-  @media print {
-    @page { size: A4; margin: 8mm; }
-    .toolbar, .add-btn, .rm, #save-indicator, .autofill-banner, .gift-filters, .gift-actions, .gift-only-mine, .cheat-nav, .cheat-toggle, .toast, .rite-filters, .add-rite-btn { display: none !important; }
-    body { background: #fff; color: #000; padding: 0; font-size: 10px; }
-    .sheet { margin: 0; padding: 0; max-width: 100%; }
-    .page { display: none; gap: 6px; page-break-after: always; }
-    .page.active { display: flex !important; }
-    .page:last-child { page-break-after: auto; }
-    .panel { background: #fff; border: 1px solid #666; box-shadow: none; page-break-inside: avoid; padding: 6px 10px; }
-    .panel > h2 { color: #000; border-bottom-color: #666; font-size: 12px; }
-    .col h3 { color: #000; border-bottom-color: #999; }
-    label { color: #444; }
-    input, textarea, select { background: #fff !important; color: #000; border-color: #999; }
-    .dot { border-color: #333; background: #fff; }
-    .dot.filled, .dot.auto { background: #333; border-color: #333; box-shadow: none; }
-    .sq { border-color: #333; background: #fff; }
-    .sq.filled { background: #333; border-color: #333; box-shadow: none; }
-    .health-box { border-color: #333; background: #fff; }
-    .health-box.filled { background: #333; border-color: #333; box-shadow: none; }
-    .form-card { background: #fff; border-color: #666; }
-    .form-card h4 { color: #000; }
-    table.combat th { color: #000; }
-  }
-
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(107,143,78,0.95); color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 13px; z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.4); opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.info { background: rgba(74,127,165,0.95); }
-  .toast.purple { background: rgba(139,107,176,0.95); }
+/* ---------- TOAST ---------- */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(74, 107, 31, 0.95);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 3px;
+  font-size: 13px;
+  z-index: 999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: opacity .25s, transform .25s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.info { background: rgba(42, 77, 107, 0.95); }
+.toast.purple { background: rgba(92, 59, 122, 0.95); }
 </style>
 </head>
 <body>
@@ -288,6 +1328,7 @@
     <button data-tab="page3">Дополнения</button>
     <button data-tab="page4">📖 Дары</button>
     <button data-tab="page6">📿 Обряды</button>
+    <button data-tab="page7">🎲 Создание</button>
     <button data-tab="page5">📋 Шпаргалки</button>
   </div>
   <span id="save-indicator">✓ Сохранено</span>
@@ -301,12 +1342,27 @@
   <input type="file" id="file-input" accept="application/json" hidden>
 </div>
 
+<div class="char-bar">
+  <span class="char-label">📚 Персонаж:</span>
+  <select id="char-select"></select>
+  <button id="btn-new-char" class="char-btn" title="Создать нового персонажа">+ Новый</button>
+  <button id="btn-rename-char" class="char-btn" title="Переименовать">✏️ Имя</button>
+  <button id="btn-dup-char" class="char-btn" title="Дублировать">📋 Копия</button>
+  <button id="btn-del-char" class="char-btn danger" title="Удалить персонажа">🗑 Удалить</button>
+  <span class="char-meta" id="char-meta"></span>
+</div>
+
 <main class="sheet">
 
+  <!-- =================== PAGE 1 =================== -->
   <div class="page active" id="page1">
     <div class="autofill-banner" id="autofill-banner"></div>
 
     <section class="panel">
+      <div class="sheet-title">
+        <div class="sheet-title-main">Werewolf</div>
+        <div class="sheet-title-sub">The Apocalypse</div>
+      </div>
       <div class="id-grid">
         <div><label>Имя</label><input type="text" id="f_name" autocomplete="off"></div>
         <div><label>Рождение</label><input type="text" id="f_birth" autocomplete="off"></div>
@@ -338,25 +1394,26 @@
     <section class="panel">
       <div class="bottom-grid">
         <div>
-          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;color:var(--gold);margin:0 0 10px;font-variant:small-caps;">Известность</h2>
+          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;margin:0 0 10px;font-variant:small-caps;">Известность</h2>
           <div class="pool-block"><div class="stat-name">Слава</div><div class="dots" data-key="glory" data-max="10"></div><div class="squares" data-key="glory" data-max="10"></div></div>
           <div class="pool-block"><div class="stat-name">Честь</div><div class="dots" data-key="honor" data-max="10"></div><div class="squares" data-key="honor" data-max="10"></div></div>
           <div class="pool-block"><div class="stat-name">Мудрость</div><div class="dots" data-key="wisdom" data-max="10"></div><div class="squares" data-key="wisdom" data-max="10"></div></div>
         </div>
         <div>
-          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;color:var(--gold);margin:0 0 10px;font-variant:small-caps;">Пулы</h2>
+          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;margin:0 0 10px;font-variant:small-caps;">Пулы</h2>
           <div class="pool-block"><div class="stat-name">Ярость</div><div class="dots" data-key="rage" data-max="10"></div><div class="squares" data-key="rage" data-max="10"></div><div class="auto-hint" id="hint-rage"></div></div>
           <div class="pool-block"><div class="stat-name">Гносис</div><div class="dots" data-key="gnosis" data-max="10"></div><div class="squares" data-key="gnosis" data-max="10"></div><div class="auto-hint" id="hint-gnosis"></div></div>
           <div class="pool-block"><div class="stat-name">Сила Воли</div><div class="dots" data-key="willpower" data-max="10"></div><div class="squares" data-key="willpower" data-max="10"></div><div class="auto-hint" id="hint-willpower"></div></div>
         </div>
         <div>
-          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;color:var(--gold);margin:0 0 10px;font-variant:small-caps;">Здоровье</h2>
+          <h2 style="font-size:13px;text-align:center;letter-spacing:2px;margin:0 0 10px;font-variant:small-caps;">Здоровье</h2>
           <div class="health" id="health"></div>
         </div>
       </div>
     </section>
   </div>
 
+  <!-- =================== PAGE 2 =================== -->
   <div class="page" id="page2">
     <section class="panel"><h2>Формы</h2><div class="forms-grid" id="forms"></div></section>
     <section class="panel"><h2>Другие Трейты</h2><div class="triple" id="other-traits"></div></section>
@@ -390,6 +1447,7 @@
     </section>
   </div>
 
+  <!-- =================== PAGE 3 =================== -->
   <div class="page" id="page3">
     <section class="panel">
       <div class="id-grid" style="grid-template-columns: 1fr 1fr;">
@@ -447,6 +1505,7 @@
     </section>
   </div>
 
+  <!-- =================== PAGE 4: ДАРЫ =================== -->
   <div class="page" id="page4">
     <section class="panel">
       <h2>Справочник Даров</h2>
@@ -466,7 +1525,7 @@
         </select>
         <input type="text" id="gift-search" placeholder="Поиск по названию или описанию…">
       </div>
-      <label class="gift-only-mine" id="gift-only-mine-label">
+      <label class="gift-only-mine">
         <input type="checkbox" id="gift-only-mine">
         <span>🎯 Показывать только мои (по выбранным в листе Породе / Покровительству / Племени)</span>
         <span class="hint" id="gift-only-mine-hint"></span>
@@ -476,6 +1535,7 @@
     </section>
   </div>
 
+  <!-- =================== PAGE 6: ОБРЯДЫ =================== -->
   <div class="page" id="page6">
     <section class="panel">
       <h2>Справочник Обрядов</h2>
@@ -519,6 +1579,272 @@
     </section>
   </div>
 
+  <!-- =================== PAGE 7: СОЗДАНИЕ =================== -->
+  <div class="page" id="page7">
+    <section class="panel">
+      <h2>Гайд по созданию персонажа</h2>
+      <div class="guide-intro">
+        <strong>📖 Как создать оборотня за 5 шагов</strong><br>
+        Создание персонажа в Werewolf: The Apocalypse строится по системе точек. Ты распределяешь очки между чертами и получаешь 15 <strong>свободных очков</strong> в конце, чтобы «докрутить» детали. Каждый шаг отмечай галочкой — прогресс сохраняется.
+      </div>
+
+      <div class="guide-progress">
+        <span class="bar-text" id="guide-progress-text">0 / 5</span>
+        <div class="bar"><div class="bar-fill" id="guide-progress-fill"></div></div>
+        <button class="reset-guide" id="btn-reset-guide">Сбросить прогресс</button>
+      </div>
+
+      <div class="guide-accordion" id="guide-accordion">
+
+        <div class="guide-step" data-step="1" data-open="false">
+          <div class="guide-step-head">
+            <div class="guide-step-num">1</div>
+            <div class="guide-step-title">Концепция и основа</div>
+            <div class="guide-step-actions">
+              <input type="checkbox" class="guide-step-check" data-step="1" title="Отметить шаг выполненным">
+              <span class="guide-step-toggle">▶</span>
+            </div>
+          </div>
+          <div class="guide-step-body">
+            <h4>Придумай концепцию</h4>
+            <p>Начни с общей идеи из 3–5 слов — она будет стержнем персонажа. Это не обязательно роль в бою, скорее <em>кто он и зачем</em>.</p>
+            <div class="example">
+              <strong>Примеры:</strong> «Миротворец поневоле», «Дипломат-нейтрал», «Современный крестоносец», «Журналист, ищущий правду».
+            </div>
+
+            <h4>Три фундаментальных выбора</h4>
+            <table>
+              <tr><th>Атрибут</th><th>Что определяет</th><th>Варианты</th></tr>
+              <tr><td><strong>Порода</strong></td><td>Кем ты родился</td><td>Хомид / Метис / Люпус</td></tr>
+              <tr><td><strong>Покровительство</strong></td><td>Роль в обществе Гару (фаза луны)</td><td>Рагабаш / Теург / Филодокс / Галлиард / Арун</td></tr>
+              <tr><td><strong>Племя</strong></td><td>Твоя «семья», культура, философия</td><td>13 вариантов</td></tr>
+            </table>
+
+            <h4>Породы</h4>
+            <table>
+              <tr><th>Порода</th><th>Гнозис</th><th>Стартовые Дары</th></tr>
+              <tr><td><strong>Хомид</strong></td><td>1</td><td>Повелитель огня, Убеждение, Запах человека</td></tr>
+              <tr><td><strong>Метис</strong></td><td>3</td><td>Создать стихию, Первобытный гнев, Чутьё Вирма</td></tr>
+              <tr><td><strong>Люпус</strong></td><td>5</td><td>Заячий прыжок, Обострённые чувства, Чутьё дичи</td></tr>
+            </table>
+
+            <h4>Покровительства</h4>
+            <table>
+              <tr><th>Покровительство</th><th>Ярость</th><th>Почёт</th></tr>
+              <tr><td><strong>Рагабаш</strong></td><td>1</td><td>3 в любой категории</td></tr>
+              <tr><td><strong>Теург</strong></td><td>2</td><td>Мудрость 3</td></tr>
+              <tr><td><strong>Филодокс</strong></td><td>3</td><td>Честь 3</td></tr>
+              <tr><td><strong>Галлиард</strong></td><td>4</td><td>Слава 2, Мудрость 1</td></tr>
+              <tr><td><strong>Арун</strong></td><td>5</td><td>Слава 2, Честь 1</td></tr>
+            </table>
+
+            <h4>Племена и стартовая Сила Воли</h4>
+            <table>
+              <tr><th>Племя</th><th>Сила Воли</th><th>Особенность</th></tr>
+              <tr><td>Черные Фурии</td><td>3</td><td>Только женщины (кроме метисов)</td></tr>
+              <tr><td>Костегрызы</td><td>4</td><td>Без Предков, Чистой Крови, Ресурсов</td></tr>
+              <tr><td>Дети Гайи</td><td>4</td><td>Миротворцы</td></tr>
+              <tr><td>Фианна</td><td>3</td><td>Кельтские корни, барды</td></tr>
+              <tr><td>Потомки Фенрира</td><td>3</td><td>Без Контактов</td></tr>
+              <tr><td>Стеклоходы</td><td>3</td><td>Без Чистой Крови, Предков, Наставника</td></tr>
+              <tr><td>Красные Когти</td><td>3</td><td>Только люпусы</td></tr>
+              <tr><td>Теневые Владыки</td><td>3</td><td>Без Союзников, Наставника</td></tr>
+              <tr><td>Безмолвные Странники</td><td>3</td><td>Без Ресурсов, Предков</td></tr>
+              <tr><td>Серебряные Клыки</td><td>3</td><td>Обязательно 3+ в Чистоте Рода</td></tr>
+              <tr><td>Уктена</td><td>3</td><td>Мистики</td></tr>
+              <tr><td>Вендиго</td><td>4</td><td>Без Контактов, Ресурсов</td></tr>
+              <tr><td>Звездочеты</td><td>5</td><td>Без Фетиша, Ресурсов</td></tr>
+            </table>
+
+            <div class="hint-green">
+              💡 <strong>Не переживай об оптимальности.</strong> Выбор должен нравиться тебе и Рассказчику. Концепция важнее цифр.
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-step" data-step="2" data-open="false">
+          <div class="guide-step-head">
+            <div class="guide-step-num">2</div>
+            <div class="guide-step-title">Атрибуты (7 / 5 / 3)</div>
+            <div class="guide-step-actions">
+              <input type="checkbox" class="guide-step-check" data-step="2">
+              <span class="guide-step-toggle">▶</span>
+            </div>
+          </div>
+          <div class="guide-step-body">
+            <h4>Приоритеты</h4>
+            <p>Определи три категории атрибутов по приоритетам. Каждый атрибут уже имеет базовое значение <strong>1</strong>.</p>
+            <table>
+              <tr><th>Категория</th><th>Доп. точки</th></tr>
+              <tr><td>Первичная</td><td><strong>7</strong></td></tr>
+              <tr><td>Вторичная</td><td><strong>5</strong></td></tr>
+              <tr><td>Третичная</td><td><strong>3</strong></td></tr>
+            </table>
+            <p>Атрибуты: <em>Сила, Ловкость, Выносливость, Обаяние, Манипуляция, Внешность, Восприятие, Интеллект, Смекалка</em>.</p>
+
+            <h4>Правила</h4>
+            <ul>
+              <li>Можно распределять внутри категории как угодно</li>
+              <li>Максимум <strong>5</strong> в одном атрибуте до свободных очков</li>
+              <li>Минимум <strong>1</strong></li>
+            </ul>
+
+            <h4>Что означают значения</h4>
+            <table>
+              <tr><th>Значение</th><th>Смысл</th></tr>
+              <tr><td>1</td><td>Плохо</td></tr>
+              <tr><td>2</td><td>Средне — нормальный человек</td></tr>
+              <tr><td>3</td><td>Хорошо — заметно выше среднего</td></tr>
+              <tr><td>4</td><td>Незаурядно</td></tr>
+              <tr><td>5</td><td>Исключительно — предел человеческих возможностей</td></tr>
+            </table>
+
+            <div class="example">
+              <strong>Пример:</strong> журналист-хомид Рагабаш из Фианна. Ментальные первичные (7): Восприятие 3, Интеллект 3, Смекалка 4. Социальные вторичные (5): Обаяние 2, Манипуляция 4, Внешность 2. Физические третичные (3): все по 2.
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-step" data-step="3" data-open="false">
+          <div class="guide-step-head">
+            <div class="guide-step-num">3</div>
+            <div class="guide-step-title">Способности (13 / 9 / 5)</div>
+            <div class="guide-step-actions">
+              <input type="checkbox" class="guide-step-check" data-step="3">
+              <span class="guide-step-toggle">▶</span>
+            </div>
+          </div>
+          <div class="guide-step-body">
+            <h4>Приоритеты</h4>
+            <table>
+              <tr><th>Категория</th><th>Доп. точки</th><th>Что это</th></tr>
+              <tr><td><strong>Таланты</strong></td><td>13 / 9 / 5</td><td>Врождённые навыки, интуиция</td></tr>
+              <tr><td><strong>Навыки</strong></td><td>13 / 9 / 5</td><td>Тренировки, практика</td></tr>
+              <tr><td><strong>Познания</strong></td><td>13 / 9 / 5</td><td>Обучение, книги</td></tr>
+            </table>
+
+            <h4>Правила</h4>
+            <ul>
+              <li>Максимум <strong>3</strong> в одной способности при распределении</li>
+              <li>Можно поднять до 4–5 за свободные очки</li>
+              <li>Способности без точек использовать нельзя</li>
+            </ul>
+
+            <div class="warn">
+              ⚠️ <strong>Люпусы ограничены:</strong> не могут брать Ремесла, Вождение, Этикет, Огнестрельное; из познаний — Компьютеры, Законы, Языки, Политику, Естественные науки.
+            </div>
+
+            <div class="example">
+              <strong>Пример:</strong> Журналист. Таланты первичные (13): Бдительность 2, Эмпатия 2, Красноречие 3, Хитрость 2, Запугивание 1, Уклонение 1, Инстинкты 1, Уличные порядки 1. Познания вторичные (9): Расследование 3, Компьютеры 1, Языки 1, Политика 2, Ритуалы 2. Навыки третичные (5): Вождение 1, Скрытность 2, Выживание 2.
+            </div>
+          </div>
+        </div>
+
+        <div class="guide-step" data-step="4" data-open="false">
+          <div class="guide-step-head">
+            <div class="guide-step-num">4</div>
+            <div class="guide-step-title">Преимущества</div>
+            <div class="guide-step-actions">
+              <input type="checkbox" class="guide-step-check" data-step="4">
+              <span class="guide-step-toggle">▶</span>
+            </div>
+          </div>
+          <div class="guide-step-body">
+            <h4>Детали биографии — 5 точек</h4>
+            <table>
+              <tr><th>Деталь</th><th>Что даёт</th></tr>
+              <tr><td><strong>Союзники</strong></td><td>Друзья, помогающие в беде</td></tr>
+              <tr><td><strong>Предки</strong></td><td>Связь с духами предков</td></tr>
+              <tr><td><strong>Контакты</strong></td><td>Информаторы из разных слоёв</td></tr>
+              <tr><td><strong>Фетиш</strong></td><td>Предмет с духом, дающий силу</td></tr>
+              <tr><td><strong>Родня</strong></td><td>Родственники-люди или волки</td></tr>
+              <tr><td><strong>Наставник</strong></td><td>Опытный Гару</td></tr>
+              <tr><td><strong>Чистота Рода</strong></td><td>Знатное происхождение; +1 кубик соц. бросков за точку</td></tr>
+              <tr><td><strong>Ресурсы</strong></td><td>Богатство, имущество</td></tr>
+              <tr><td><strong>Обряды</strong></td><td>Знание ритуалов</td></tr>
+              <tr><td><strong>Тотем</strong></td><td>Дух-покровитель стаи (покупается коллективно)</td></tr>
+            </table>
+
+            <h4>Дары — 3 стартовых</h4>
+            <p>По одному Дару 1-го уровня от <strong>породы</strong>, <strong>покровительства</strong> и <strong>племени</strong>. Дополнительные Дары — 7 очков за штуку.</p>
+
+            <div class="hint-green">
+              💡 <strong>Автоматизация:</strong> заполни Породу, Покровительство и Племя — стартовые Дары и пулы заполнятся сами! Вкладка «📖 Дары» + фильтр «🎯 Только мои».
+            </div>
+
+            <h4>Почёт</h4>
+            <table>
+              <tr><th>Покровительство</th><th>Слава</th><th>Честь</th><th>Мудрость</th></tr>
+              <tr><td>Рагабаш</td><td>—</td><td>—</td><td>3 в любой</td></tr>
+              <tr><td>Теург</td><td>—</td><td>—</td><td>3</td></tr>
+              <tr><td>Филодокс</td><td>—</td><td>3</td><td>—</td></tr>
+              <tr><td>Галлиард</td><td>2</td><td>—</td><td>1</td></tr>
+              <tr><td>Арун</td><td>2</td><td>1</td><td>—</td></tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="guide-step" data-step="5" data-open="false">
+          <div class="guide-step-head">
+            <div class="guide-step-num">5</div>
+            <div class="guide-step-title">Финальные штрихи и свободные очки</div>
+            <div class="guide-step-actions">
+              <input type="checkbox" class="guide-step-check" data-step="5">
+              <span class="guide-step-toggle">▶</span>
+            </div>
+          </div>
+          <div class="guide-step-body">
+            <h4>Свободные очки — 15 штук</h4>
+            <table>
+              <tr><th>Что купить</th><th>Стоимость</th></tr>
+              <tr><td>Атрибут</td><td><strong>5</strong> за точку</td></tr>
+              <tr><td>Способность</td><td><strong>2</strong> за точку</td></tr>
+              <tr><td>Деталь биографии</td><td><strong>1</strong> за точку</td></tr>
+              <tr><td>Дар (1-й уровень)</td><td><strong>7</strong> за Дар</td></tr>
+              <tr><td>Ярость</td><td><strong>1</strong> за точку</td></tr>
+              <tr><td>Гнозис</td><td><strong>2</strong> за точку</td></tr>
+              <tr><td>Сила воли</td><td><strong>1</strong> за точку</td></tr>
+            </table>
+
+            <h4>Как распределить?</h4>
+            <ul>
+              <li><strong>Специалист:</strong> всё в одну категорию</li>
+              <li><strong>Универсал:</strong> по чуть-чуть везде</li>
+              <li><strong>Компенсация:</strong> закрыть слабые места</li>
+              <li><strong>Сюжетно:</strong> по предыстории</li>
+            </ul>
+
+            <h4>Проверь себя</h4>
+            <ul>
+              <li>Все поля на вкладке «Основное» заполнены</li>
+              <li>Точки в атрибутах и способностях не превышают 5</li>
+              <li>Сумма израсходованных свободных очков = 15</li>
+              <li>3 стартовых Дара записаны</li>
+              <li>Пулы Ярости / Гнозиса / Воли заполнены</li>
+              <li>Здоровье — 7 уровней, все пустые</li>
+            </ul>
+
+            <div class="hint-green">
+              🎉 <strong>Персонаж готов!</strong> Не забудь:
+              <ul style="margin-top:6px;">
+                <li>Придумать имя стаи и тотем (с Рассказчиком)</li>
+                <li>Записать биографию</li>
+                <li>Пройти Прелюдию и Первое Изменение</li>
+                <li>Разыграть Обряд Перехода</li>
+              </ul>
+            </div>
+
+            <div class="note">
+              <strong>📌 Что дальше?</strong> Персонаж растёт через опыт. В конце каждой главы Рассказчик раздаёт 1–5 очков опыта.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- =================== PAGE 5: ШПАРГАЛКИ =================== -->
   <div class="page" id="page5">
     <section class="panel">
       <h2>Шпаргалки Мастера и Игрока</h2>
@@ -557,11 +1883,10 @@
               <tr><td>Величайший каэрн</td><td>2</td></tr>
             </table>
             <h4>Отражающие поверхности</h4>
-            <p>Зеркало, серебро, тихий бассейн:</p>
             <ul>
               <li>−1 к сложности</li>
               <li>При неудаче сложность <em>не растёт</em></li>
-              <li>При провале поверхность тускнеет (но не гибнешь)</li>
+              <li>При провале поверхность тускнеет</li>
             </ul>
             <div class="warn"><strong>Провал:</strong> ловушка Узорной Паутины (Вивер).</div>
             <div class="note">Нельзя тратить Ярость в тот же ход, что и делать Шаг за грань.</div>
@@ -618,8 +1943,6 @@
               <li>Агравированный: только в форме, отличной от натуральной</li>
               <li><strong>Серебро:</strong> нельзя поглощать, кроме натуральной формы (метисы — никогда)</li>
             </ul>
-            <h4>Множественные действия</h4>
-            <p>1-е −N кубиков, 2-е −(N+1), 3-е −(N+2).</p>
             <div class="note"><strong>Ярость:</strong> 1 пункт = 1 доп. атака без штрафов.</div>
           </div>
         </div>
@@ -645,7 +1968,6 @@
               <tr><td>Полнолуние</td><td>+4</td></tr>
               <tr><td>Своё покровительство</td><td>Полный</td></tr>
             </table>
-            <p><strong>Также:</strong> провал броска (+1), унижение (+1), перед боем (+1).</p>
           </div>
         </div>
 
@@ -660,13 +1982,6 @@
               <tr><td>Контроль поведения</td><td>1</td><td>Игнорировать первобытные побуждения</td></tr>
               <tr><td>Сопротивление внушению</td><td>1+</td><td>Против магии, гипноза</td></tr>
             </table>
-            <h4>Восстановление</h4>
-            <ul>
-              <li>Конец истории — полное</li>
-              <li>Личный успех — 1–3</li>
-              <li>Хорошее исполнение роли — 1–3</li>
-              <li><em>Опц.:</em> +1 после пробуждения</li>
-            </ul>
           </div>
         </div>
 
@@ -684,9 +1999,6 @@
             <h4>Восстановление</h4>
             <p><strong>Медитация:</strong> 1 час + <code>Сообр+Загадки (8)</code>, +1 за успех.</p>
             <p><strong>Священная охота:</strong> полное восстановление.</p>
-            <p><strong>Между историями:</strong> <code>Обаяние+Загадки</code>.</p>
-            <h4>Потеря</h4>
-            <p>Серебро: пули −1/5, клайв −1, великий клайв −2. Восст. за день.</p>
           </div>
         </div>
 
@@ -714,13 +2026,6 @@
               <li>Стимул пропал</li>
               <li><code>Воля</code> (слж = Ярость)</li>
               <li>1 ПСВ — потерять следующий ход</li>
-            </ul>
-            <h4>Что теряется</h4>
-            <ul>
-              <li>Сложные маневры</li>
-              <li>Стайные тактики</li>
-              <li>Дары</li>
-              <li>Все штрафы от ран игнорируются</li>
             </ul>
           </div>
         </div>
@@ -762,8 +2067,18 @@
 </datalist>
 
 <script>
-const STORAGE_KEY = 'wta_char_sheet_v6';
+/* =========================================================
+   WEREWOLF: THE APOCALYPSE — Character Sheet v7
+   (мульти-персонаж + гайд + пергамент + градации здоровья)
+   ========================================================= */
 
+const CHAR_LIST_KEY  = 'wta_characters_list';
+const ACTIVE_CHAR_KEY = 'wta_active_character';
+const CHAR_PREFIX    = 'wta_char_';
+const LEGACY_STORAGE_KEY = 'wta_char_sheet_v6';
+const GUIDE_KEY = 'wta_guide_progress';
+
+/* ============ СПРАВОЧНИКИ ============ */
 const BREEDS = {
   'Хомид': { gnosis: 1, gifts: ['Повелитель огня', 'Убеждение', 'Запах человека'] },
   'Метис': { gnosis: 3, gifts: ['Создать стихию', 'Первобытный гнев', 'Чутьё Вирма'] },
@@ -1082,67 +2397,67 @@ const GIFT_DATA = {
 const RITE_DATA = {
   harmony: { label: '🕊️ Гармония', roll: 'Обаяние + Ритуалы', diff: '7',
     rites: [
-      { n:'Обряд Очищения', l:1, d:'Очищает личность, место или объект от порчи Вирма. Хождение против часовой стрелки с тлеющей веткой (берёза/ива), затем погружение её в чистую воду.', s:'Сложность = Гнозис порчи. Рассвет: −1. 1 Гнозис за каждый доп. объект.' },
-      { n:'Обряд Раскаяния', l:1, d:'Извинение перед духом или Гару. Ползти на животе, скулить. Подарок оскорблённому.', s:'Сложность = Ярость цели. 1 успех = честное раскаяние.' },
-      { n:'Обряд Отречения', l:2, d:'Отказ от покровительства и смена на новое. Обнажённого поливают водой из серебряного сосуда.', s:'Ранг сбрасывается на 1. К старому вернуться нельзя.' }
+      { n:'Обряд Очищения', l:1, d:'Очищает личность, место или объект от порчи Вирма.', s:'Сложность = Гнозис порчи. Рассвет: −1.' },
+      { n:'Обряд Раскаяния', l:1, d:'Извинение перед духом или Гару.', s:'Сложность = Ярость цели.' },
+      { n:'Обряд Отречения', l:2, d:'Отказ от покровительства и смена на новое.', s:'Ранг сбрасывается на 1.' }
     ]},
   caern: { label: '🏛️ Каэрн', roll: 'Разный (макс. Гнозис)', diff: '7',
     rites: [
-      { n:'Вечевой Обряд', l:1, d:'Открывает вече и наполняет каэрн Гнозисом. Все в круге, Мастер Завываний ведёт вой.', s:'1 раз в месяц. 5 Гнозиса на каждый уровень каэрна.' },
-      { n:'Обряд Раскрытого Каэрна', l:1, d:'Получение силы каэрна. Прохождение испытания по типу каэрна.', s:'Сообразит+Ритуалы (7).' },
-      { n:'Обряд Открытого Моста', l:4, d:'Создаёт Лунный мост между двумя каэрнами. Требуется Путевой камень.', s:'Сообразит+Загадки (8 × уровень). Раз в 13 лун.' },
-      { n:'Барсучья Нора', l:4, d:'Дистанционное изучение области каэрна через воду/зеркало.', s:'Восприятие+Ритуалы. Слж 5–9.' },
-      { n:'Обряд Уединённой Лощины', l:4, d:'Скрывает область в Умбре.', s:'Сложность = Барьер каэрна +4. 10 Гнозиса на постоянство.' },
-      { n:'Обряд Закладки Каэрна', l:5, d:'Создаёт новый каэрн. Незаурядный Теург + ночь при растущей луне.', s:'40 успехов, 13+ участников, 100 Гнозиса. Провал: 7 урона всем.' }
+      { n:'Вечевой Обряд', l:1, d:'Открывает вече и наполняет каэрн Гнозисом.', s:'1 раз в месяц. 5 Гнозиса на уровень.' },
+      { n:'Обряд Раскрытого Каэрна', l:1, d:'Получение силы каэрна.', s:'Сообразит+Ритуалы (7).' },
+      { n:'Обряд Открытого Моста', l:4, d:'Создаёт Лунный мост между двумя каэрнами.', s:'Сообразит+Загадки (8 × уровень).' },
+      { n:'Барсучья Нора', l:4, d:'Дистанционное изучение области каэрна.', s:'Восприятие+Ритуалы. Слж 5–9.' },
+      { n:'Обряд Уединённой Лощины', l:4, d:'Скрывает область в Умбре.', s:'Барьер каэрна +4. 10 Гнозиса на постоянство.' },
+      { n:'Обряд Закладки Каэрна', l:5, d:'Создаёт новый каэрн.', s:'40 успехов, 13+ участников, 100 Гнозиса.' }
     ]},
   death: { label: '⚰️ Смерть', roll: 'Обаяние + Ритуалы', diff: '8 − Ранг',
     rites: [
-      { n:'Проводы Усопшего', l:1, d:'Обряд в честь недавно умершего. Галлиард рассказывает историю о подвигах павшего.', s:'Упрощает контакт с духом через Деталь биографии Предки.' },
-      { n:'Обряд Зимнего Волка', l:3, d:'Добровольное самоубийство старого или раненого Гару. Товарищи поют гимны.', s:'3+ Гару, ночь, серебряное оружие.' }
+      { n:'Проводы Усопшего', l:1, d:'Обряд в честь недавно умершего.', s:'Упрощает контакт с духом через Предки.' },
+      { n:'Обряд Зимнего Волка', l:3, d:'Добровольное самоубийство старого или раненого Гару.', s:'3+ Гару, ночь, серебряное оружие.' }
     ]},
   mystic: { label: '✨ Мистический', roll: 'Сообразительность + Ритуалы', diff: '7',
     rites: [
-      { n:'Крещение огнём', l:1, d:'Отмечает новорождённого Гару знаком племени. Дух-Хранитель рода целует младенца на лунном свете.', s:'Обаяние+Ритуалы. 1 успех.' },
-      { n:'Обряд Указующего Камня', l:1, d:'Находит личность или объект через раскачивание иглы на нитке.', s:'Стандартный. Частица цели: −1 к сложности.' },
-      { n:'Обряд Освящённого Талисмана', l:1, d:'«Привязывает» объекты к телу — они меняют форму вместе с Гару.', s:'1 Гнозис за предмет. Максимум = Гнозис персонажа.' },
-      { n:'Обряд Удержания', l:1, d:'Привязывает духа к Гару.', s:'Гнозис vs Гнозис. Длит. 1 неделя за успех.' },
-      { n:'Обряд Подготовки', l:2, d:'Позволяет путешествовать в Глубокую Умбру. Браслет из волос, проволоки и плюща.', s:'Если уничтожен в Глубокой Умбре — 1 агграв. уровень.' },
-      { n:'Обряд Пробуждения Духа', l:2, d:'Пробуждает спящий дух. Музыка/барабан + вой.', s:'Сложность = Ярость духа.' },
+      { n:'Крещение огнём', l:1, d:'Отмечает новорождённого Гару знаком племени.', s:'Обаяние+Ритуалы. 1 успех.' },
+      { n:'Обряд Указующего Камня', l:1, d:'Находит личность или объект.', s:'Стандартный. Частица цели: −1.' },
+      { n:'Обряд Освящённого Талисмана', l:1, d:'«Привязывает» объекты к телу.', s:'1 Гнозис за предмет.' },
+      { n:'Обряд Удержания', l:1, d:'Привязывает духа к Гару.', s:'Гнозис vs Гнозис.' },
+      { n:'Обряд Подготовки', l:2, d:'Путешествие в Глубокую Умбру.', s:'Если браслет уничтожен — 1 агграв.' },
+      { n:'Обряд Пробуждения Духа', l:2, d:'Пробуждает спящий дух.', s:'Сложность = Ярость духа.' },
       { n:'Обряд Вызова', l:2, d:'Призывает духа по имени.', s:'Бросок Гнозиса vs сложность духа (4–10).' },
-      { n:'Обряд Фетиша', l:3, d:'Создаёт фетиш — объект, содержащий духа.', s:'Сообразит+Ритуалы (10).' },
-      { n:'Обряд Тотемa', l:3, d:'Прикрепляет тотем к группе Гару, объединяя их в стаю.', s:'Стандартный. Требует Деталь биографии Тотем.' }
+      { n:'Обряд Фетиша', l:3, d:'Создаёт фетиш.', s:'Сообразит+Ритуалы (10).' },
+      { n:'Обряд Тотемa', l:3, d:'Прикрепляет тотем к группе Гару.', s:'Стандартный. Требует Деталь Тотем.' }
     ]},
   punishment: { label: '⚖️ Наказание', roll: 'Обаяние + Ритуалы', diff: '7',
     rites: [
-      { n:'Обряд Остракизма', l:2, d:'Отлучение от племени. Все отворачиваются, называя «не знаю такого брата».', s:'До следующей фазы. −1 Славы, −5 Чести, −1 Мудрости.' },
-      { n:'Камень Презрения', l:2, d:'Круг септа выцарапывает позорные символы с насмешками.', s:'−8 Чести, −2 Мудрости, пока не искупит.' },
-      { n:'Загнанный Шакал', l:2, d:'Голос становится визгливым. Пыль/пепел в нарушителя.', s:'−2 соц. броска, −2 Славы, −5 Чести.' },
-      { n:'Охота (Дикая Охота)', l:3, d:'Смертная казнь. Стая выслеживает преступника. Священные символы на телах.', s:'Обаяние+Ритуалы (Ранг +4).' },
-      { n:'Обряд Насмешки', l:3, d:'На вече высмеивают виноватого. Останется в устной традиции.', s:'Слж = Ранг +4. −1 постоянный Ранг.' },
-      { n:'Срывание Завесы', l:4, d:'Приподнимает Завесу для человека. Мешочек с фекалиями у спящего.', s:'Жертва теряет иммунитет к Первобытному Ужасу.' },
-      { n:'Мстительное Касание Гайи', l:5, d:'Казнь предателя. Гайя превращает всё, чего он коснётся, в серебро.', s:'Пять оборотней тянут предателя по земле. Никто не выжил.' }
+      { n:'Обряд Остракизма', l:2, d:'Отлучение от племени.', s:'−1 Славы, −5 Чести, −1 Мудрости.' },
+      { n:'Камень Презрения', l:2, d:'Круг септа выцарапывает позорные символы.', s:'−8 Чести, −2 Мудрости.' },
+      { n:'Загнанный Шакал', l:2, d:'Голос становится визгливым.', s:'−2 соц. броска, −2 Славы, −5 Чести.' },
+      { n:'Охота (Дикая Охота)', l:3, d:'Смертная казнь.', s:'Обаяние+Ритуалы (Ранг +4).' },
+      { n:'Обряд Насмешки', l:3, d:'На вече высмеивают виноватого.', s:'Слж = Ранг +4.' },
+      { n:'Срывание Завесы', l:4, d:'Приподнимает Завесу для человека.', s:'Жертва теряет иммунитет к Ужасу.' },
+      { n:'Мстительное Касание Гайи', l:5, d:'Казнь предателя.', s:'Никто не выжил.' }
     ]},
   renown: { label: '🏆 Известность', roll: 'Обаяние + Ритуалы', diff: '6',
     rites: [
-      { n:'Обряд Первой Крови', l:1, d:'Отмечает первую боевую рану. Втирание золы, пир или молитвы.', s:'Гару получает 2 очка Славы.' },
-      { n:'Обряд Свершений', l:2, d:'Преобразует 10 временного Почёта в 1 постоянный.', s:'Сложность 4 (6 если оспаривается).' },
-      { n:'Обряд Перехода', l:2, d:'Щенок становится полноценным Гару. Опасное задание на выживание.', s:'До обряда щенок не имеет ранга.' }
+      { n:'Обряд Первой Крови', l:1, d:'Отмечает первую боевую рану.', s:'Гару получает 2 очка Славы.' },
+      { n:'Обряд Свершений', l:2, d:'10 временного Почёта → 1 постоянный.', s:'Слж 4 (6 если оспаривается).' },
+      { n:'Обряд Перехода', l:2, d:'Щенок становится полноценным Гару.', s:'До обряда щенок не имеет ранга.' }
     ]},
   seasonal: { label: '🍂 Сезонный', roll: 'Выносливость + Ритуалы', diff: '8 − уровень каэрна',
     rites: [
-      { n:'Обряд Северных Ветров', l:2, d:'Самая длинная ночь. Гару хватают горящие ветки и бегут в лес с воем.', s:'Возвращаются к костру, пирушка до рассвета.' },
-      { n:'Обряд Пробуждения', l:2, d:'Весеннее равноденствие. Семь испытаний в Нижних мирах Умбры.', s:'Обычно заканчивается зачатием новых Гару.' },
-      { n:'Великая Охота', l:2, d:'Летнее солнцестояние. Гайя указывает цель, септ охотится до полуночи.', s:'3 очка Славы. При провале — 2 Славы в минус.' },
-      { n:'Долгое Бдение', l:2, d:'Осеннее равноденствие. Ночь рассказов о битвах, трофеи сжигаются.', s:'Прощание с летом, молитва Луне.' }
+      { n:'Обряд Северных Ветров', l:2, d:'Самая длинная ночь.', s:'Пирушка до рассвета.' },
+      { n:'Обряд Пробуждения', l:2, d:'Весеннее равноденствие.', s:'Семь испытаний в Умбре.' },
+      { n:'Великая Охота', l:2, d:'Летнее солнцестояние.', s:'3 очка Славы. При провале — 2 Славы в минус.' },
+      { n:'Долгое Бдение', l:2, d:'Осеннее равноденствие.', s:'Прощание с летом.' }
     ]},
   minor: { label: '🌿 Малые', roll: 'Без броска', diff: '—',
     rites: [
-      { n:'Костяные Палочки', l:0, d:'Ритуальные барабанные палочки для почитания тотема.', s:'3 дня по 3 раза: +1 кубик в Умбре.' },
-      { n:'Дыхание Гайи', l:0, d:'13 глубоких вдохов чистого воздуха.', s:'1 лунный цикл: −2 к сложности лечения.' },
-      { n:'Приветствие Луне', l:0, d:'Хвалебная песнь Селене по фазе луны.', s:'Полный цикл: +1 кубик соц. бросков.' },
-      { n:'Приветствие Солнцу', l:0, d:'Хвала Гелиосу на рассвете.', s:'9 дней: +1 кубик обнаружения Вирма.' },
-      { n:'Охотничья Молитва', l:0, d:'Пауза перед охотой, носитель молитвы.', s:'3 цикла луны: +1 кубик на выслеживание.' },
-      { n:'Молитва за Добычу', l:0, d:'Шаг за грань после убийства для благодарности.', s:'Полный цикл: −1 к сложности с духами природы.' }
+      { n:'Костяные Палочки', l:0, d:'Ритуальные барабанные палочки.', s:'3 дня: +1 кубик в Умбре.' },
+      { n:'Дыхание Гайи', l:0, d:'13 глубоких вдохов.', s:'1 цикл: −2 к лечению.' },
+      { n:'Приветствие Луне', l:0, d:'Хвалебная песнь Селене.', s:'Полный цикл: +1 кубик соц. бросков.' },
+      { n:'Приветствие Солнцу', l:0, d:'Хвала Гелиосу.', s:'9 дней: +1 кубик обнаружения.' },
+      { n:'Охотничья Молитва', l:0, d:'Пауза перед охотой.', s:'3 цикла: +1 на выслеживание.' },
+      { n:'Молитва за Добычу', l:0, d:'Шаг за грань после убийства.', s:'Полный цикл: −1 к общению с духами.' }
     ]}
 };
 
@@ -1186,17 +2501,179 @@ const LISTS = {
   rites:       { max:5, placeholder:'Ритуал' },
 };
 const AUTO_KEYS = ['rage','gnosis','willpower'];
+const HEALTH_STATES = ['none', 'slash', 'cross', 'star'];
 
+/* ============ МУЛЬТИ-ПЕРСОНАЖ ============ */
+function getCharList() {
+  try { return JSON.parse(localStorage.getItem(CHAR_LIST_KEY)) || []; }
+  catch (e) { return []; }
+}
+function setCharList(list) { localStorage.setItem(CHAR_LIST_KEY, JSON.stringify(list)); }
+function getActiveCharId() { return localStorage.getItem(ACTIVE_CHAR_KEY) || null; }
+function setActiveCharId(id) { localStorage.setItem(ACTIVE_CHAR_KEY, id); }
+function genCharId() { return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function loadCharData(id) {
+  try { return JSON.parse(localStorage.getItem(CHAR_PREFIX + id)) || {}; }
+  catch (e) { return {}; }
+}
+function saveCharData(id, data) { localStorage.setItem(CHAR_PREFIX + id, JSON.stringify(data)); }
+function deleteCharData(id) { localStorage.removeItem(CHAR_PREFIX + id); }
+
+function migrateOldState() {
+  const old = localStorage.getItem(LEGACY_STORAGE_KEY);
+  if (!old) return;
+  if (getCharList().length > 0) return;
+  try {
+    const data = JSON.parse(old);
+    const id = genCharId();
+    const name = (data.text && data.text.f_name) || 'Мой персонаж';
+    const now = new Date().toISOString();
+    setCharList([{ id, name, createdAt: now, updatedAt: now }]);
+    saveCharData(id, data);
+    setActiveCharId(id);
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+  } catch (e) {}
+}
+
+function updateCharMeta() {
+  const id = getActiveCharId();
+  if (!id) return;
+  const list = getCharList();
+  const idx = list.findIndex(c => c.id === id);
+  if (idx < 0) return;
+  const nameFromSheet = ((state.text && state.text.f_name) || '').trim();
+  if (nameFromSheet) list[idx].name = nameFromSheet;
+  list[idx].updatedAt = new Date().toISOString();
+  setCharList(list);
+  const sel = document.getElementById('char-select');
+  if (sel) {
+    const opt = Array.from(sel.options).find(o => o.value === id);
+    if (opt) opt.textContent = list[idx].name || 'Без имени';
+  }
+  const meta = document.getElementById('char-meta');
+  if (meta) {
+    const d = new Date(list[idx].updatedAt);
+    meta.textContent = 'Изменён: ' + d.toLocaleDateString('ru-RU') + ' ' +
+      d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+  }
+  if (nameFromSheet) document.title = nameFromSheet + ' — WtA';
+}
+
+function renderCharBar() {
+  const sel = document.getElementById('char-select');
+  if (!sel) return;
+  const list = getCharList();
+  const activeId = getActiveCharId();
+  sel.innerHTML = '';
+  list.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name || 'Без имени';
+    if (c.id === activeId) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  updateCharMeta();
+}
+
+function createNewCharacter(name) {
+  const id = genCharId();
+  const list = getCharList();
+  const now = new Date().toISOString();
+  list.push({ id, name: name || 'Новый персонаж', createdAt: now, updatedAt: now });
+  setCharList(list);
+  saveCharData(id, {});
+  setActiveCharId(id);
+  location.reload();
+}
+function switchCharacter(id) {
+  if (id === getActiveCharId()) return;
+  setActiveCharId(id);
+  location.reload();
+}
+function deleteCurrentCharacter() {
+  const id = getActiveCharId();
+  if (!id) return;
+  const list = getCharList();
+  if (list.length <= 1) {
+    alert('Нельзя удалить последнего персонажа.');
+    return;
+  }
+  const c = list.find(x => x.id === id);
+  if (!confirm('Удалить персонажа "' + (c ? c.name : '') + '"?')) return;
+  const newList = list.filter(x => x.id !== id);
+  setCharList(newList);
+  deleteCharData(id);
+  setActiveCharId(newList[0].id);
+  location.reload();
+}
+function renameCurrentCharacter() {
+  const id = getActiveCharId();
+  if (!id) return;
+  const list = getCharList();
+  const c = list.find(x => x.id === id);
+  const newName = prompt('Новое имя персонажа:', c ? c.name : '');
+  if (newName === null) return;
+  const trimmed = newName.trim();
+  if (!trimmed) return;
+  const nameInput = document.getElementById('f_name');
+  if (nameInput) {
+    nameInput.value = trimmed;
+    state.text = state.text || {};
+    state.text.f_name = trimmed;
+    save();
+  }
+}
+function duplicateCurrentCharacter() {
+  const id = getActiveCharId();
+  if (!id) return;
+  const data = loadCharData(id);
+  const list = getCharList();
+  const src = list.find(x => x.id === id);
+  const newId = genCharId();
+  const now = new Date().toISOString();
+  const clone = JSON.parse(JSON.stringify(data));
+  const baseName = (src ? src.name : 'Персонаж') + ' (копия)';
+  if (clone.text) clone.text.f_name = baseName;
+  else clone.text = { f_name: baseName };
+  saveCharData(newId, clone);
+  list.push({ id: newId, name: baseName, createdAt: now, updatedAt: now });
+  setCharList(list);
+  setActiveCharId(newId);
+  location.reload();
+}
+
+function initCharBar() {
+  document.getElementById('char-select').addEventListener('change', e => switchCharacter(e.target.value));
+  document.getElementById('btn-new-char').addEventListener('click', () => {
+    const name = prompt('Имя нового персонажа:', 'Новый персонаж');
+    if (name === null) return;
+    createNewCharacter(name.trim() || 'Новый персонаж');
+  });
+  document.getElementById('btn-rename-char').addEventListener('click', renameCurrentCharacter);
+  document.getElementById('btn-dup-char').addEventListener('click', duplicateCurrentCharacter);
+  document.getElementById('btn-del-char').addEventListener('click', deleteCurrentCharacter);
+}
+
+/* ============ STATE ============ */
 let state = {};
-function loadState() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { return {}; } }
 let saveTimer;
 function save() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const activeId = getActiveCharId();
+    if (activeId) {
+      saveCharData(activeId, state);
+      updateCharMeta();
+    }
     const ind = document.getElementById('save-indicator');
-    if (ind) { ind.classList.add('show'); clearTimeout(saveTimer); saveTimer = setTimeout(() => ind.classList.remove('show'), 1100); }
+    if (ind) {
+      ind.classList.add('show');
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => ind.classList.remove('show'), 1100);
+    }
   } catch (e) {}
 }
+
+/* ============ DOTS ============ */
 function paintDots(container, val, auto=false) {
   container.querySelectorAll('.dot').forEach((d, i) => {
     d.classList.toggle('filled', i < val);
@@ -1204,24 +2681,34 @@ function paintDots(container, val, auto=false) {
     d.classList.toggle('locked', auto);
   });
 }
-function paintSquares(container, arr) { container.querySelectorAll('.sq').forEach((s, i) => { s.classList.toggle('filled', !!arr[i]); }); }
+function paintSquares(container, arr) {
+  container.querySelectorAll('.sq').forEach((s, i) => {
+    s.classList.toggle('filled', !!arr[i]);
+  });
+}
 function initDots() {
   document.querySelectorAll('.dots[data-key]').forEach(container => {
     if (container.dataset.initialized === '1') return;
     container.dataset.initialized = '1';
     const max = parseInt(container.dataset.max, 10) || 5;
     const key = container.dataset.key;
-    for (let i = 0; i < max; i++) { const d = document.createElement('span'); d.className='dot'; d.dataset.i=i; container.appendChild(d); }
+    for (let i = 0; i < max; i++) {
+      const d = document.createElement('span');
+      d.className = 'dot'; d.dataset.i = i;
+      container.appendChild(d);
+    }
     const isAuto = AUTO_KEYS.includes(key);
     const val = (state.dots && state.dots[key]) || 0;
     paintDots(container, val, isAuto && state.auto && state.auto[key]);
     container.addEventListener('click', e => {
       if (isAuto && state.auto && state.auto[key] && !e.shiftKey) return;
-      const dot = e.target.closest('.dot'); if (!dot) return;
+      const dot = e.target.closest('.dot');
+      if (!dot) return;
       const i = parseInt(dot.dataset.i, 10);
       const cur = (state.dots && state.dots[key]) || 0;
       const nv = (cur === i + 1) ? i : i + 1;
-      state.dots = state.dots || {}; state.dots[key] = nv;
+      state.dots = state.dots || {};
+      state.dots[key] = nv;
       paintDots(container, nv);
       const sqContainer = document.querySelector(`.squares[data-key="${key}"]`);
       if (sqContainer && state.squares && state.squares[key]) {
@@ -1239,12 +2726,17 @@ function initSquares() {
     container.dataset.initialized = '1';
     const max = parseInt(container.dataset.max, 10) || 5;
     const key = container.dataset.key;
-    for (let i = 0; i < max; i++) { const s = document.createElement('span'); s.className='sq'; s.dataset.i=i; container.appendChild(s); }
+    for (let i = 0; i < max; i++) {
+      const s = document.createElement('span');
+      s.className = 'sq'; s.dataset.i = i;
+      container.appendChild(s);
+    }
     state.squares = state.squares || {};
     state.squares[key] = state.squares[key] || new Array(max).fill(false);
     paintSquares(container, state.squares[key]);
     container.addEventListener('click', e => {
-      const sq = e.target.closest('.sq'); if (!sq) return;
+      const sq = e.target.closest('.sq');
+      if (!sq) return;
       const i = parseInt(sq.dataset.i, 10);
       const perm = (state.dots && state.dots[key]) || 0;
       if (i >= perm) return;
@@ -1252,15 +2744,20 @@ function initSquares() {
       const isLastFilled = arr[i] && (i === perm - 1 || !arr[i + 1]);
       if (isLastFilled) arr[i] = false;
       else for (let j = 0; j < arr.length; j++) arr[j] = j <= i;
-      paintSquares(container, arr); save();
+      paintSquares(container, arr);
+      save();
     });
   });
 }
+
+/* ============ AUTO-FILL ============ */
 function normalizeKey(input, dict) {
   if (!input) return null;
   const trimmed = input.trim().toLowerCase();
   for (const key of Object.keys(dict)) if (key.toLowerCase() === trimmed) return key;
-  for (const key of Object.keys(dict)) { if (key.toLowerCase().startsWith(trimmed) || trimmed.startsWith(key.toLowerCase())) return key; }
+  for (const key of Object.keys(dict)) {
+    if (key.toLowerCase().startsWith(trimmed) || trimmed.startsWith(key.toLowerCase())) return key;
+  }
   return null;
 }
 function applyAutoFill() {
@@ -1269,9 +2766,12 @@ function applyAutoFill() {
   const auspiceKey = normalizeKey(document.getElementById('f_auspice').value, AUSPICES);
   const tribeKey = normalizeKey(document.getElementById('f_tribe').value, TRIBES);
   state.dots = state.dots || {};
-  if (breedKey) { state.dots.gnosis = BREEDS[breedKey].gnosis; state.auto.gnosis = true; } else delete state.auto.gnosis;
-  if (auspiceKey) { state.dots.rage = AUSPICES[auspiceKey].rage; state.auto.rage = true; } else delete state.auto.rage;
-  if (tribeKey) { state.dots.willpower = TRIBES[tribeKey].willpower; state.auto.willpower = true; } else delete state.auto.willpower;
+  if (breedKey) { state.dots.gnosis = BREEDS[breedKey].gnosis; state.auto.gnosis = true; }
+  else delete state.auto.gnosis;
+  if (auspiceKey) { state.dots.rage = AUSPICES[auspiceKey].rage; state.auto.rage = true; }
+  else delete state.auto.rage;
+  if (tribeKey) { state.dots.willpower = TRIBES[tribeKey].willpower; state.auto.willpower = true; }
+  else delete state.auto.willpower;
   if (auspiceKey) {
     const r = AUSPICES[auspiceKey].renown;
     if (r.glory || r.honor || r.wisdom) {
@@ -1292,78 +2792,146 @@ function applyAutoFill() {
   save();
 }
 function renderGiftBanner(breedKey, auspiceKey, tribeKey) {
-  const banner = document.getElementById('autofill-banner'); if (!banner) return;
-  if (!breedKey && !auspiceKey && !tribeKey) { banner.classList.remove('show'); banner.innerHTML = ''; return; }
+  const banner = document.getElementById('autofill-banner');
+  if (!banner) return;
+  if (!breedKey && !auspiceKey && !tribeKey) {
+    banner.classList.remove('show'); banner.innerHTML = ''; return;
+  }
   let html = '<strong>✨ Авто-заполнение сработало</strong><br>';
   const gifts = [];
-  if (breedKey) { html += `Порода: <b>${breedKey}</b> → Гнозис ${BREEDS[breedKey].gnosis}<br>`; BREEDS[breedKey].gifts.forEach(g => gifts.push({ g, src:'Порода' })); }
+  if (breedKey) {
+    html += `Порода: <b>${breedKey}</b> → Гнозис ${BREEDS[breedKey].gnosis}<br>`;
+    BREEDS[breedKey].gifts.forEach(g => gifts.push({ g, src:'Порода' }));
+  }
   if (auspiceKey) {
     const a = AUSPICES[auspiceKey];
     html += `Покровительство: <b>${auspiceKey}</b> → Ярость ${a.rage}`;
     if (a.renown.any) html += `, Почёт: ${a.renown.any} в любой комбинации`;
-    else { const parts = []; if (a.renown.glory) parts.push(`Слава ${a.renown.glory}`); if (a.renown.honor) parts.push(`Честь ${a.renown.honor}`); if (a.renown.wisdom) parts.push(`Мудрость ${a.renown.wisdom}`); if (parts.length) html += `, Почёт: ${parts.join(', ')}`; }
-    html += '<br>'; a.gifts.forEach(g => gifts.push({ g, src:'Покровительство' }));
+    else {
+      const parts = [];
+      if (a.renown.glory) parts.push(`Слава ${a.renown.glory}`);
+      if (a.renown.honor) parts.push(`Честь ${a.renown.honor}`);
+      if (a.renown.wisdom) parts.push(`Мудрость ${a.renown.wisdom}`);
+      if (parts.length) html += `, Почёт: ${parts.join(', ')}`;
+    }
+    html += '<br>';
+    a.gifts.forEach(g => gifts.push({ g, src:'Покровительство' }));
   }
-  if (tribeKey) { html += `Племя: <b>${tribeKey}</b> → Сила Воли ${TRIBES[tribeKey].willpower}<br>`; TRIBES[tribeKey].gifts.forEach(g => gifts.push({ g, src:'Племя' })); }
-  html += '<div class="gift-list"><b>Стартовые Дары:</b><ul style="margin:2px 0 0 0;padding-left:14px;">';
+  if (tribeKey) {
+    html += `Племя: <b>${tribeKey}</b> → Сила Воли ${TRIBES[tribeKey].willpower}<br>`;
+    TRIBES[tribeKey].gifts.forEach(g => gifts.push({ g, src:'Племя' }));
+  }
+  html += '<div class="gift-list"><b>Стартовые Дары (3 шт.):</b><ul style="margin:2px 0 0 0;padding-left:14px;">';
   gifts.forEach(item => { html += `<li>${item.g} <span style="opacity:0.6">(${item.src})</span></li>`; });
   html += '</ul></div><button class="reset-auto" id="reset-auto-btn">Отключить авто-заполнение</button>';
-  banner.innerHTML = html; banner.classList.add('show');
+  banner.innerHTML = html;
+  banner.classList.add('show');
   const resetBtn = document.getElementById('reset-auto-btn');
   if (resetBtn) resetBtn.addEventListener('click', () => {
     state.auto = {};
-    document.querySelectorAll('.dots[data-key]').forEach(c => { paintDots(c, state.dots[c.dataset.key] || 0, false); });
+    document.querySelectorAll('.dots[data-key]').forEach(c => {
+      paintDots(c, state.dots[c.dataset.key] || 0, false);
+    });
     document.getElementById('hint-rage').textContent = '';
     document.getElementById('hint-gnosis').textContent = '';
     document.getElementById('hint-willpower').textContent = '';
-    banner.classList.remove('show'); banner.innerHTML = ''; save();
+    banner.classList.remove('show'); banner.innerHTML = '';
+    save();
   });
 }
 function initAutoFill() {
   ['f_breed','f_auspice','f_tribe'].forEach(id => {
-    const el = document.getElementById(id); if (!el) return;
+    const el = document.getElementById(id);
+    if (!el) return;
     el.addEventListener('change', () => { applyAutoFill(); renderGiftList(); });
     el.addEventListener('blur', () => { applyAutoFill(); renderGiftList(); });
   });
   applyAutoFill();
 }
+
+/* ============ STATS / HEALTH / FORMS ============ */
 function buildStats(root, groups) {
   root.innerHTML = '';
   for (const groupName of Object.keys(groups)) {
-    const col = document.createElement('div'); col.className = 'col';
-    if (groupName) { const h = document.createElement('h3'); h.textContent = groupName; col.appendChild(h); }
+    const col = document.createElement('div');
+    col.className = 'col';
+    if (groupName) {
+      const h = document.createElement('h3');
+      h.textContent = groupName;
+      col.appendChild(h);
+    }
     for (const [key, name] of groups[groupName]) {
-      const row = document.createElement('div'); row.className = 'stat';
-      const lbl = document.createElement('span'); lbl.className = 'stat-name'; lbl.textContent = name;
-      const dots = document.createElement('div'); dots.className = 'dots'; dots.dataset.key = key; dots.dataset.max = 5;
-      row.appendChild(lbl); row.appendChild(dots); col.appendChild(row);
+      const row = document.createElement('div');
+      row.className = 'stat';
+      const lbl = document.createElement('span');
+      lbl.className = 'stat-name'; lbl.textContent = name;
+      const dots = document.createElement('div');
+      dots.className = 'dots'; dots.dataset.key = key; dots.dataset.max = 5;
+      row.appendChild(lbl); row.appendChild(dots);
+      col.appendChild(row);
     }
     root.appendChild(col);
   }
 }
+
 function buildHealth() {
-  const root = document.getElementById('health'); root.innerHTML = '';
-  if (!state.health || state.health.length !== HEALTH_LEVELS.length) state.health = new Array(HEALTH_LEVELS.length).fill(false);
+  const root = document.getElementById('health');
+  root.innerHTML = '';
+
+  if (!state.health || state.health.length !== HEALTH_LEVELS.length) {
+    state.health = new Array(HEALTH_LEVELS.length).fill('none');
+  }
+  state.health = state.health.map(v => {
+    if (v === true) return 'cross';
+    if (v === false || v == null) return 'none';
+    if (typeof v === 'string' && HEALTH_STATES.includes(v)) return v;
+    return 'none';
+  });
+
   HEALTH_LEVELS.forEach(([name, pen], i) => {
-    const row = document.createElement('div'); row.className = 'health-row';
-    const box = document.createElement('span'); box.className = 'health-box';
-    if (state.health[i]) box.classList.add('filled');
-    const nm = document.createElement('span'); nm.className = 'health-name'; nm.textContent = name;
-    const pn = document.createElement('span'); pn.className = 'health-pen'; pn.textContent = pen;
+    const row = document.createElement('div');
+    row.className = 'health-row';
+
+    const box = document.createElement('span');
+    box.className = 'health-box';
+    box.dataset.state = state.health[i];
+    box.title = 'ЛКМ — сменить тип урона • ПКМ — очистить всё';
+
+    const nm = document.createElement('span');
+    nm.className = 'health-name';
+    nm.textContent = name;
+
+    const pn = document.createElement('span');
+    pn.className = 'health-pen';
+    pn.textContent = pen;
+
     row.appendChild(box); row.appendChild(nm); row.appendChild(pn);
+
     row.addEventListener('click', () => {
-      const h = state.health;
-      const isLast = h[i] && (i === h.length - 1 || !h[i + 1]);
-      if (isLast) h[i] = false;
-      else for (let j = 0; j < h.length; j++) h[j] = j <= i;
-      buildHealth(); save();
+      const cur = state.health[i] || 'none';
+      const idx = HEALTH_STATES.indexOf(cur);
+      const next = HEALTH_STATES[(idx + 1) % HEALTH_STATES.length];
+      state.health[i] = next;
+      buildHealth();
+      save();
     });
+
+    row.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      state.health = new Array(HEALTH_LEVELS.length).fill('none');
+      buildHealth();
+      save();
+      if (typeof flashToast === 'function') flashToast('Здоровье очищено', 'info', 1200);
+    });
+
     root.appendChild(row);
   });
 }
+
 function recomputeForms() {
   document.querySelectorAll('.form-card').forEach(card => {
-    const form = FORMS.find(f => f.id === card.dataset.form); if (!form) return;
+    const form = FORMS.find(f => f.id === card.dataset.form);
+    if (!form) return;
     card.querySelectorAll('.form-mod').forEach(el => {
       const attrKey = el.dataset.attr;
       const base = (state.dots && state.dots[attrKey]) || 0;
@@ -1376,74 +2944,120 @@ function recomputeForms() {
   });
 }
 function buildForms() {
-  const root = document.getElementById('forms'); root.innerHTML = '';
+  const root = document.getElementById('forms');
+  root.innerHTML = '';
   FORMS.forEach(form => {
-    const card = document.createElement('div'); card.className = 'form-card'; card.dataset.form = form.id;
-    const h = document.createElement('h4'); h.textContent = form.name; card.appendChild(h);
+    const card = document.createElement('div');
+    card.className = 'form-card'; card.dataset.form = form.id;
+    const h = document.createElement('h4'); h.textContent = form.name;
+    card.appendChild(h);
     [['attr_strength','Сила'],['attr_dexterity','Ловкость'],['attr_stamina','Вынос.'],['attr_appearance','Внешн.'],['attr_manipulation','Манипул.']].forEach(([key, label]) => {
       const mod = form.mods[key] || 0;
-      const row = document.createElement('div'); row.className = 'form-mod'; row.dataset.attr = key; row.dataset.label = label;
+      const row = document.createElement('div');
+      row.className = 'form-mod'; row.dataset.attr = key; row.dataset.label = label;
       row.innerHTML = `<span class="mod-label">${label} (${mod > 0 ? '+'+mod : mod})</span><span class="mod-value">0</span>`;
       card.appendChild(row);
     });
-    if (form.id === 'homid') card.querySelectorAll('.form-mod').forEach(el => { el.querySelector('.mod-label').textContent = 'Без изменений'; el.querySelector('.mod-value').textContent = '—'; });
-    const d = document.createElement('div'); d.className = 'form-diff'; d.innerHTML = `Сложность: <b>${form.diff}</b>`; card.appendChild(d);
-    if (form.note) { const n = document.createElement('div'); n.style.cssText = 'font-size:10px;color:var(--muted);text-align:center;margin-top:5px;font-style:italic;'; n.textContent = form.note; card.appendChild(n); }
+    if (form.id === 'homid') card.querySelectorAll('.form-mod').forEach(el => {
+      el.querySelector('.mod-label').textContent = 'Без изменений';
+      el.querySelector('.mod-value').textContent = '—';
+    });
+    const d = document.createElement('div');
+    d.className = 'form-diff';
+    d.innerHTML = `Сложность: <b>${form.diff}</b>`;
+    card.appendChild(d);
+    if (form.note) {
+      const n = document.createElement('div');
+      n.style.cssText = 'font-size:10px;color:var(--ink-faint);text-align:center;margin-top:5px;font-style:italic;';
+      n.textContent = form.note;
+      card.appendChild(n);
+    }
     root.appendChild(card);
   });
   recomputeForms();
 }
+
+/* ============ LISTS / FETISHES / COMBAT / MERITS ============ */
 function renderList(key) {
   const conf = LISTS[key];
-  const container = document.getElementById('list_' + key); if (!container) return;
+  const container = document.getElementById('list_' + key);
+  if (!container) return;
   container.innerHTML = '';
   state.lists = state.lists || {};
   state.lists[key] = state.lists[key] || [];
   state.lists[key].forEach((item, idx) => {
-    const row = document.createElement('div'); row.className = 'list-row';
-    const input = document.createElement('input'); input.type = 'text'; input.value = item.name || ''; input.placeholder = conf.placeholder;
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    const input = document.createElement('input');
+    input.type = 'text'; input.value = item.name || '';
+    input.placeholder = conf.placeholder;
     input.addEventListener('input', () => { state.lists[key][idx].name = input.value; save(); });
-    const dots = document.createElement('div'); dots.className = 'dots';
+    const dots = document.createElement('div');
+    dots.className = 'dots';
     for (let i = 0; i < conf.max; i++) {
-      const d = document.createElement('span'); d.className = 'dot';
+      const d = document.createElement('span');
+      d.className = 'dot';
       if (i < (item.value || 0)) d.classList.add('filled');
-      d.addEventListener('click', () => { const cur = state.lists[key][idx].value || 0; state.lists[key][idx].value = (cur === i + 1) ? i : i + 1; renderList(key); save(); });
+      d.addEventListener('click', () => {
+        const cur = state.lists[key][idx].value || 0;
+        state.lists[key][idx].value = (cur === i + 1) ? i : i + 1;
+        renderList(key); save();
+      });
       dots.appendChild(d);
     }
-    const rm = document.createElement('button'); rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
-    rm.addEventListener('click', () => { state.lists[key].splice(idx, 1); renderList(key); save(); });
+    const rm = document.createElement('button');
+    rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
+    rm.addEventListener('click', () => {
+      state.lists[key].splice(idx, 1);
+      renderList(key); save();
+    });
     row.appendChild(input); row.appendChild(dots); row.appendChild(rm);
     container.appendChild(row);
   });
 }
 function addListItem(key) {
-  state.lists = state.lists || {}; state.lists[key] = state.lists[key] || [];
-  state.lists[key].push({ name:'', value:0 }); renderList(key); save();
+  state.lists = state.lists || {};
+  state.lists[key] = state.lists[key] || [];
+  state.lists[key].push({ name:'', value:0 });
+  renderList(key); save();
 }
 function renderFetishes() {
-  const root = document.getElementById('fetishes'); root.innerHTML = '';
+  const root = document.getElementById('fetishes');
+  root.innerHTML = '';
   state.fetishes = state.fetishes || [];
   state.fetishes.forEach((f, idx) => {
-    const row = document.createElement('div'); row.className = 'fetish-row';
-    row.innerHTML = `<input type="text" placeholder="Название" value="${(f.name||'').replace(/"/g,'&quot;')}"><label><input type="checkbox" ${f.bound?'checked':''}> Прив.</label><input type="number" placeholder="Ур." min="1" max="5" value="${f.level||''}"><input type="number" placeholder="Гн." min="1" max="10" value="${f.gnosis||''}">`;
+    const row = document.createElement('div');
+    row.className = 'fetish-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Название" value="${(f.name||'').replace(/"/g,'&quot;')}">
+      <label><input type="checkbox" ${f.bound?'checked':''}> Прив.</label>
+      <input type="number" placeholder="Ур." min="1" max="5" value="${f.level||''}">
+      <input type="number" placeholder="Гн." min="1" max="10" value="${f.gnosis||''}">
+    `;
     row.querySelectorAll('input')[0].addEventListener('input', e => { state.fetishes[idx].name = e.target.value; save(); });
     row.querySelectorAll('input')[1].addEventListener('change', e => { state.fetishes[idx].bound = e.target.checked; save(); });
     row.querySelectorAll('input')[2].addEventListener('input', e => { state.fetishes[idx].level = e.target.value; save(); });
     row.querySelectorAll('input')[3].addEventListener('input', e => { state.fetishes[idx].gnosis = e.target.value; save(); });
-    const rm = document.createElement('button'); rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
-    rm.addEventListener('click', () => { state.fetishes.splice(idx, 1); renderFetishes(); save(); });
+    const rm = document.createElement('button');
+    rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
+    rm.addEventListener('click', () => {
+      state.fetishes.splice(idx, 1);
+      renderFetishes(); save();
+    });
     row.appendChild(rm); root.appendChild(row);
   });
 }
 function renderCombat() {
-  const tbody = document.getElementById('combat-rows'); tbody.innerHTML = '';
+  const tbody = document.getElementById('combat-rows');
+  tbody.innerHTML = '';
   state.combat = state.combat || [];
   while (state.combat.length < 8) state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' });
   state.combat.forEach((rowData, idx) => {
     const tr = document.createElement('tr');
     ['w','a','b','c','d','e','f','g'].forEach(k => {
       const td = document.createElement('td');
-      const inp = document.createElement('input'); inp.type = 'text'; inp.value = rowData[k] || '';
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.value = rowData[k] || '';
       inp.addEventListener('input', () => { state.combat[idx][k] = inp.value; save(); });
       td.appendChild(inp); tr.appendChild(td);
     });
@@ -1451,29 +3065,39 @@ function renderCombat() {
   });
 }
 function renderMeritsFlaws(kind, tbodyId) {
-  const tbody = document.getElementById(tbodyId); tbody.innerHTML = '';
+  const tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
   state[kind] = state[kind] || [];
   while (state[kind].length < 8) state[kind].push({ n:'',t:'',c:'' });
   state[kind].forEach((rowData, idx) => {
     const tr = document.createElement('tr');
     ['n','t','c'].forEach(k => {
       const td = document.createElement('td');
-      const inp = document.createElement('input'); inp.type = 'text'; inp.value = rowData[k] || '';
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.value = rowData[k] || '';
       inp.addEventListener('input', () => { state[kind][idx][k] = inp.value; save(); });
       td.appendChild(inp); tr.appendChild(td);
     });
     tbody.appendChild(tr);
   });
 }
+
+/* ============ TEXT FIELDS / TABS / BUTTONS ============ */
 function initTextFields() {
   document.querySelectorAll('input, textarea, select').forEach(el => {
     if (el.closest('.list') || el.closest('.fetish-row')) return;
     if (el.closest('table.combat')) return;
     if (el.closest('.gift-filters') || el.closest('.gift-only-mine') || el.closest('.rite-filters')) return;
+    if (el.closest('.char-bar')) return;
     if (el.type === 'file' || el.type === 'checkbox') return;
-    const key = el.id; if (!key) return;
+    const key = el.id;
+    if (!key) return;
     if (state.text && state.text[key] !== undefined) el.value = state.text[key];
-    el.addEventListener('input', () => { state.text = state.text || {}; state.text[key] = el.value; save(); });
+    el.addEventListener('input', () => {
+      state.text = state.text || {};
+      state.text[key] = el.value;
+      save();
+    });
   });
 }
 function initTabs() {
@@ -1489,17 +3113,95 @@ function initTabs() {
 }
 function initCheatSheets() {
   document.querySelectorAll('.cheat-section').forEach(sec => {
-    const header = sec.querySelector('.cheat-header'); if (!header) return;
-    header.addEventListener('click', () => { sec.dataset.open = (sec.dataset.open === 'true') ? 'false' : 'true'; });
+    const header = sec.querySelector('.cheat-header');
+    if (!header) return;
+    header.addEventListener('click', () => {
+      sec.dataset.open = (sec.dataset.open === 'true') ? 'false' : 'true';
+    });
   });
   document.querySelectorAll('.cheat-nav button').forEach(btn => {
     btn.addEventListener('click', () => {
-      const sec = document.getElementById(btn.dataset.jump); if (!sec) return;
+      const sec = document.getElementById(btn.dataset.jump);
+      if (!sec) return;
       sec.dataset.open = 'true';
       setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     });
   });
 }
+
+/* ============ ГАЙД ============ */
+function loadGuideProgress() {
+  try { return JSON.parse(localStorage.getItem(GUIDE_KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function saveGuideProgress(p) { localStorage.setItem(GUIDE_KEY, JSON.stringify(p)); }
+
+function updateGuideProgress() {
+  const progress = loadGuideProgress();
+  let done = 0;
+  document.querySelectorAll('.guide-step').forEach(step => {
+    const n = step.dataset.step;
+    const check = step.querySelector('.guide-step-check');
+    if (progress[n]) {
+      step.classList.add('done');
+      if (check) check.checked = true;
+      done++;
+    } else {
+      step.classList.remove('done');
+      if (check) check.checked = false;
+    }
+  });
+  const total = document.querySelectorAll('.guide-step').length || 5;
+  const text = document.getElementById('guide-progress-text');
+  const fill = document.getElementById('guide-progress-fill');
+  if (text) text.textContent = `${done} / ${total}`;
+  if (fill) fill.style.width = (done / total * 100) + '%';
+}
+
+function initCreationGuide() {
+  document.querySelectorAll('.guide-step').forEach(step => {
+    const head = step.querySelector('.guide-step-head');
+    const check = step.querySelector('.guide-step-check');
+    const toggle = step.querySelector('.guide-step-toggle');
+
+    head.addEventListener('click', e => {
+      if (e.target === check) return;
+      step.dataset.open = (step.dataset.open === 'true') ? 'false' : 'true';
+    });
+
+    if (check) {
+      check.addEventListener('change', e => {
+        e.stopPropagation();
+        const progress = loadGuideProgress();
+        const n = step.dataset.step;
+        if (check.checked) progress[n] = true;
+        else delete progress[n];
+        saveGuideProgress(progress);
+        updateGuideProgress();
+      });
+    }
+
+    if (toggle) {
+      toggle.addEventListener('click', e => {
+        e.stopPropagation();
+        step.dataset.open = (step.dataset.open === 'true') ? 'false' : 'true';
+      });
+    }
+  });
+
+  const resetBtn = document.getElementById('btn-reset-guide');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (!confirm('Сбросить прогресс прохождения гайда?')) return;
+      localStorage.removeItem(GUIDE_KEY);
+      document.querySelectorAll('.guide-step').forEach(step => { step.dataset.open = 'false'; });
+      updateGuideProgress();
+    });
+  }
+
+  updateGuideProgress();
+}
+
 function initButtons() {
   document.getElementById('btn-export').addEventListener('click', () => {
     const data = JSON.stringify(state, null, 2);
@@ -1514,13 +3216,21 @@ function initButtons() {
   });
   document.getElementById('btn-import').addEventListener('click', () => document.getElementById('file-input').click());
   document.getElementById('file-input').addEventListener('change', e => {
-    const file = e.target.files && e.target.files[0]; if (!file) return;
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
       try {
         const parsed = JSON.parse(reader.result);
         if (typeof parsed !== 'object' || parsed === null) throw 0;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        const id = genCharId();
+        const list = getCharList();
+        const now = new Date().toISOString();
+        const name = (parsed.text && parsed.text.f_name) || 'Импортированный персонаж';
+        list.push({ id, name, createdAt: now, updatedAt: now });
+        setCharList(list);
+        saveCharData(id, parsed);
+        setActiveCharId(id);
         location.reload();
       } catch (err) { alert('Некорректный файл экспорта.'); }
     };
@@ -1532,18 +3242,35 @@ function initButtons() {
     setTimeout(() => window.print(), 350);
   });
   document.getElementById('btn-reset').addEventListener('click', () => {
-    if (confirm('Сбросить весь лист персонажа?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+    if (confirm('Очистить текущий лист? Персонаж останется в списке, но все данные будут удалены.')) {
+      const id = getActiveCharId();
+      if (id) saveCharData(id, {});
+      location.reload();
+    }
   });
   document.querySelectorAll('.add-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.add;
-      if (key === 'fetishes') { state.fetishes = state.fetishes || []; state.fetishes.push({ name:'', bound:false, level:'', gnosis:'' }); renderFetishes(); save(); }
-      else if (key === 'combat') { state.combat = state.combat || []; state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' }); renderCombat(); save(); }
-      else if (key === 'merits' || key === 'flaws') { state[key] = state[key] || []; state[key].push({ n:'',t:'',c:'' }); renderMeritsFlaws(key, key + '-rows'); save(); }
-      else addListItem(key);
+      if (key === 'fetishes') {
+        state.fetishes = state.fetishes || [];
+        state.fetishes.push({ name:'', bound:false, level:'', gnosis:'' });
+        renderFetishes(); save();
+      } else if (key === 'combat') {
+        state.combat = state.combat || [];
+        state.combat.push({ w:'',a:'',b:'',c:'',d:'',e:'',f:'',g:'' });
+        renderCombat(); save();
+      } else if (key === 'merits' || key === 'flaws') {
+        state[key] = state[key] || [];
+        state[key].push({ n:'',t:'',c:'' });
+        renderMeritsFlaws(key, key + '-rows'); save();
+      } else {
+        addListItem(key);
+      }
     });
   });
 }
+
+/* ============ ДАРЫ ============ */
 function flattenGifts() {
   const out = [];
   Object.keys(GIFT_DATA.breeds).forEach(s => GIFT_DATA.breeds[s].forEach(g => out.push({ ...g, source:s, sourceType:'breeds', sourceLabel:'Порода' })));
@@ -1552,6 +3279,7 @@ function flattenGifts() {
   return out;
 }
 const ALL_GIFTS = flattenGifts();
+
 function getMySources() {
   return {
     breedKey: normalizeKey(document.getElementById('f_breed').value, BREEDS),
@@ -1559,7 +3287,10 @@ function getMySources() {
     tribeKey: normalizeKey(document.getElementById('f_tribe').value, TRIBES)
   };
 }
-function hasAnyMySource() { const s = getMySources(); return !!(s.breedKey || s.auspiceKey || s.tribeKey); }
+function hasAnyMySource() {
+  const s = getMySources();
+  return !!(s.breedKey || s.auspiceKey || s.tribeKey);
+}
 function isGiftMine(g, s) {
   if (g.sourceType === 'breeds' && s.breedKey && g.source === s.breedKey) return true;
   if (g.sourceType === 'auspices' && s.auspiceKey && g.source === s.auspiceKey) return true;
@@ -1585,7 +3316,8 @@ function getSourceOptions() {
   }
   select.innerHTML = '';
   options.forEach(o => {
-    const opt = document.createElement('option'); opt.value = o.value; opt.textContent = o.label;
+    const opt = document.createElement('option');
+    opt.value = o.value; opt.textContent = o.label;
     if (o.value.startsWith('__')) opt.disabled = true;
     select.appendChild(opt);
   });
@@ -1593,7 +3325,8 @@ function getSourceOptions() {
   else select.value = 'all';
 }
 function updateOnlyMineHint() {
-  const hint = document.getElementById('gift-only-mine-hint'); if (!hint) return;
+  const hint = document.getElementById('gift-only-mine-hint');
+  if (!hint) return;
   const s = getMySources();
   const parts = [];
   if (s.breedKey) parts.push(s.breedKey);
@@ -1636,8 +3369,9 @@ function renderGiftList() {
   stats.textContent = (onlyMine && hasAnyMySource()) ? `🎯 Найдено «моих» Даров: ${items.length}` : `Найдено: ${items.length} из ${ALL_GIFTS.length} Даров`;
   if (items.length === 0) { list.innerHTML = '<div class="gift-empty">Ничего не найдено. Попробуй изменить фильтры.</div>'; return; }
   items.slice(0, 300).forEach(g => {
-    const card = document.createElement('div'); card.className = 'gift-card';
-    const typeColor = g.sourceType === 'breeds' ? '#8b6b3a' : g.sourceType === 'auspices' ? '#c9a227' : '#6b8f4e';
+    const card = document.createElement('div');
+    card.className = 'gift-card';
+    const typeColor = g.sourceType === 'breeds' ? '#8b6b3a' : g.sourceType === 'auspices' ? '#8a6b14' : '#4a6b1f';
     card.style.borderLeftColor = typeColor;
     if (isGiftMine(g, mySources)) card.classList.add('mine');
     const canAdd = hasFreeSlot();
@@ -1664,7 +3398,9 @@ function addGiftToSheet(name, level) {
   state.lists = state.lists || {};
   state.lists.gifts1 = state.lists.gifts1 || [];
   state.lists.gifts2 = state.lists.gifts2 || [];
-  if ([...state.lists.gifts1, ...state.lists.gifts2].some(g => g.name === name)) { flashToast(`«${name}» уже в листе`); return; }
+  if ([...state.lists.gifts1, ...state.lists.gifts2].some(g => g.name === name)) {
+    flashToast(`«${name}» уже в листе`); return;
+  }
   let target = null;
   if (state.lists.gifts1.length < 5) target = 'gifts1';
   else if (state.lists.gifts2.length < 5) target = 'gifts2';
@@ -1683,6 +3419,8 @@ function initGiftReference() {
   document.getElementById('gift-only-mine').addEventListener('change', () => { updateOnlyMineHint(); renderGiftList(); });
   updateOnlyMineHint();
 }
+
+/* ============ ОБРЯДЫ ============ */
 function flattenRites() {
   const out = [];
   Object.keys(RITE_DATA).forEach(key => {
@@ -1692,11 +3430,13 @@ function flattenRites() {
   return out;
 }
 const ALL_RITES = flattenRites();
+
 function initRiteTypeFilter() {
   const sel = document.getElementById('rite-type-filter');
   sel.innerHTML = '<option value="all">Все типы</option>';
   Object.keys(RITE_DATA).forEach(k => {
-    const opt = document.createElement('option'); opt.value = k; opt.textContent = RITE_DATA[k].label;
+    const opt = document.createElement('option');
+    opt.value = k; opt.textContent = RITE_DATA[k].label;
     sel.appendChild(opt);
   });
 }
@@ -1720,9 +3460,10 @@ function renderRiteList() {
   stats.textContent = `Найдено: ${items.length} из ${ALL_RITES.length} обрядов`;
   if (items.length === 0) { list.innerHTML = '<div class="gift-empty">Ничего не найдено. Попробуй изменить фильтры.</div>'; return; }
   items.forEach(r => {
-    const card = document.createElement('div'); card.className = 'rite-card';
+    const card = document.createElement('div');
+    card.className = 'rite-card';
     const canAdd = hasFreeRiteSlot();
-    const exists = (state.lists.rites || []).some(x => x.name === r.n);
+    const exists = (state.lists && state.lists.rites || []).some(x => x.name === r.n);
     card.innerHTML = `
       <div class="rite-head"><span class="rite-name">${escapeHtml(r.n)}</span><span class="rite-level">${r.l === 0 ? 'Малый' : 'Ур. ' + r.l}</span></div>
       <div class="rite-type">${r.typeLabel}</div>
@@ -1737,13 +3478,19 @@ function renderRiteList() {
   });
 }
 function hasFreeRiteSlot() {
-  state.lists = state.lists || {}; state.lists.rites = state.lists.rites || [];
+  state.lists = state.lists || {};
+  state.lists.rites = state.lists.rites || [];
   return state.lists.rites.length < 5;
 }
 function addRiteToSheet(name, level) {
-  state.lists = state.lists || {}; state.lists.rites = state.lists.rites || [];
-  if (state.lists.rites.some(r => r.name === name)) { flashToast(`«${name}» уже в листе ритуалов`); return; }
-  if (state.lists.rites.length >= 5) { flashToast('Список ритуалов заполнен'); return; }
+  state.lists = state.lists || {};
+  state.lists.rites = state.lists.rites || [];
+  if (state.lists.rites.some(r => r.name === name)) {
+    flashToast(`«${name}» уже в листе ритуалов`); return;
+  }
+  if (state.lists.rites.length >= 5) {
+    flashToast('Список ритуалов заполнен'); return;
+  }
   state.lists.rites.push({ name, value: level });
   renderList('rites'); save();
   flashToast(`✓ «${name}» добавлен в ритуалы`, 'purple');
@@ -1755,8 +3502,11 @@ function initRiteReference() {
   document.getElementById('rite-level-filter').addEventListener('change', renderRiteList);
   document.getElementById('rite-search').addEventListener('input', renderRiteList);
 }
+
+/* ============ UTILS ============ */
 function flashToast(text, type='', duration=1800) {
-  const t = document.getElementById('toast'); if (!t) return;
+  const t = document.getElementById('toast');
+  if (!t) return;
   t.textContent = text;
   t.className = 'toast' + (type === 'info' ? ' info' : type === 'purple' ? ' purple' : '');
   requestAnimationFrame(() => t.classList.add('show'));
@@ -1766,16 +3516,41 @@ function flashToast(text, type='', duration=1800) {
 function escapeHtml(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
+
+/* ============ INIT ============ */
 function init() {
-  state = loadState();
+  migrateOldState();
+
+  let list = getCharList();
+  if (list.length === 0) {
+    const id = genCharId();
+    const now = new Date().toISOString();
+    list.push({ id, name: 'Новый персонаж', createdAt: now, updatedAt: now });
+    setCharList(list);
+    setActiveCharId(id);
+  }
+  let activeId = getActiveCharId();
+  if (!activeId || !list.find(c => c.id === activeId)) {
+    setActiveCharId(list[0].id);
+  }
+
+  state = loadCharData(getActiveCharId());
+  if (!state || typeof state !== 'object') state = {};
+
+  initCharBar();
+  renderCharBar();
+
   buildStats(document.getElementById('attrs'), ATTRS);
   buildStats(document.getElementById('abilities'), ABILITIES);
   initDots(); initSquares(); buildHealth(); buildForms();
+
   Object.keys(LISTS).forEach(renderList);
   renderFetishes(); renderCombat();
   renderMeritsFlaws('merits', 'merits-rows');
   renderMeritsFlaws('flaws', 'flaws-rows');
-  initTextFields(); initButtons(); initTabs(); initCheatSheets();
+
+  initTextFields(); initButtons(); initTabs();
+  initCheatSheets(); initCreationGuide();
   initGiftReference(); initRiteReference(); initAutoFill();
 }
 document.addEventListener('DOMContentLoaded', init);
