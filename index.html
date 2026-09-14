@@ -409,7 +409,7 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
         <div><label>Рождение</label><input type="text" id="f_birth" autocomplete="off"></div>
         <div><label>Имя Стаи</label><input type="text" id="f_pack" autocomplete="off"></div>
         <div><label>Игрок</label><input type="text" id="f_player" autocomplete="off"></div>
-        <div><label>Предварительные</label><input type="text" id="f_prelude" autocomplete="off"></div>
+        <div><label>Предназначение</label><input type="text" id="f_prelude" autocomplete="off"></div>
         <div><label>Тотем Стаи</label><input type="text" id="f_totem" autocomplete="off"></div>
         <div><label>Хроника</label><input type="text" id="f_chronicle" autocomplete="off"></div>
         <div><label>Племя</label><input type="text" id="f_tribe" list="dl_tribes" autocomplete="off"></div>
@@ -423,7 +423,8 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
             <option value="2">2 — Фостерн</option>
             <option value="3">3 — Адрен</option>
             <option value="4">4 — Атро</option>
-            <option value="5">5 — Старейшина</option>
+          <option value="5">5 — Старейшина</option>
+            <option value="6">6 — Легенда</option>
           </select>
         </div>
       </div>
@@ -1449,13 +1450,13 @@ const LISTS = {
 };
 const AUTO_KEYS = ['rage','gnosis','willpower'];
 const HEALTH_STATES = ['none', 'slash', 'cross', 'star'];
-
 const RANKS = [
   { n:1, name:'Клиат',      desc:'Молодой Гару после Обряда Перехода' },
   { n:2, name:'Фостерн',    desc:'Опытный оборотень, уважаемый стаей' },
   { n:3, name:'Адрен',      desc:'Старший оборотень, вожак малой стаи' },
   { n:4, name:'Атро',       desc:'Учитель, наставник, лидер септа' },
-  { n:5, name:'Старейшина', desc:'Легендарная фигура Нации Гару' }
+  { n:5, name:'Старейшина', desc:'Уважаемый лидер Нации Гару' },
+  { n:6, name:'Легенда',    desc:'Мифический ранг. Имя вписано в вечность (NPC / мастерский)' }
 ];
 
 const RANK_REQUIREMENTS = {
@@ -1464,35 +1465,40 @@ const RANK_REQUIREMENTS = {
     { n:2, sum:7,  text:'7 в любой комбинации' },
     { n:3, sum:13, text:'13 в любой комбинации' },
     { n:4, sum:19, text:'19 в любой комбинации' },
-    { n:5, sum:25, text:'25 в любой комбинации' }
+    { n:5, sum:25, text:'25 в любой комбинации' },
+    { n:6, sum:30, text:'30 в любой комбинации' }
   ],
   'Теург': [
     { n:1, glory:0, honor:0, wisdom:3,  text:'Слава 0 · Честь 0 · Мудрость 3' },
     { n:2, glory:1, honor:0, wisdom:5,  text:'Слава 1 · Честь 0 · Мудрость 5' },
     { n:3, glory:2, honor:1, wisdom:7,  text:'Слава 2 · Честь 1 · Мудрость 7' },
     { n:4, glory:4, honor:2, wisdom:9,  text:'Слава 4 · Честь 2 · Мудрость 9' },
-    { n:5, glory:4, honor:9, wisdom:10, text:'Слава 4 · Честь 9 · Мудрость 10' }
+    { n:5, glory:4, honor:9, wisdom:10, text:'Слава 4 · Честь 9 · Мудрость 10' },
+    { n:6, glory:5, honor:10, wisdom:10, text:'Слава 5 · Честь 10 · Мудрость 10' }
   ],
   'Филодокс': [
     { n:1, glory:0, honor:3, wisdom:0,  text:'Слава 0 · Честь 3 · Мудрость 0' },
     { n:2, glory:1, honor:4, wisdom:1,  text:'Слава 1 · Честь 4 · Мудрость 1' },
     { n:3, glory:2, honor:6, wisdom:2,  text:'Слава 2 · Честь 6 · Мудрость 2' },
     { n:4, glory:3, honor:8, wisdom:4,  text:'Слава 3 · Честь 8 · Мудрость 4' },
-    { n:5, glory:4, honor:10, wisdom:9, text:'Слава 4 · Честь 10 · Мудрость 9' }
+    { n:5, glory:4, honor:10, wisdom:9, text:'Слава 4 · Честь 10 · Мудрость 9' },
+    { n:6, glory:5, honor:10, wisdom:10, text:'Слава 5 · Честь 10 · Мудрость 10' }
   ],
   'Галлиард': [
     { n:1, glory:2, honor:0, wisdom:1,  text:'Слава 2 · Честь 0 · Мудрость 1' },
     { n:2, glory:4, honor:0, wisdom:2,  text:'Слава 4 · Честь 0 · Мудрость 2' },
     { n:3, glory:4, honor:2, wisdom:4,  text:'Слава 4 · Честь 2 · Мудрость 4' },
     { n:4, glory:7, honor:2, wisdom:6,  text:'Слава 7 · Честь 2 · Мудрость 6' },
-    { n:5, glory:9, honor:5, wisdom:9,  text:'Слава 9 · Честь 5 · Мудрость 9' }
+    { n:5, glory:9, honor:5, wisdom:9,  text:'Слава 9 · Честь 5 · Мудрость 9' },
+    { n:6, glory:10, honor:7, wisdom:10, text:'Слава 10 · Честь 7 · Мудрость 10' }
   ],
   'Арун': [
     { n:1, glory:2, honor:1, wisdom:0,  text:'Слава 2 · Честь 1 · Мудрость 0' },
     { n:2, glory:4, honor:1, wisdom:1,  text:'Слава 4 · Честь 1 · Мудрость 1' },
     { n:3, glory:6, honor:3, wisdom:1,  text:'Слава 6 · Честь 3 · Мудрость 1' },
     { n:4, glory:9, honor:5, wisdom:2,  text:'Слава 9 · Честь 5 · Мудрость 2' },
-    { n:5, glory:10,honor:9, wisdom:4,  text:'Слава 10 · Честь 9 · Мудрость 4' }
+    { n:5, glory:10,honor:9, wisdom:4,  text:'Слава 10 · Честь 9 · Мудрость 4' },
+    { n:6, glory:10,honor:10, wisdom:7, text:'Слава 10 · Честь 10 · Мудрость 7' }
   ]
 };
 
