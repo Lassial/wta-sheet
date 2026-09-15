@@ -889,7 +889,8 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
         <button data-jump="cheat-rage">🔥 Ярость</button>
         <button data-jump="cheat-wp">💪 Сила Воли</button>
         <button data-jump="cheat-gnosis">✨ Гнозис</button>
-        <button data-jump="cheat-frenzy">🩸 Бешенство</button>
+      <button data-jump="cheat-frenzy">🩸 Бешенство</button>
+        <button data-jump="cheat-recovery">🔄 Восстановление</button>
       </div>
       <div class="cheat-accordion" id="cheat-accordion">
         <div class="cheat-section" id="cheat-umbra" data-open="false">
@@ -1054,7 +1055,104 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
             <ul>
               <li>Стимул пропал</li>
               <li><code>Воля</code> (слж = Ярость)</li>
-              <li>1 ПСВ — потерять следующий ход</li>
+                 <li>1 ПСВ — потерять следующий ход</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cheat-section" id="cheat-recovery" data-open="false">
+          <div class="cheat-header"><span class="cheat-title"><span class="emoji">🔄</span>Восстановление пулов</span><span class="cheat-toggle">▶</span></div>
+          <div class="cheat-body">
+
+            <h4>🔥 Восстановление Ярости <span class="pill rage">Rage</span></h4>
+            <table>
+              <tr><th>Событие</th><th>Пункты</th></tr>
+              <tr><td><strong>Увидеть Луну ночью</strong> (1 раз за ночь)</td><td>+1 … +4 (по фазе)</td></tr>
+              <tr><td>Новолуние</td><td>+1</td></tr>
+              <tr><td>Серповидная луна</td><td>+2</td></tr>
+              <tr><td>Полулуние / горбатая луна</td><td>+3</td></tr>
+              <tr><td>Полнолуние</td><td>+4</td></tr>
+              <tr><td><strong>Своё покровительство</strong> (фаза совпала)</td><td>Полный запас</td></tr>
+              <tr><td>Провал на броске (решение Рассказчика)</td><td>+1</td></tr>
+              <tr><td>Унижение от другого Гару</td><td>+1</td></tr>
+              <tr><td>Перед боем / напряжённый момент</td><td>+1</td></tr>
+              <tr><td>Начало новой истории</td><td>Бросок кубика</td></tr>
+            </table>
+            <p style="font-size:11.5px;color:var(--ink-faint);font-style:italic;">Восстановление происходит автоматически — игрок не «заявляет», что хочет восстановить Ярость. Рассказчик решает, когда она прибывает.</p>
+
+            <div class="warn">
+              <strong>⚠️ Потеря волка:</strong> если у Гару закончились <em>одновременно</em> Ярость и Сила воли — он теряет своего волка. Не может менять форму, кроме своей природной, пока не восстановит хотя бы 1 пункт Силы воли.
+            </div>
+
+            <h4>✨ Восстановление Гнозиса <span class="pill gnosis">Gnosis</span></h4>
+
+            <p><strong>Медитация</strong> — основной способ:</p>
+            <ul>
+              <li>Минимум <strong>1 час</strong> неподвижного самосозерцания</li>
+              <li>Бросок <code>Сообразительность + Загадки</code>, сложность <strong>8</strong></li>
+              <li>+1 пункт за каждый успех, но <strong>максимум 1 пункт за час</strong></li>
+              <li>Каждая медитация в ту же неделю: <strong>+1 к сложности</strong> (максимум до 10)</li>
+            </ul>
+
+            <p><strong>Священная охота (Энглинг):</strong></p>
+            <ul>
+              <li>Ритуал вече — охота на духа-Энглинга в Умбре</li>
+              <li>Все участники получают <strong>полный запас Гнозиса</strong></li>
+              <li>Энглинг после этого перерождается в другой части Умбры</li>
+            </ul>
+
+            <p><strong>Сделки с духами:</strong></p>
+            <ul>
+              <li>Дух даёт Гнозис в обмен на услугу или задание</li>
+              <li>Обычно через Дар «Речь духов»</li>
+            </ul>
+
+            <p><strong>Между историями:</strong></p>
+            <ul>
+              <li>Бросок <code>Обаяние + Загадки</code> — по 1 пункту за успех</li>
+            </ul>
+
+            <div class="warn">
+              <strong>⚠️ Потеря Гнозиса от серебра:</strong>
+              <table style="margin-top:6px;">
+                <tr><th>Серебряный предмет</th><th>−Гнозис</th></tr>
+                <tr><td>Серебряные пули</td><td>1 за 5 пуль</td></tr>
+                <tr><td>Клайв</td><td>1</td></tr>
+                <tr><td>Великий клайв</td><td>2</td></tr>
+              </table>
+              <p style="margin-top:6px;">Временно — восстанавливается через день.</p>
+            </div>
+
+            <h4>💪 Восстановление Силы Воли <span class="pill wp">Willpower</span></h4>
+            <table>
+              <tr><th>Событие</th><th>Пункты</th></tr>
+              <tr><td><strong>Завершение истории</strong> (целиком, не главы)</td><td>Полный запас</td></tr>
+              <tr><td>Выдающийся личный успех (месть, преодоление недостатка)</td><td>1–3</td></tr>
+              <tr><td>Хорошее исполнение роли по покровительству</td><td>1–3</td></tr>
+              <tr><td><em>Опционально:</em> после пробуждения</td><td>+1</td></tr>
+            </table>
+
+            <p style="font-size:11.5px;color:var(--ink-faint);font-style:italic;">Каждую новую историю (не главу) — полное восстановление Силы воли. Внутри истории восстанавливается только за сюжетные достижения, по решению Рассказчика.</p>
+
+            <div class="note">
+              <strong>💡 Лайфхак для отыгрыша:</strong> Сила воли — это «батарейка» для автоматических успехов и сопротивления. Если у Гару кончилась Сила воли — он вялый, апатичный, не может сопротивляться ментальному контролю. Это повод для интересной сцены, а не просто «нечем платить».
+            </div>
+
+            <h4>📊 Сводная таблица скорости</h4>
+            <table>
+              <tr><th>Пул</th><th>Быстро</th><th>Медленно</th></tr>
+              <tr><td>🔥 Ярость</td><td>Видя Луну (каждую ночь)</td><td>Ожидание фаз и событий</td></tr>
+              <tr><td>✨ Гнозис</td><td>Священная охота (полный)</td><td>Медитация (1 в час)</td></tr>
+              <tr><td>💪 Сила Воли</td><td>Конец истории</td><td>Личные успехи (1–3)</td></tr>
+            </table>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</main>
             </ul>
           </div>
         </div>
