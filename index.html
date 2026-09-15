@@ -358,7 +358,70 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.info { background: rgba(42, 77, 107, 0.95); }
 .toast.purple { background: rgba(92, 59, 122, 0.95); }
+/* ---------- AUTH BAR ---------- */
+.auth-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 20px;
+  background: rgba(15, 10, 6, 0.7);
+  border-bottom: 1px solid #3a2a18;
+  color: #e8ddc9;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+.auth-bar .auth-label {
+  font-family: 'Cinzel', Georgia, serif;
+  color: #c9a227;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 11px;
+}
+.auth-btn {
+  background: transparent;
+  border: 1px solid #3a2e21;
+  color: #968772;
+  padding: 5px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
+  transition: all .15s;
+  font-family: inherit;
+}
+.auth-btn:hover {
+  border-color: #c9a227;
+  color: #f2cd52;
+}
+.auth-btn.primary {
+  border-color: #c9a227;
+  color: #c9a227;
+  background: rgba(201, 162, 39, 0.08);
+}
+.auth-btn.primary:hover {
+  background: #c9a227;
+  color: #1a1209;
+}
+.auth-status {
+  margin-left: auto;
+  font-style: italic;
+  font-size: 11px;
+  color: #968772;
+}
+.auth-status.synced {
+  color: #4a6b1f;
+  font-weight: 600;
+}
+.auth-status.syncing {
+  color: #c9a227;
+}
+.auth-status.error {
+  color: #b03030;
+}
+@media (max-width: 520px) {
+  .auth-status { margin-left: 0; width: 100%; text-align: center; }
+}
 </style>
+
 </head>
 <body>
 
@@ -393,6 +456,13 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
   <button id="btn-dup-char" class="char-btn" title="Дублировать">📋 Копия</button>
   <button id="btn-del-char" class="char-btn danger" title="Удалить персонажа">🗑 Удалить</button>
   <span class="char-meta" id="char-meta"></span>
+</div>
+
+<div class="auth-bar" id="auth-bar">
+  <span class="auth-label">☁️ Синхронизация:</span>
+  <button id="btn-signin" class="auth-btn primary">🔑 Войти через Google</button>
+  <button id="btn-signout" class="auth-btn" style="display:none;">🚪 Выйти</button>
+  <span id="auth-status" class="auth-status">Не авторизован — данные только в этом браузере</span>
 </div>
 
 <main class="sheet">
@@ -2633,5 +2703,178 @@ function init() {
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
+<script type="module">
+/* =========================================================
+   FIREBASE CLOUD SYNC
+   ========================================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBOIovlnBT42tsKBOcJQq7z5rh4ioBVOX8",
+  authDomain: "wta-character-sheet.firebaseapp.com",
+  projectId: "wta-character-sheet",
+  storageBucket: "wta-character-sheet.firebasestorage.app",
+  messagingSenderId: "621641779705",
+  appId: "1:621641779705:web:109e5df33bedce804a1528"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+const btnSignIn = document.getElementById('btn-signin');
+const btnSignOut = document.getElementById('btn-signout');
+const authStatus = document.getElementById('auth-status');
+
+let currentUser = null;
+let syncTimer = null;
+let isApplyingCloud = false; // флаг, чтобы не зациклить синхронизацию
+
+function setStatus(text, cls = '') {
+  authStatus.textContent = text;
+  authStatus.className = 'auth-status ' + cls;
+}
+
+/* ---------- Собираем локальный снапшот ---------- */
+function buildLocalSnapshot() {
+  const list = window.getCharList();
+  const characters = {};
+  list.forEach(c => {
+    characters[c.id] = window.loadCharData(c.id) || {};
+  });
+  return {
+    list,
+    characters,
+    activeId: window.getActiveCharId(),
+    updatedAt: new Date().toISOString()
+  };
+}
+
+/* ---------- Применяем облачный снапшот ---------- */
+function applyCloudSnapshot(cloud) {
+  isApplyingCloud = true;
+  try {
+    if (cloud.list && Array.isArray(cloud.list)) {
+      window.setCharList(cloud.list);
+    }
+    if (cloud.characters && typeof cloud.characters === 'object') {
+      Object.keys(cloud.characters).forEach(id => {
+        window.saveCharData(id, cloud.characters[id]);
+      });
+    }
+    if (cloud.activeId) {
+      window.setActiveCharId(cloud.activeId);
+    }
+  } finally {
+    isApplyingCloud = false;
+  }
+}
+
+/* ---------- Сравнение версий по updatedAt ---------- */
+function latestTime(list) {
+  if (!list || !list.length) return 0;
+  return list.reduce((max, c) => {
+    const t = c.updatedAt ? new Date(c.updatedAt).getTime() : 0;
+    return t > max ? t : max;
+  }, 0);
+}
+
+/* ---------- Загрузить из облака или залить локальное ---------- */
+async function mergeAndSync(user) {
+  setStatus('⏳ Синхронизация…', 'syncing');
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
+
+  const local = buildLocalSnapshot();
+
+  if (!snap.exists()) {
+    // Первый вход — заливаем всё локальное
+    await setDoc(ref, local);
+    setStatus('✓ Данные загружены в облако', 'synced');
+    return;
+  }
+
+  const cloud = snap.data();
+  const localTime = latestTime(local.list);
+  const cloudTime = latestTime(cloud.list);
+
+  const localHasData = local.list.length > 0;
+  const cloudHasData = (cloud.list || []).length > 0;
+
+  // Если в облаке есть данные и они новее — подтягиваем
+  if (cloudHasData && (!localHasData || cloudTime > localTime)) {
+    applyCloudSnapshot(cloud);
+    setStatus('✓ Загружено из облака', 'synced');
+    // Перезагружаем, чтобы лист подхватил новые данные
+    setTimeout(() => location.reload(), 300);
+    return;
+  }
+
+  // Иначе — заливаем локальное поверх облачного
+  await setDoc(ref, local);
+  setStatus('✓ Локальные данные отправлены в облако', 'synced');
+}
+
+/* ---------- Отправить данные в облако ---------- */
+async function pushToCloud() {
+  if (!currentUser || isApplyingCloud) return;
+  try {
+    setStatus('⏳ Синхронизация…', 'syncing');
+    const snap = buildLocalSnapshot();
+    await setDoc(doc(db, 'users', currentUser.uid), snap);
+    setStatus('✓ Сохранено в облаке', 'synced');
+  } catch (e) {
+    console.error(e);
+    setStatus('⚠ Ошибка синхронизации', 'error');
+  }
+}
+
+/* ---------- Дебаунс-хук на save() ---------- */
+(function hookSave() {
+  const orig = window.save;
+  if (typeof orig !== 'function') return;
+  window.save = function () {
+    orig.apply(this, arguments);
+    if (!currentUser || isApplyingCloud) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(pushToCloud, 1500);
+  };
+})();
+
+/* ---------- Кнопки ---------- */
+btnSignIn.addEventListener('click', async () => {
+  try {
+    setStatus('⏳ Открываем окно Google…', 'syncing');
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    console.error(e);
+    setStatus('⚠ Ошибка входа: ' + (e.code || e.message), 'error');
+  }
+});
+
+btnSignOut.addEventListener('click', async () => {
+  if (!confirm('Выйти из аккаунта?\nЛокальные данные останутся, но перестанут синхронизироваться.')) return;
+  await signOut(auth);
+});
+
+/* ---------- Отслеживание авторизации ---------- */
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  if (user) {
+    btnSignIn.style.display = 'none';
+    btnSignOut.style.display = '';
+    setStatus('✓ ' + (user.displayName || user.email || 'Вы вошли'), 'synced');
+    await mergeAndSync(user);
+  } else {
+    btnSignIn.style.display = '';
+    btnSignOut.style.display = 'none';
+    setStatus('Не авторизован — данные только в этом браузере');
+  }
+});
+</script>
+
 </body>
 </html>
