@@ -57,6 +57,17 @@ button, input, textarea, select { font-family: inherit; }
 .char-btn.danger:hover { border-color: #8b2a2a; color: #ff7a7a; }
 .char-meta { font-size: 10px; color: #968772; margin-left: auto; font-style: italic; white-space: nowrap; }
 
+.auth-bar { display: flex; align-items: center; gap: 10px; padding: 8px 20px; background: rgba(15, 10, 6, 0.7); border-bottom: 1px solid #3a2a18; color: #e8ddc9; font-size: 12px; flex-wrap: wrap; }
+.auth-bar .auth-label { font-family: 'Cinzel', Georgia, serif; color: #c9a227; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; font-size: 11px; }
+.auth-btn { background: transparent; border: 1px solid #3a2e21; color: #968772; padding: 5px 14px; border-radius: 3px; cursor: pointer; font-size: 11.5px; letter-spacing: 0.5px; transition: all .15s; font-family: inherit; }
+.auth-btn:hover { border-color: #c9a227; color: #f2cd52; }
+.auth-btn.primary { border-color: #c9a227; color: #c9a227; background: rgba(201, 162, 39, 0.08); }
+.auth-btn.primary:hover { background: #c9a227; color: #1a1209; }
+.auth-status { margin-left: auto; font-style: italic; font-size: 11px; color: #968772; }
+.auth-status.synced { color: #4a6b1f; font-weight: 600; }
+.auth-status.syncing { color: #c9a227; }
+.auth-status.error { color: #b03030; }
+
 .sheet { max-width: 1320px; margin: 24px auto; padding: 0 16px; }
 .page { display: none; flex-direction: column; gap: 0; padding: 34px 44px 42px; background: radial-gradient(ellipse at 15% 10%, var(--paper-glow), transparent 45%), radial-gradient(ellipse at 85% 90%, var(--paper-glow), transparent 45%), linear-gradient(180deg, var(--paper-1) 0%, var(--paper-2) 100%); border: 2px solid var(--border-ink); border-radius: 4px; box-shadow: inset 0 0 0 1px #e8dcb8, inset 0 0 90px rgba(139, 100, 60, 0.14), 0 20px 60px rgba(0,0,0,0.75), 0 4px 20px rgba(0,0,0,0.5); position: relative; }
 .page.active { display: flex; }
@@ -321,16 +332,17 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 @media (max-width: 520px) {
   .forms-grid { grid-template-columns: 1fr; }
   .gift-filters, .rite-filters { grid-template-columns: 1fr; }
-  .char-bar { top: 0; position: static; }
+  .char-bar, .auth-bar { top: 0; position: static; }
   .char-bar select { min-width: 140px; flex: 1; }
   .char-meta { display: none; }
   .guide-step-body { padding-left: 16px; }
   .guide-step-num { width: 26px; height: 26px; font-size: 12px; }
   .guide-step-title { font-size: 11px; letter-spacing: 0.5px; }
+  .auth-status { margin-left: 0; width: 100%; text-align: center; }
 }
 @media print {
   @page { size: A4; margin: 8mm; }
-  .toolbar, .char-bar, .add-btn, .rm, #save-indicator, .autofill-banner, .gift-filters, .gift-actions, .gift-only-mine, .cheat-nav, .cheat-toggle, .toast, .rite-filters, .add-rite-btn, .guide-progress, .guide-step-check, .guide-step-toggle, .reset-guide, .rank-info-btn { display: none !important; }
+  .toolbar, .char-bar, .auth-bar, .add-btn, .rm, #save-indicator, .autofill-banner, .gift-filters, .gift-actions, .gift-only-mine, .cheat-nav, .cheat-toggle, .toast, .rite-filters, .add-rite-btn, .guide-progress, .guide-step-check, .guide-step-toggle, .reset-guide, .rank-info-btn { display: none !important; }
   body { background: #fff !important; color: #000 !important; padding: 0; font-size: 10px; }
   .sheet { margin: 0; padding: 0; max-width: 100%; }
   .page { display: none; gap: 8px; page-break-after: always; background: #fff !important; border: 1px solid #333 !important; box-shadow: none !important; padding: 10px 14px; border-radius: 0; }
@@ -358,70 +370,7 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast.info { background: rgba(42, 77, 107, 0.95); }
 .toast.purple { background: rgba(92, 59, 122, 0.95); }
-/* ---------- AUTH BAR ---------- */
-.auth-bar {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 20px;
-  background: rgba(15, 10, 6, 0.7);
-  border-bottom: 1px solid #3a2a18;
-  color: #e8ddc9;
-  font-size: 12px;
-  flex-wrap: wrap;
-}
-.auth-bar .auth-label {
-  font-family: 'Cinzel', Georgia, serif;
-  color: #c9a227;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  font-weight: 600;
-  font-size: 11px;
-}
-.auth-btn {
-  background: transparent;
-  border: 1px solid #3a2e21;
-  color: #968772;
-  padding: 5px 14px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 11.5px;
-  letter-spacing: 0.5px;
-  transition: all .15s;
-  font-family: inherit;
-}
-.auth-btn:hover {
-  border-color: #c9a227;
-  color: #f2cd52;
-}
-.auth-btn.primary {
-  border-color: #c9a227;
-  color: #c9a227;
-  background: rgba(201, 162, 39, 0.08);
-}
-.auth-btn.primary:hover {
-  background: #c9a227;
-  color: #1a1209;
-}
-.auth-status {
-  margin-left: auto;
-  font-style: italic;
-  font-size: 11px;
-  color: #968772;
-}
-.auth-status.synced {
-  color: #4a6b1f;
-  font-weight: 600;
-}
-.auth-status.syncing {
-  color: #c9a227;
-}
-.auth-status.error {
-  color: #b03030;
-}
-@media (max-width: 520px) {
-  .auth-status { margin-left: 0; width: 100%; text-align: center; }
-}
 </style>
-
 </head>
 <body>
 
@@ -434,7 +383,7 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
     <button data-tab="page4">📖 Дары</button>
     <button data-tab="page6">📿 Обряды</button>
     <button data-tab="page7">🎲 Создание</button>
-     <button data-tab="page8">📚 Справочник</button>
+    <button data-tab="page8">📚 Справочник</button>
     <button data-tab="page5">📋 Шпаргалки</button>
   </div>
   <span id="save-indicator">✓ Сохранено</span>
@@ -494,7 +443,7 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
             <option value="2">2 — Фостерн</option>
             <option value="3">3 — Адрен</option>
             <option value="4">4 — Атро</option>
-          <option value="5">5 — Старейшина</option>
+            <option value="5">5 — Старейшина</option>
             <option value="6">6 — Легенда</option>
           </select>
         </div>
@@ -830,7 +779,6 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
             </table>
             <h4>Дары — 3 стартовых</h4>
             <p>По одному Дару 1-го уровня от <strong>породы</strong>, <strong>покровительства</strong> и <strong>племени</strong>. Дополнительные — 7 очков за штуку.</p>
-            <div class="hint-green">💡 <strong>Автоматизация:</strong> заполни Породу, Покровительство и Племя — стартовые Дары и пулы заполнятся сами!</div>
             <h4>Почёт</h4>
             <table>
               <tr><th>Покровительство</th><th>Слава</th><th>Честь</th><th>Мудрость</th></tr>
@@ -865,17 +813,168 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
               <li>Пулы Ярости / Гнозиса / Воли заполнены</li>
               <li>Здоровье — 7 уровней</li>
             </ul>
-            <div class="hint-green">🎉 <strong>Персонаж готов!</strong> Не забудь:
-              <ul style="margin-top:6px;">
-                <li>Придумать имя стаи и тотем</li>
-                <li>Записать биографию</li>
-                <li>Пройти Прелюдию и Первое Изменение</li>
-                <li>Разыграть Обряд Перехода</li>
-              </ul>
-            </div>
-            <div class="note"><strong>📌 Что дальше?</strong> Опыт в конце главы: 1–5 очков. Стоимость повышения — на вкладке «Дополнения».</div>
           </div>
         </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="page" id="page8">
+    <section class="panel">
+      <h2>Справочник</h2>
+      <p style="text-align:center; font-size:12px; color:var(--ink-soft); font-style:italic; margin-bottom:16px;">
+        Краткие описания — что выбрать и как это играется
+      </p>
+
+      <div class="cheat-accordion">
+
+        <div class="cheat-section" data-open="true">
+          <div class="cheat-header">
+            <span class="cheat-title"><span class="emoji">🧬</span>Породы — кем ты родился</span>
+            <span class="cheat-toggle">▶</span>
+          </div>
+          <div class="cheat-body">
+            <p style="margin-bottom:12px;">Порода — это то, в каком теле Гару пришёл в мир. Она определяет стартовый Гнозис, стартовые Дары и то, как персонаж смотрит на мир.</p>
+
+            <h4>🌆 Хомид — рождённый человеком</h4>
+            <p><strong>Кто это:</strong> обычный человек (по крови — потомок Гару), который до Первого Изменения жил среди людей. Понимает язык, культуру, технологии, но плохо чувствует инстинкты.</p>
+            <p><strong>Старт:</strong> Гнозис <strong>1</strong> · Дары: Повелитель огня, Убеждение, Запах человека</p>
+            <p><strong>Плюсы:</strong> легко работает с людьми, техникой, документами; может жить «двойной жизнью».</p>
+            <p><strong>Минусы:</strong> низкая связь с духами, слабые инстинкты, часто теряет контроль в критический момент.</p>
+            <p><strong>Кому играть:</strong> если нравятся городские истории, разведка, дипломатия, журналистика.</p>
+
+            <h4>🌗 Метис — рождённый от двух Гару</h4>
+            <p><strong>Кто это:</strong> дитя двух оборотней — нарушение Литании. Всегда носит уродство и бесплоден. Воспитан в септе, знает общество Гару изнутри, но всю жизнь — изгой даже среди своих.</p>
+            <p><strong>Старт:</strong> Гнозис <strong>3</strong> · Дары: Создать стихию, Первобытный гнев, Чутьё Вирма</p>
+            <p><strong>Плюсы:</strong> лучший баланс между инстинктами и разумом; глубже всех понимает Гару; часто — самый свирепый боец, потому что всю жизнь доказывает своё право.</p>
+            <p><strong>Минусы:</strong> бесплоден, уродлив, презираем обществом Гару; сложные социальные взаимодействия.</p>
+            <p><strong>Кому играть:</strong> если нравятся трагические персонажи, изгои, истории про принятие себя.</p>
+
+            <h4>🐺 Люпус — рождённый волком</h4>
+            <p><strong>Кто это:</strong> волчонок с кровью Гару. Вырос в стае, думает инстинктами, слабо понимает человеческий мир. Но у него самая крепкая связь с Гайей.</p>
+            <p><strong>Старт:</strong> Гнозис <strong>5</strong> · Дары: Заячий прыжок, Обострённые чувства, Чутьё дичи</p>
+            <p><strong>Плюсы:</strong> максимальный Гнозис, звериные чувства, природные инстинкты, уважение среди волков.</p>
+            <p><strong>Минусы:</strong> не умеет читать, водить, стрелять; теряется в городе; людей видит плохо.</p>
+            <p><strong>Кому играть:</strong> если хочется быть «настоящим зверем», защитником природы, разведчиком.</p>
+          </div>
+        </div>
+
+        <div class="cheat-section" data-open="false">
+          <div class="cheat-header">
+            <span class="cheat-title"><span class="emoji">🌙</span>Покровительства — фаза Луны</span>
+            <span class="cheat-toggle">▶</span>
+          </div>
+          <div class="cheat-body">
+            <p style="margin-bottom:12px;">Покровительство — фаза Луны, под которой родился Гару. Оно определяет роль в обществе, стартовую Ярость, стартовые Дары и начальный Почёт. Это как астрологический знак, только реально работающий.</p>
+
+            <h4>🌑 Рагабаш — Новолуние</h4>
+            <p><strong>Роль:</strong> трикстер, разведчик, шпион, саботажник. Дитя тьмы — учится красться и обманывать.</p>
+            <p><strong>Старт:</strong> Ярость <strong>1</strong> · Почёт: <strong>3 в любой категории</strong></p>
+            <p><strong>Дары:</strong> Размывание, Взломанная печать, Запах текущей воды</p>
+            <p><strong>Стиль:</strong> решает проблемы хитростью, а не силой. Часто не воспринимают всерьёз — а зря.</p>
+
+            <h4>🌒 Теург — Серповидная луна</h4>
+            <p><strong>Роль:</strong> мистик, шаман, провидец, мастер обрядов. Тот, кто говорит с духами и разгадывает тайны Умбры.</p>
+            <p><strong>Старт:</strong> Ярость <strong>2</strong> · Почёт: <strong>Мудрость 3</strong></p>
+            <p><strong>Дары:</strong> Ласка Матери, Чутьё Вирма, Речь духов</p>
+            <p><strong>Стиль:</strong> редко дерётся первым, но именно он решает исход истории — через знания, видения и сделки с духами.</p>
+
+            <h4>🌓 Филодокс — Полулуние</h4>
+            <p><strong>Роль:</strong> судья, посредник, хранитель Литании. Видит обе стороны любой ситуации — свет и тьму.</p>
+            <p><strong>Старт:</strong> Ярость <strong>3</strong> · Почёт: <strong>Честь 3</strong></p>
+            <p><strong>Дары:</strong> Устойчивость к боли, Чутьё истинной формы, Истина Гайи</p>
+            <p><strong>Стиль:</strong> справедливый и непреклонный. В бою — стойкий, в спорах — неотразимый.</p>
+
+            <h4>🌔 Галлиард — Горбатая луна</h4>
+            <p><strong>Роль:</strong> бард, сказитель, хранитель истории. Тот, кто помнит традиции и вдохновляет стаю.</p>
+            <p><strong>Старт:</strong> Ярость <strong>4</strong> · Почёт: <strong>Слава 2, Мудрость 1</strong></p>
+            <p><strong>Дары:</strong> Язык зверей, Зов Вильда, Мыслеречь</p>
+            <p><strong>Стиль:</strong> страстный, артистичный, эмоциональный. Хранит память Нации и поёт её подвиги.</p>
+
+            <h4>🌕 Арун — Полнолуние</h4>
+            <p><strong>Роль:</strong> воин, берсерк, защитник. Тот, кто идёт первым в бой и последним отступает.</p>
+            <p><strong>Старт:</strong> Ярость <strong>5</strong> · Почёт: <strong>Слава 2, Честь 1</strong></p>
+            <p><strong>Дары:</strong> Оглушающее касание, Воодушевление, Заточенные когти</p>
+            <p><strong>Стиль:</strong> грубая сила и вызов. Легко впадает в Бешенство — но именно он решает исход сражений.</p>
+          </div>
+        </div>
+
+        <div class="cheat-section" data-open="false">
+          <div class="cheat-header">
+            <span class="cheat-title"><span class="emoji">🐾</span>Племена — твоя семья и культура</span>
+            <span class="cheat-toggle">▶</span>
+          </div>
+          <div class="cheat-body">
+            <p style="margin-bottom:12px;">Племя — не гены, а культура и философия. Ты выбираешь его сам после Обряда Перехода. У каждого — свой тотем-покровитель, своя роль в Нации и своя стартовая Сила Воли.</p>
+
+            <h4>🦅 Черные Фурии</h4>
+            <p><strong>Кто:</strong> женщины-воительницы, защитницы женщин и дикой природы. Основаны Селеной в Древней Греции.</p>
+            <p><strong>Тотем:</strong> Пегас · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> принимают только женщин (мужчины — только метисы). Феминистский дух, мистическая мудрость, боевое мастерство.</p>
+
+            <h4>🐀 Костегрызы</h4>
+            <p><strong>Кто:</strong> городские парии — живут в нищете, едят отбросы, знают все слухи и тайные ходы городов.</p>
+            <p><strong>Тотем:</strong> Крыса · <strong>Сила Воли:</strong> 4</p>
+            <p><strong>Особое:</strong> неубиваемые выживальщики. Не могут брать Предков, Чистую Кровь, Ресурсы — они нищие по определению.</p>
+
+            <h4>🦄 Дети Гайи</h4>
+            <p><strong>Кто:</strong> миротворцы, защитники природы и людей, дипломаты. Самое миролюбивое племя.</p>
+            <p><strong>Тотем:</strong> Единорог · <strong>Сила Воли:</strong> 4</p>
+            <p><strong>Особое:</strong> хорошо принимают метисов и мужчин из Фурий. Работают с экологами, гуманитарными организациями.</p>
+
+            <h4>🍀 Фианна</h4>
+            <p><strong>Кто:</strong> кельтские барды, поэты, воины, влюбчивые и страстные. Хранители устной традиции.</p>
+            <p><strong>Тотем:</strong> Олень · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> лучшие Галлиарды Нации. Много пьют, много поют, много дерутся, много любит.</p>
+
+            <h4>🐺 Потомки Фенрира</h4>
+            <p><strong>Кто:</strong> скандинавские берсерки, северные воины, готовые умереть в бою ради славы.</p>
+            <p><strong>Тотем:</strong> Фенрир · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> не могут иметь Контакты — только товарищи-Фенриры. Фаталисты и шовинисты, но великие воины.</p>
+
+            <h4>🪳 Стеклоходы</h4>
+            <p><strong>Кто:</strong> городские технократы — работают с технологиями, деньгами, корпорациями. Живут в небоскрёбах.</p>
+            <p><strong>Тотем:</strong> Таракан · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> связаны с Вивер — их недолюбливают, но без них Гару не выживут в городах. Не могут брать Чистую Кровь, Предков, Наставника.</p>
+
+            <h4>🦁 Красные Когти</h4>
+            <p><strong>Кто:</strong> дикие волки, ненавидят людей. Полностью лупусы, защитники чистой природы.</p>
+            <p><strong>Тотем:</strong> Грифон · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> родичи — только волки. Считают человечество раковой опухнью. Самые свирепые и опасные на своей территории.</p>
+
+            <h4>⚡ Теневые Владыки</h4>
+            <p><strong>Кто:</strong> политики-интриганы, мастера шпионажа, амбициозные и хитрые. Правили Нацией в Восточной Европе.</p>
+            <p><strong>Тотем:</strong> Дед Гром · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> не могут брать Союзников и Наставника. Плетут интриги против Серебряных Клыков, стремятся к власти.</p>
+
+            <h4>🦉 Безмолвные Странники</h4>
+            <p><strong>Кто:</strong> вечные путники, разведчики, гонцы. Родились в Египте, но прокляты и разбрелись по миру.</p>
+            <p><strong>Тотем:</strong> Сова · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> не могут иметь Ресурсы и Предков. Знают дороги и тропы, недоступные другим. Разведчики Нации.</p>
+
+            <h4>👑 Серебряные Клыки</h4>
+            <p><strong>Кто:</strong> аристократы Гару, некогда — правители Нации. Ведут родословные от королей и знатных родов.</p>
+            <p><strong>Тотем:</strong> Сокол · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> обязательно иметь <strong>3+ в Чистоте Рода</strong>. Медленно вырождаются, но всё ещё символ власти. Безумны, но благородны.</p>
+
+            <h4>🦋 Уктена</h4>
+            <p><strong>Кто:</strong> мистики разных народов мира — коренные американцы, маори, африканские шаманы. Хранители запретных тайн.</p>
+            <p><strong>Тотем:</strong> Уктена (дух воды) · <strong>Сила Воли:</strong> 3</p>
+            <p><strong>Особое:</strong> знают всё про Бэйнов и духов. Многие боятся их — подозревают в связи с Вирмом. Великие оккультисты.</p>
+
+            <h4>❄️ Вендиго</h4>
+            <p><strong>Кто:</strong> коренные жители Северной Америки, защитники лесов, тундры и своих племён.</p>
+            <p><strong>Тотем:</strong> Вендиго · <strong>Сила Воли:</strong> 4</p>
+            <p><strong>Особое:</strong> не могут брать Контакты и Ресурсы. Ненавидят «Вирмоносов» — европейских Гару и их потомков. Суровые, как зима.</p>
+
+            <h4>⭐ Звездочёты</h4>
+            <p><strong>Кто:</strong> восточные мистики, ищущие просветления. В книге ушли из Нации Гару — но некоторые остались.</p>
+            <p><strong>Тотем:</strong> Химера · <strong>Сила Воли:</strong> <strong>5</strong></p>
+            <p><strong>Особое:</strong> не могут брать Фетиш и Ресурсы, союзники — только не-Гару. Самые могущественные мистики.</p>
+
+          </div>
+        </div>
+
       </div>
     </section>
   </div>
@@ -889,7 +988,7 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
         <button data-jump="cheat-rage">🔥 Ярость</button>
         <button data-jump="cheat-wp">💪 Сила Воли</button>
         <button data-jump="cheat-gnosis">✨ Гнозис</button>
-      <button data-jump="cheat-frenzy">🩸 Бешенство</button>
+        <button data-jump="cheat-frenzy">🩸 Бешенство</button>
         <button data-jump="cheat-recovery">🔄 Восстановление</button>
       </div>
       <div class="cheat-accordion" id="cheat-accordion">
@@ -992,15 +1091,6 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
               <tr><td>Игнор боли</td><td>1</td><td>Снять штрафы на 1 ход</td></tr>
               <tr><td>Возврат при Нокауте</td><td>Бросок</td><td>+1 уровень здоровья, но Бешенство</td></tr>
             </table>
-            <h4>Восстановление</h4>
-            <table>
-              <tr><th>Фаза</th><th>Пункты</th></tr>
-              <tr><td>Новолуние</td><td>+1</td></tr>
-              <tr><td>Серповидная</td><td>+2</td></tr>
-              <tr><td>Полулуние/горбатая</td><td>+3</td></tr>
-              <tr><td>Полнолуние</td><td>+4</td></tr>
-              <tr><td>Своё покровительство</td><td>Полный</td></tr>
-            </table>
           </div>
         </div>
         <div class="cheat-section" id="cheat-wp" data-open="false">
@@ -1027,9 +1117,6 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
               <tr><td>Шаг за грань</td><td>—</td><td>Бросок против Барьера</td></tr>
               <tr><td>Обряд каэрна</td><td>до 5 на ур.</td><td>Святость каэрна</td></tr>
             </table>
-            <h4>Восстановление</h4>
-            <p><strong>Медитация:</strong> 1 час + <code>Сообр+Загадки (8)</code>, +1 за успех.</p>
-            <p><strong>Священная охота:</strong> полное восстановление.</p>
           </div>
         </div>
         <div class="cheat-section" id="cheat-frenzy" data-open="false">
@@ -1055,15 +1142,13 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
             <ul>
               <li>Стимул пропал</li>
               <li><code>Воля</code> (слж = Ярость)</li>
-                 <li>1 ПСВ — потерять следующий ход</li>
+              <li>1 ПСВ — потерять следующий ход</li>
             </ul>
           </div>
         </div>
-
         <div class="cheat-section" id="cheat-recovery" data-open="false">
           <div class="cheat-header"><span class="cheat-title"><span class="emoji">🔄</span>Восстановление пулов</span><span class="cheat-toggle">▶</span></div>
           <div class="cheat-body">
-
             <h4>🔥 Восстановление Ярости <span class="pill rage">Rage</span></h4>
             <table>
               <tr><th>Событие</th><th>Пункты</th></tr>
@@ -1078,40 +1163,20 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
               <tr><td>Перед боем / напряжённый момент</td><td>+1</td></tr>
               <tr><td>Начало новой истории</td><td>Бросок кубика</td></tr>
             </table>
-            <p style="font-size:11.5px;color:var(--ink-faint);font-style:italic;">Восстановление происходит автоматически — игрок не «заявляет», что хочет восстановить Ярость. Рассказчик решает, когда она прибывает.</p>
-
             <div class="warn">
               <strong>⚠️ Потеря волка:</strong> если у Гару закончились <em>одновременно</em> Ярость и Сила воли — он теряет своего волка. Не может менять форму, кроме своей природной, пока не восстановит хотя бы 1 пункт Силы воли.
             </div>
-
             <h4>✨ Восстановление Гнозиса <span class="pill gnosis">Gnosis</span></h4>
-
-            <p><strong>Медитация</strong> — основной способ:</p>
+            <p><strong>Медитация:</strong></p>
             <ul>
               <li>Минимум <strong>1 час</strong> неподвижного самосозерцания</li>
               <li>Бросок <code>Сообразительность + Загадки</code>, сложность <strong>8</strong></li>
-              <li>+1 пункт за каждый успех, но <strong>максимум 1 пункт за час</strong></li>
-              <li>Каждая медитация в ту же неделю: <strong>+1 к сложности</strong> (максимум до 10)</li>
+              <li>+1 за каждый успех, но <strong>максимум 1 за час</strong></li>
+              <li>Каждая медитация в ту же неделю: <strong>+1 к сложности</strong></li>
             </ul>
-
-            <p><strong>Священная охота (Энглинг):</strong></p>
-            <ul>
-              <li>Ритуал вече — охота на духа-Энглинга в Умбре</li>
-              <li>Все участники получают <strong>полный запас Гнозиса</strong></li>
-              <li>Энглинг после этого перерождается в другой части Умбры</li>
-            </ul>
-
-            <p><strong>Сделки с духами:</strong></p>
-            <ul>
-              <li>Дух даёт Гнозис в обмен на услугу или задание</li>
-              <li>Обычно через Дар «Речь духов»</li>
-            </ul>
-
-            <p><strong>Между историями:</strong></p>
-            <ul>
-              <li>Бросок <code>Обаяние + Загадки</code> — по 1 пункту за успех</li>
-            </ul>
-
+            <p><strong>Священная охота (Энглинг):</strong> полное восстановление всем участникам.</p>
+            <p><strong>Сделки с духами:</strong> в обмен на услугу.</p>
+            <p><strong>Между историями:</strong> бросок <code>Обаяние + Загадки</code>.</p>
             <div class="warn">
               <strong>⚠️ Потеря Гнозиса от серебра:</strong>
               <table style="margin-top:6px;">
@@ -1122,7 +1187,6 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
               </table>
               <p style="margin-top:6px;">Временно — восстанавливается через день.</p>
             </div>
-
             <h4>💪 Восстановление Силы Воли <span class="pill wp">Willpower</span></h4>
             <table>
               <tr><th>Событие</th><th>Пункты</th></tr>
@@ -1131,13 +1195,6 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
               <tr><td>Хорошее исполнение роли по покровительству</td><td>1–3</td></tr>
               <tr><td><em>Опционально:</em> после пробуждения</td><td>+1</td></tr>
             </table>
-
-            <p style="font-size:11.5px;color:var(--ink-faint);font-style:italic;">Каждую новую историю (не главу) — полное восстановление Силы воли. Внутри истории восстанавливается только за сюжетные достижения, по решению Рассказчика.</p>
-
-            <div class="note">
-              <strong>💡 Лайфхак для отыгрыша:</strong> Сила воли — это «батарейка» для автоматических успехов и сопротивления. Если у Гару кончилась Сила воли — он вялый, апатичный, не может сопротивляться ментальному контролю. Это повод для интересной сцены, а не просто «нечем платить».
-            </div>
-
             <h4>📊 Сводная таблица скорости</h4>
             <table>
               <tr><th>Пул</th><th>Быстро</th><th>Медленно</th></tr>
@@ -1145,180 +1202,8 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
               <tr><td>✨ Гнозис</td><td>Священная охота (полный)</td><td>Медитация (1 в час)</td></tr>
               <tr><td>💪 Сила Воли</td><td>Конец истории</td><td>Личные успехи (1–3)</td></tr>
             </table>
-
           </div>
         </div>
-
-      </div>
-    </section>
-  </div>
-</main>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-
-<div class="page" id="page8">
-    <section class="panel">
-      <h2>Справочник</h2>
-      <p style="text-align:center; font-size:12px; color:var(--ink-soft); font-style:italic; margin-bottom:16px;">
-        Краткие описания — что выбрать и как это играется
-      </p>
-
-      <div class="cheat-accordion">
-
-        <!-- ===== ПОРОДЫ ===== -->
-        <div class="cheat-section" data-open="true">
-          <div class="cheat-header">
-            <span class="cheat-title"><span class="emoji">🧬</span>Породы — кем ты родился</span>
-            <span class="cheat-toggle">▶</span>
-          </div>
-          <div class="cheat-body">
-            <p style="margin-bottom:12px;">Порода — это то, в каком теле Гару пришёл в мир. Она определяет стартовый Гнозис, стартовые Дары и то, как персонаж смотрит на мир.</p>
-
-            <h4>🌆 Хомид — рождённый человеком</h4>
-            <p><strong>Кто это:</strong> обычный человек (по крови — потомок Гару), который до Первого Изменения жил среди людей. Он понимает язык, культуру, технологии, но плохо чувствует инстинкты.</p>
-            <p><strong>Старт:</strong> Гнозис <strong>1</strong> · Дары: Повелитель огня, Убеждение, Запах человека</p>
-            <p><strong>Плюсы:</strong> легко работает с людьми, техникой, документами; может жить «двойной жизнью».</p>
-            <p><strong>Минусы:</strong> низкая связь с духами, слабые инстинкты, часто теряет контроль в критический момент.</p>
-            <p><strong>Кому играть:</strong> если нравятся городские истории, разведка, дипломатия, журналистика.</p>
-
-            <h4>🌗 Метис — рождённый от двух Гару</h4>
-            <p><strong>Кто это:</strong> дитя двух оборотней — нарушение Литании. Всегда носит уродство и бесплоден. Воспитан в септе, знает общество Гару изнутри, но всю жизнь — изгой даже среди своих.</p>
-            <p><strong>Старт:</strong> Гнозис <strong>3</strong> · Дары: Создать стихию, Первобытный гнев, Чутьё Вирма</p>
-            <p><strong>Плюсы:</strong> лучший баланс между инстинктами и разумом; глубже всех понимает Гару; часто — самый свирепый боец, потому что всю жизнь доказывает своё право.</p>
-            <p><strong>Минусы:</strong> бесплоден, уродлив, презираем обществом Гару; сложные социальные взаимодействия.</p>
-            <p><strong>Кому играть:</strong> если нравятся трагические персонажи, изгои, истории про принятие себя.</p>
-
-            <h4>🐺 Люпус — рождённый волком</h4>
-            <p><strong>Кто это:</strong> волчонок с кровью Гару. Вырос в стае, думает инстинктами, слабо понимает человеческий мир. Но у него самая крепкая связь с Гайей.</p>
-            <p><strong>Старт:</strong> Гнозис <strong>5</strong> · Дары: Заячий прыжок, Обострённые чувства, Чутьё дичи</p>
-            <p><strong>Плюсы:</strong> максимальный Гнозис, звериные чувства, природные инстинкты, уважение среди волков.</p>
-            <p><strong>Минусы:</strong> не умеет читать, водить, стрелять; теряется в городе; людей видит плохо.</p>
-            <p><strong>Кому играть:</strong> если хочется быть «настоящим зверем», защитником природы, разведчиком.</p>
-          </div>
-        </div>
-
-        <!-- ===== ПОКРОВИТЕЛЬСТВА ===== -->
-        <div class="cheat-section" data-open="false">
-          <div class="cheat-header">
-            <span class="cheat-title"><span class="emoji">🌙</span>Покровительства — фаза Луны</span>
-            <span class="cheat-toggle">▶</span>
-          </div>
-          <div class="cheat-body">
-            <p style="margin-bottom:12px;">Покровительство — фаза Луны, под которой родился Гару. Оно определяет его роль в обществе, стартовую Ярость, стартовые Дары и начальный Почёт. Это как астрологический знак, только реально работающий.</p>
-
-            <h4>🌑 Рагабаш — Новолуние</h4>
-            <p><strong>Роль:</strong> трикстер, разведчик, шпион, саботажник. Дитя тьмы — учится красться и обманывать.</p>
-            <p><strong>Старт:</strong> Ярость <strong>1</strong> · Почёт: <strong>3 в любой категории</strong></p>
-            <p><strong>Дары:</strong> Размывание, Взломанная печать, Запах текущей воды</p>
-            <p><strong>Стиль:</strong> решает проблемы хитростью, а не силой. Часто не воспринимают всерьёз — а зря.</p>
-
-            <h4>🌒 Теург — Серповидная луна</h4>
-            <p><strong>Роль:</strong> мистик, шаман, провидец, мастер обрядов. Тот, кто говорит с духами и разгадывает тайны Умбры.</p>
-            <p><strong>Старт:</strong> Ярость <strong>2</strong> · Почёт: <strong>Мудрость 3</strong></p>
-            <p><strong>Дары:</strong> Ласка Матери, Чутьё Вирма, Речь духов</p>
-            <p><strong>Стиль:</strong> редко дерётся первым, но именно он решает исход истории — через знания, видения и сделки с духами.</p>
-
-            <h4>🌓 Филодокс — Полулуние</h4>
-            <p><strong>Роль:</strong> судья, посредник, хранитель Литании. Видит обе стороны любой ситуации — свет и тьму.</p>
-            <p><strong>Старт:</strong> Ярость <strong>3</strong> · Почёт: <strong>Честь 3</strong></p>
-            <p><strong>Дары:</strong> Устойчивость к боли, Чутьё истинной формы, Истина Гайи</p>
-            <p><strong>Стиль:</strong> справедливый и непреклонный. В бою — стойкий, в спорах — неотразимый.</p>
-
-            <h4>🌔 Галлиард — Горбатая луна</h4>
-            <p><strong>Роль:</strong> бард, сказитель, хранитель истории. Тот, кто помнит традиции и вдохновляет стаю.</p>
-            <p><strong>Старт:</strong> Ярость <strong>4</strong> · Почёт: <strong>Слава 2, Мудрость 1</strong></p>
-            <p><strong>Дары:</strong> Язык зверей, Зов Вильда, Мыслеречь</p>
-            <p><strong>Стиль:</strong> страстный, артистичный, эмоциональный. Хранит память Нации и поёт её подвиги.</p>
-
-            <h4>🌕 Арун — Полнолуние</h4>
-            <p><strong>Роль:</strong> воин, берсерк, защитник. Тот, кто идёт первым в бой и последним отступает.</p>
-            <p><strong>Старт:</strong> Ярость <strong>5</strong> · Почёт: <strong>Слава 2, Честь 1</strong></p>
-            <p><strong>Дары:</strong> Оглушающее касание, Воодушевление, Заточенные когти</p>
-            <p><strong>Стиль:</strong> грубая сила и вызов. Легко впадает в Бешенство — но именно он решает исход сражений.</p>
-          </div>
-        </div>
-
-        <!-- ===== ПЛЕМЕНА ===== -->
-        <div class="cheat-section" data-open="false">
-          <div class="cheat-header">
-            <span class="cheat-title"><span class="emoji">🐾</span>Племена — твоя семья и культура</span>
-            <span class="cheat-toggle">▶</span>
-          </div>
-          <div class="cheat-body">
-            <p style="margin-bottom:12px;">Племя — не гены, а культура и философия. Ты выбираешь его сам после Обряда Перехода. У каждого — свой тотем-покровитель, своя роль в Нации и своя стартовая Сила Воли.</p>
-
-            <h4>🦅 Черные Фурии</h4>
-            <p><strong>Кто:</strong> женщины-воительницы, защитницы женщин и дикой природы. Основаны Селеной в Древней Греции.</p>
-            <p><strong>Тотем:</strong> Пегас · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> принимают только женщин (мужчины — только метисы). Феминистский дух, мистическая мудрость, боевое мастерство.</p>
-
-            <h4>🐀 Костегрызы</h4>
-            <p><strong>Кто:</strong> городские парии — живут в нищете, едят отбросы, знают все слухи и тайные ходы городов.</p>
-            <p><strong>Тотем:</strong> Крыса · <strong>Сила Воли:</strong> 4</p>
-            <p><strong>Особое:</strong> неубиваемые выживальщики. Не могут брать Предков, Чистую Кровь, Ресурсы — они нищие по определению.</p>
-
-            <h4>🦄 Дети Гайи</h4>
-            <p><strong>Кто:</strong> миротворцы, защитники природы и людей, дипломаты. Самое миролюбивое племя.</p>
-            <p><strong>Тотем:</strong> Единорог · <strong>Сила Воли:</strong> 4</p>
-            <p><strong>Особое:</strong> хорошо принимают метисов и мужчин из Фурий. Работают с экологами, гуманитарными организациями.</p>
-
-            <h4>🍀 Фианна</h4>
-            <p><strong>Кто:</strong> кельтские барды, поэты, воины, влюбчивые и страстные. Хранители устной традиции.</p>
-            <p><strong>Тотем:</strong> Олень · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> лучшие Галлиарды Нации. Много пьют, много поют, много дерутся, много любит.</p>
-
-            <h4>🐺 Потомки Фенрира</h4>
-            <p><strong>Кто:</strong> скандинавские берсерки, северные воины, готовые умереть в бою ради славы.</p>
-            <p><strong>Тотем:</strong> Фенрир · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> не могут иметь Контакты — только товарищи-Фенриры. Фаталисты и шовинисты, но великие воины.</p>
-
-            <h4>🪳 Стеклоходы</h4>
-            <p><strong>Кто:</strong> городские технократы — работают с технологиями, деньгами, корпорациями. Живут в небоскрёбах.</p>
-            <p><strong>Тотем:</strong> Таракан · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> связаны с Вивер — их недолюбливают, но без них Гару не выживут в городах. Не могут брать Чистую Кровь, Предков, Наставника.</p>
-
-            <h4>🦁 Красные Когти</h4>
-            <p><strong>Кто:</strong> дикие волки, ненавидят людей. Полностью лупусы, защитники чистой природы.</p>
-            <p><strong>Тотем:</strong> Грифон · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> родичи — только волки. Считают человечество раковой опухнью. Самые свирепые и опасные на своей территории.</p>
-
-            <h4>⚡ Теневые Владыки</h4>
-            <p><strong>Кто:</strong> политики-интриганы, мастера шпионажа, амбициозные и хитрые. Правили Нацией в Восточной Европе.</p>
-            <p><strong>Тотем:</strong> Дед Гром · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> не могут брать Союзников и Наставника. Плетут интриги против Серебряных Клыков, стремятся к власти.</p>
-
-            <h4>🦉 Безмолвные Странники</h4>
-            <p><strong>Кто:</strong> вечные путники, разведчики, гонцы. Родились в Египте, но прокляты и разбрелись по миру.</p>
-            <p><strong>Тотем:</strong> Сова · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> не могут иметь Ресурсы и Предков. Знают дороги и тропы, недоступные другим. Разведчики Нации.</p>
-
-            <h4>👑 Серебряные Клыки</h4>
-            <p><strong>Кто:</strong> аристократы Гару, некогда — правители Нации. Ведут родословные от королей и знатных родов.</p>
-            <p><strong>Тотем:</strong> Сокол · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> обязательно иметь <strong>3+ в Чистоте Рода</strong>. Медленно вырождаются, но всё ещё символ власти. Безумны, но благородны.</p>
-
-            <h4>🦋 Уктена</h4>
-            <p><strong>Кто:</strong> мистики разных народов мира — коренные американцы, маори, африканские шаманы. Хранители запретных тайн.</p>
-            <p><strong>Тотем:</strong> Уктена (дух воды) · <strong>Сила Воли:</strong> 3</p>
-            <p><strong>Особое:</strong> знают всё про Бэйнов и духов. Многие боятся их — подозревают в связи с Вирмом. Великие оккультисты.</p>
-
-            <h4>❄️ Вендиго</h4>
-            <p><strong>Кто:</strong> коренные жители Северной Америки, защитники лесов, тундры и своих племён.</p>
-            <p><strong>Тотем:</strong> Вендиго · <strong>Сила Воли:</strong> 4</p>
-            <p><strong>Особое:</strong> не могут брать Контакты и Ресурсы. Ненавидят «Вирмоносов» — европейских Гару и их потомков. Суровые, как зима.</p>
-
-            <h4>⭐ Звездочёты</h4>
-            <p><strong>Кто:</strong> восточные мистики, ищущие просветления. В книге ушли из Нации Гару — но некоторые остались.</p>
-            <p><strong>Тотем:</strong> Химера · <strong>Сила Воли:</strong> <strong>5</strong></p>
-            <p><strong>Особое:</strong> не могут брать Фетиш и Ресурсы, союзники — только не-Гару. Самые могущественные мистики. Ушедшие — но не забытые.</p>
-
-          </div>
-        </div>
-
       </div>
     </section>
   </div>
@@ -1357,8 +1242,7 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 
 <script>
 /* =========================================================
-   WEREWOLF: THE APOCALYPSE — Character Sheet v8
-   (мульти-персонаж + гайд + пергамент + градации здоровья + связь ранга)
+   WEREWOLF: THE APOCALYPSE — Character Sheet v9
    ========================================================= */
 
 const CHAR_LIST_KEY  = 'wta_characters_list';
@@ -1780,8 +1664,8 @@ const LISTS = {
   gifts2:      { max:5, placeholder:'Дар' },
   rites:       { max:5, placeholder:'Ритуал' },
 };
-const AUTO_KEYS = ['rage','gnosis','willpower'];
 const HEALTH_STATES = ['none', 'slash', 'cross', 'star'];
+
 const RANKS = [
   { n:1, name:'Клиат',      desc:'Молодой Гару после Обряда Перехода' },
   { n:2, name:'Фостерн',    desc:'Опытный оборотень, уважаемый стаей' },
@@ -2040,6 +1924,7 @@ function save() {
     }
     const ind = document.getElementById('save-indicator');
     if (ind) { ind.classList.add('show'); clearTimeout(saveTimer); saveTimer = setTimeout(() => ind.classList.remove('show'), 1100); }
+    if (typeof window.syncToCloud === 'function') window.syncToCloud();
   } catch (e) {}
 }
 
@@ -2053,6 +1938,7 @@ function paintDots(container, val, auto=false) {
 function paintSquares(container, arr) {
   container.querySelectorAll('.sq').forEach((s, i) => { s.classList.toggle('filled', !!arr[i]); });
 }
+
 function initDots() {
   document.querySelectorAll('.dots[data-key]').forEach(container => {
     if (container.dataset.initialized === '1') return;
@@ -2065,7 +1951,6 @@ function initDots() {
       container.appendChild(d);
     }
 
-    // Значение по умолчанию: атрибуты стартуют с 1, остальное с 0
     let val = (state.dots && state.dots[key]);
     if (val === undefined || val === null) {
       val = key.startsWith('attr_') ? 1 : 0;
@@ -2096,77 +1981,7 @@ function initDots() {
     });
   });
 }
-  document.querySelectorAll('.dots[data-key]').forEach(container => {
-    if (container.dataset.initialized === '1') return;
-    container.dataset.initialized = '1';
-    const max = parseInt(container.dataset.max, 10) || 5;
-    const key = container.dataset.key;
-    for (let i = 0; i < max; i++) {
-      const d = document.createElement('span');
-      d.className = 'dot'; d.dataset.i = i;
-      container.appendChild(d);
-    }
 
-    // Значение по умолчанию: атрибуты стартуют с 1, остальное с 0
-    let val = (state.dots && state.dots[key]);
-    if (val === undefined || val === null) {
-      val = key.startsWith('attr_') ? 1 : 0;
-      state.dots = state.dots || {};
-      state.dots[key] = val;
-    }
-
-    paintDots(container, val, false);
-
-    container.addEventListener('click', e => {
-      const dot = e.target.closest('.dot');
-      if (!dot) return;
-      const i = parseInt(dot.dataset.i, 10);
-      const cur = (state.dots && state.dots[key]) || 0;
-      const nv = (cur === i + 1) ? i : i + 1;
-      state.dots = state.dots || {};
-      state.dots[key] = nv;
-      paintDots(container, nv);
-      const sqContainer = document.querySelector(`.squares[data-key="${key}"]`);
-      if (sqContainer && state.squares && state.squares[key]) {
-        for (let j = nv; j < state.squares[key].length; j++) state.squares[key][j] = false;
-        paintSquares(sqContainer, state.squares[key]);
-      }
-      if (key.startsWith('attr_')) recomputeForms();
-      if (['glory','honor','wisdom'].includes(key)) renderRankInfo();
-      if (key === 'ab_rituals') renderRiteList();
-      save();
-    });
-  });
-}
-  document.querySelectorAll('.dots[data-key]').forEach(container => {
-    if (container.dataset.initialized === '1') return;
-    container.dataset.initialized = '1';
-    const max = parseInt(container.dataset.max, 10) || 5;
-    const key = container.dataset.key;
-    for (let i = 0; i < max; i++) { const d = document.createElement('span'); d.className='dot'; d.dataset.i=i; container.appendChild(d); }
-    const isAuto = AUTO_KEYS.includes(key);
-    const val = (state.dots && state.dots[key]) || 0;
-    paintDots(container, val, isAuto && state.auto && state.auto[key]);
-    container.addEventListener('click', e => {
-      if (isAuto && state.auto && state.auto[key] && !e.shiftKey) return;
-      const dot = e.target.closest('.dot'); if (!dot) return;
-      const i = parseInt(dot.dataset.i, 10);
-      const cur = (state.dots && state.dots[key]) || 0;
-      const nv = (cur === i + 1) ? i : i + 1;
-      state.dots = state.dots || {}; state.dots[key] = nv;
-      paintDots(container, nv);
-      const sqContainer = document.querySelector(`.squares[data-key="${key}"]`);
-      if (sqContainer && state.squares && state.squares[key]) {
-        for (let j = nv; j < state.squares[key].length; j++) state.squares[key][j] = false;
-        paintSquares(sqContainer, state.squares[key]);
-      }
-      if (key.startsWith('attr_')) recomputeForms();
-      if (['glory','honor','wisdom'].includes(key)) renderRankInfo();
-      if (key === 'ab_rituals') renderRiteList();
-      save();
-    });
-  });
-}
 function initSquares() {
   document.querySelectorAll('.squares[data-key]').forEach(container => {
     if (container.dataset.initialized === '1') return;
@@ -2199,14 +2014,16 @@ function normalizeKey(input, dict) {
   return null;
 }
 function applyAutoFill() {
-  state.auto = state.auto || {};
   const breedKey = normalizeKey(document.getElementById('f_breed').value, BREEDS);
   const auspiceKey = normalizeKey(document.getElementById('f_auspice').value, AUSPICES);
   const tribeKey = normalizeKey(document.getElementById('f_tribe').value, TRIBES);
   state.dots = state.dots || {};
-   if (breedKey) state.dots.gnosis = BREEDS[breedKey].gnosis;
-   if (auspiceKey) state.dots.rage = AUSPICES[auspiceKey].rage;
+
+  // Значения подставляются, но НЕ помечаются как auto — пользователь может менять вручную
+  if (breedKey) state.dots.gnosis = BREEDS[breedKey].gnosis;
+  if (auspiceKey) state.dots.rage = AUSPICES[auspiceKey].rage;
   if (tribeKey) state.dots.willpower = TRIBES[tribeKey].willpower;
+
   if (auspiceKey) {
     const r = AUSPICES[auspiceKey].renown;
     if (r.glory || r.honor || r.wisdom) {
@@ -2215,13 +2032,16 @@ function applyAutoFill() {
       state.dots.wisdom = Math.max(state.dots.wisdom || 0, r.wisdom);
     }
   }
+
   document.querySelectorAll('.dots[data-key]').forEach(container => {
     const key = container.dataset.key;
-    paintDots(container, state.dots[key] || 0, AUTO_KEYS.includes(key) && state.auto[key]);
+    paintDots(container, state.dots[key] || 0, false);
   });
-  document.getElementById('hint-rage').textContent = (auspiceKey && state.auto.rage) ? `✓ Авто: ${auspiceKey}` : '';
-  document.getElementById('hint-gnosis').textContent = (breedKey && state.auto.gnosis) ? `✓ Авто: ${breedKey}` : '';
-  document.getElementById('hint-willpower').textContent = (tribeKey && state.auto.willpower) ? `✓ Авто: ${tribeKey}` : '';
+
+  document.getElementById('hint-rage').textContent = '';
+  document.getElementById('hint-gnosis').textContent = '';
+  document.getElementById('hint-willpower').textContent = '';
+
   renderGiftBanner(breedKey, auspiceKey, tribeKey);
   updateOnlyMineHint();
   updateAvailableHint();
@@ -2246,17 +2066,9 @@ function renderGiftBanner(breedKey, auspiceKey, tribeKey) {
   if (tribeKey) { html += `Племя: <b>${tribeKey}</b> → Сила Воли ${TRIBES[tribeKey].willpower}<br>`; TRIBES[tribeKey].gifts.forEach(g => gifts.push({ g, src:'Племя' })); }
   html += '<div class="gift-list"><b>Стартовые Дары (3 шт.):</b><ul style="margin:2px 0 0 0;padding-left:14px;">';
   gifts.forEach(item => { html += `<li>${item.g} <span style="opacity:0.6">(${item.src})</span></li>`; });
-  html += '</ul></div><button class="reset-auto" id="reset-auto-btn">Отключить авто-заполнение</button>';
-  banner.innerHTML = html; banner.classList.add('show');
-  const resetBtn = document.getElementById('reset-auto-btn');
-  if (resetBtn) resetBtn.addEventListener('click', () => {
-    state.auto = {};
-    document.querySelectorAll('.dots[data-key]').forEach(c => { paintDots(c, state.dots[c.dataset.key] || 0, false); });
-    document.getElementById('hint-rage').textContent = '';
-    document.getElementById('hint-gnosis').textContent = '';
-    document.getElementById('hint-willpower').textContent = '';
-    banner.classList.remove('show'); banner.innerHTML = ''; save();
-  });
+  html += '</ul></div>';
+  banner.innerHTML = html;
+  banner.classList.add('show');
 }
 function initAutoFill() {
   ['f_breed','f_auspice','f_tribe'].forEach(id => {
@@ -2427,7 +2239,7 @@ function initTextFields() {
     if (el.closest('.list') || el.closest('.fetish-row')) return;
     if (el.closest('table.combat')) return;
     if (el.closest('.gift-filters') || el.closest('.gift-only-mine') || el.closest('.rite-filters')) return;
-    if (el.closest('.char-bar')) return;
+    if (el.closest('.char-bar') || el.closest('.auth-bar')) return;
     if (el.type === 'file' || el.type === 'checkbox') return;
     if (el.id === 'f_rank_select') return;
     const key = el.id; if (!key) return;
@@ -2882,13 +2694,19 @@ function init() {
   initCheatSheets(); initCreationGuide();
   initGiftReference(); initRiteReference(); initAutoFill();
   renderRankInfo();
+
+  // Firebase-хук
+  window.getCharList = getCharList;
+  window.setCharList = setCharList;
+  window.getActiveCharId = getActiveCharId;
+  window.setActiveCharId = setActiveCharId;
+  window.loadCharData = loadCharData;
+  window.saveCharData = saveCharData;
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
+
 <script type="module">
-/* =========================================================
-   FIREBASE CLOUD SYNC
-   ========================================================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -2913,14 +2731,13 @@ const authStatus = document.getElementById('auth-status');
 
 let currentUser = null;
 let syncTimer = null;
-let isApplyingCloud = false; // флаг, чтобы не зациклить синхронизацию
+let isApplyingCloud = false;
 
 function setStatus(text, cls = '') {
   authStatus.textContent = text;
   authStatus.className = 'auth-status ' + cls;
 }
 
-/* ---------- Собираем локальный снапшот ---------- */
 function buildLocalSnapshot() {
   const list = window.getCharList();
   const characters = {};
@@ -2935,27 +2752,21 @@ function buildLocalSnapshot() {
   };
 }
 
-/* ---------- Применяем облачный снапшот ---------- */
 function applyCloudSnapshot(cloud) {
   isApplyingCloud = true;
   try {
-    if (cloud.list && Array.isArray(cloud.list)) {
-      window.setCharList(cloud.list);
-    }
+    if (cloud.list && Array.isArray(cloud.list)) window.setCharList(cloud.list);
     if (cloud.characters && typeof cloud.characters === 'object') {
       Object.keys(cloud.characters).forEach(id => {
         window.saveCharData(id, cloud.characters[id]);
       });
     }
-    if (cloud.activeId) {
-      window.setActiveCharId(cloud.activeId);
-    }
+    if (cloud.activeId) window.setActiveCharId(cloud.activeId);
   } finally {
     isApplyingCloud = false;
   }
 }
 
-/* ---------- Сравнение версий по updatedAt ---------- */
 function latestTime(list) {
   if (!list || !list.length) return 0;
   return list.reduce((max, c) => {
@@ -2964,7 +2775,6 @@ function latestTime(list) {
   }, 0);
 }
 
-/* ---------- Загрузить из облака или залить локальное ---------- */
 async function mergeAndSync(user) {
   setStatus('⏳ Синхронизация…', 'syncing');
   const ref = doc(db, 'users', user.uid);
@@ -2973,7 +2783,6 @@ async function mergeAndSync(user) {
   const local = buildLocalSnapshot();
 
   if (!snap.exists()) {
-    // Первый вход — заливаем всё локальное
     await setDoc(ref, local);
     setStatus('✓ Данные загружены в облако', 'synced');
     return;
@@ -2982,25 +2791,20 @@ async function mergeAndSync(user) {
   const cloud = snap.data();
   const localTime = latestTime(local.list);
   const cloudTime = latestTime(cloud.list);
-
   const localHasData = local.list.length > 0;
   const cloudHasData = (cloud.list || []).length > 0;
 
-  // Если в облаке есть данные и они новее — подтягиваем
   if (cloudHasData && (!localHasData || cloudTime > localTime)) {
     applyCloudSnapshot(cloud);
     setStatus('✓ Загружено из облака', 'synced');
-    // Перезагружаем, чтобы лист подхватил новые данные
     setTimeout(() => location.reload(), 300);
     return;
   }
 
-  // Иначе — заливаем локальное поверх облачного
   await setDoc(ref, local);
   setStatus('✓ Локальные данные отправлены в облако', 'synced');
 }
 
-/* ---------- Отправить данные в облако ---------- */
 async function pushToCloud() {
   if (!currentUser || isApplyingCloud) return;
   try {
@@ -3014,19 +2818,12 @@ async function pushToCloud() {
   }
 }
 
-/* ---------- Дебаунс-хук на save() ---------- */
-(function hookSave() {
-  const orig = window.save;
-  if (typeof orig !== 'function') return;
-  window.save = function () {
-    orig.apply(this, arguments);
-    if (!currentUser || isApplyingCloud) return;
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(pushToCloud, 1500);
-  };
-})();
+window.syncToCloud = function() {
+  if (!currentUser || isApplyingCloud) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(pushToCloud, 1500);
+};
 
-/* ---------- Кнопки ---------- */
 btnSignIn.addEventListener('click', async () => {
   try {
     setStatus('⏳ Открываем окно Google…', 'syncing');
@@ -3042,7 +2839,6 @@ btnSignOut.addEventListener('click', async () => {
   await signOut(auth);
 });
 
-/* ---------- Отслеживание авторизации ---------- */
 onAuthStateChanged(auth, async (user) => {
   currentUser = user;
   if (user) {
