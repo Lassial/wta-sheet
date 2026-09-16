@@ -2059,6 +2059,90 @@ function initDots() {
     container.dataset.initialized = '1';
     const max = parseInt(container.dataset.max, 10) || 5;
     const key = container.dataset.key;
+    for (let i = 0; i < max; i++) {
+      const d = document.createElement('span');
+      d.className = 'dot'; d.dataset.i = i;
+      container.appendChild(d);
+    }
+
+    // Значение по умолчанию: атрибуты стартуют с 1, остальное с 0
+    let val = (state.dots && state.dots[key]);
+    if (val === undefined || val === null) {
+      val = key.startsWith('attr_') ? 1 : 0;
+      state.dots = state.dots || {};
+      state.dots[key] = val;
+    }
+
+    paintDots(container, val, false);
+
+    container.addEventListener('click', e => {
+      const dot = e.target.closest('.dot');
+      if (!dot) return;
+      const i = parseInt(dot.dataset.i, 10);
+      const cur = (state.dots && state.dots[key]) || 0;
+      const nv = (cur === i + 1) ? i : i + 1;
+      state.dots = state.dots || {};
+      state.dots[key] = nv;
+      paintDots(container, nv);
+      const sqContainer = document.querySelector(`.squares[data-key="${key}"]`);
+      if (sqContainer && state.squares && state.squares[key]) {
+        for (let j = nv; j < state.squares[key].length; j++) state.squares[key][j] = false;
+        paintSquares(sqContainer, state.squares[key]);
+      }
+      if (key.startsWith('attr_')) recomputeForms();
+      if (['glory','honor','wisdom'].includes(key)) renderRankInfo();
+      if (key === 'ab_rituals') renderRiteList();
+      save();
+    });
+  });
+}
+  document.querySelectorAll('.dots[data-key]').forEach(container => {
+    if (container.dataset.initialized === '1') return;
+    container.dataset.initialized = '1';
+    const max = parseInt(container.dataset.max, 10) || 5;
+    const key = container.dataset.key;
+    for (let i = 0; i < max; i++) {
+      const d = document.createElement('span');
+      d.className = 'dot'; d.dataset.i = i;
+      container.appendChild(d);
+    }
+
+    // Значение по умолчанию: атрибуты стартуют с 1, остальное с 0
+    let val = (state.dots && state.dots[key]);
+    if (val === undefined || val === null) {
+      val = key.startsWith('attr_') ? 1 : 0;
+      state.dots = state.dots || {};
+      state.dots[key] = val;
+    }
+
+    paintDots(container, val, false);
+
+    container.addEventListener('click', e => {
+      const dot = e.target.closest('.dot');
+      if (!dot) return;
+      const i = parseInt(dot.dataset.i, 10);
+      const cur = (state.dots && state.dots[key]) || 0;
+      const nv = (cur === i + 1) ? i : i + 1;
+      state.dots = state.dots || {};
+      state.dots[key] = nv;
+      paintDots(container, nv);
+      const sqContainer = document.querySelector(`.squares[data-key="${key}"]`);
+      if (sqContainer && state.squares && state.squares[key]) {
+        for (let j = nv; j < state.squares[key].length; j++) state.squares[key][j] = false;
+        paintSquares(sqContainer, state.squares[key]);
+      }
+      if (key.startsWith('attr_')) recomputeForms();
+      if (['glory','honor','wisdom'].includes(key)) renderRankInfo();
+      if (key === 'ab_rituals') renderRiteList();
+      save();
+    });
+  });
+}
+  document.querySelectorAll('.dots[data-key]').forEach(container => {
+    if (container.dataset.initialized === '1') return;
+    container.dataset.initialized = '1';
+    const max = parseInt(container.dataset.max, 10) || 5;
+    const key = container.dataset.key;
     for (let i = 0; i < max; i++) { const d = document.createElement('span'); d.className='dot'; d.dataset.i=i; container.appendChild(d); }
     const isAuto = AUTO_KEYS.includes(key);
     const val = (state.dots && state.dots[key]) || 0;
@@ -2120,9 +2204,9 @@ function applyAutoFill() {
   const auspiceKey = normalizeKey(document.getElementById('f_auspice').value, AUSPICES);
   const tribeKey = normalizeKey(document.getElementById('f_tribe').value, TRIBES);
   state.dots = state.dots || {};
-  if (breedKey) { state.dots.gnosis = BREEDS[breedKey].gnosis; state.auto.gnosis = true; } else delete state.auto.gnosis;
-  if (auspiceKey) { state.dots.rage = AUSPICES[auspiceKey].rage; state.auto.rage = true; } else delete state.auto.rage;
-  if (tribeKey) { state.dots.willpower = TRIBES[tribeKey].willpower; state.auto.willpower = true; } else delete state.auto.willpower;
+   if (breedKey) state.dots.gnosis = BREEDS[breedKey].gnosis;
+   if (auspiceKey) state.dots.rage = AUSPICES[auspiceKey].rage;
+  if (tribeKey) state.dots.willpower = TRIBES[tribeKey].willpower;
   if (auspiceKey) {
     const r = AUSPICES[auspiceKey].renown;
     if (r.glory || r.honor || r.wisdom) {
