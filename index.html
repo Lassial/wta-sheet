@@ -1659,10 +1659,10 @@ const FORMS = [
   { id:'lupus',  name:'Люпус',  diff:6, mods:{ attr_strength:1, attr_dexterity:2, attr_stamina:2, attr_manipulation:-3 } },
 ];
 const LISTS = {
-  backgrounds: { max:5, placeholder:'Фон' },
-  gifts1:      { max:5, placeholder:'Дар' },
-  gifts2:      { max:5, placeholder:'Дар' },
-  rites:       { max:5, placeholder:'Ритуал' },
+  backgrounds: { max:9, placeholder:'Фон' },
+  gifts1:      { max:9, placeholder:'Дар' },
+  gifts2:      { max:9, placeholder:'Дар' },
+  rites:       { max:9, placeholder:'Ритуал' },
 };
 const HEALTH_STATES = ['none', 'slash', 'cross', 'star'];
 
@@ -1943,7 +1943,7 @@ function initDots() {
   document.querySelectorAll('.dots[data-key]').forEach(container => {
     if (container.dataset.initialized === '1') return;
     container.dataset.initialized = '1';
-    const max = parseInt(container.dataset.max, 10) || 5;
+    const max = parseInt(container.dataset.max, 10) || 9;
     const key = container.dataset.key;
     for (let i = 0; i < max; i++) {
       const d = document.createElement('span');
@@ -1986,7 +1986,7 @@ function initSquares() {
   document.querySelectorAll('.squares[data-key]').forEach(container => {
     if (container.dataset.initialized === '1') return;
     container.dataset.initialized = '1';
-    const max = parseInt(container.dataset.max, 10) || 5;
+    const max = parseInt(container.dataset.max, 10) || 9;
     const key = container.dataset.key;
     for (let i = 0; i < max; i++) { const s = document.createElement('span'); s.className='sq'; s.dataset.i=i; container.appendChild(s); }
     state.squares = state.squares || {};
@@ -2087,7 +2087,7 @@ function buildStats(root, groups) {
     for (const [key, name] of groups[groupName]) {
       const row = document.createElement('div'); row.className = 'stat';
       const lbl = document.createElement('span'); lbl.className = 'stat-name'; lbl.textContent = name;
-      const dots = document.createElement('div'); dots.className = 'dots'; dots.dataset.key = key; dots.dataset.max = 5;
+        const dots = document.createElement('div'); dots.className = 'dots'; dots.dataset.key = key; dots.dataset.max = 9;
       row.appendChild(lbl); row.appendChild(dots); col.appendChild(row);
     }
     root.appendChild(col);
