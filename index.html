@@ -155,11 +155,48 @@ table.combat td { padding: 1px; border-bottom: 1px dotted var(--line-soft); }
 table.combat td input { background: transparent; border: none; color: var(--ink); width: 100%; padding: 4px 5px; font-size: 12.5px; outline: none; }
 table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 
-.fetish-row { display: grid; grid-template-columns: 2fr 30px 40px 40px 30px; gap: 6px; align-items: center; padding: 3px 0; border-bottom: 1px dotted var(--line-soft); }
-.fetish-row input[type=text] { padding: 2px 4px; border-bottom: 1px solid var(--line); }
-.fetish-row label { font-family: 'EB Garamond', Georgia, serif; font-size: 11px; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--ink-soft); display: flex; align-items: center; gap: 3px; }
-.fetish-row input[type=number] { padding: 2px 4px; text-align: center; border-bottom: 1px solid var(--line); }
-
+.fetish-card {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background: rgba(255, 250, 235, 0.4);
+  transition: all .15s;
+}
+.fetish-card:hover { border-color: var(--gold); background: rgba(255, 250, 235, 0.7); }
+.fetish-head {
+  display: grid;
+  grid-template-columns: 1fr 90px 60px 60px 28px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.fetish-head input[type=text] { font-size: 14px; font-weight: 600; border-bottom: 1px solid var(--line); }
+.fetish-head label { font-family: 'EB Garamond', Georgia, serif; font-size: 11px; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--ink-soft); display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+.fetish-head input[type=number] { padding: 2px 4px; text-align: center; border-bottom: 1px solid var(--line); }
+.fetish-card .rm {
+  background: transparent; border: 1px solid var(--line); color: var(--ink-soft);
+  border-radius: 2px; cursor: pointer; width: 26px; height: 26px;
+  font-size: 15px; line-height: 1; padding: 0; transition: all .15s;
+}
+.fetish-card .rm:hover { border-color: var(--red); color: var(--red); background: rgba(139, 26, 26, 0.08); }
+.fetish-card textarea {
+  width: 100%;
+  min-height: 70px;
+  margin-top: 4px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: rgba(255, 250, 235, 0.5);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+  resize: vertical;
+  outline: none;
+}
+.fetish-card textarea:focus { border-color: var(--gold); background: rgba(255, 250, 235, 0.85); }
+.fetish-card textarea::placeholder { color: var(--ink-faint); font-style: italic; opacity: 0.7; }
 .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 .misc-block { display: flex; flex-direction: column; gap: 6px; }
 .misc-block > label { color: var(--ink); font-size: 11px; letter-spacing: 1.5px; border-bottom: 1px dashed var(--border-ink); padding-bottom: 4px; margin-top: 4px; }
@@ -2189,18 +2226,80 @@ function addListItem(key) {
   state.lists[key].push({ name:'', value:0 }); renderList(key); save();
 }
 function renderFetishes() {
-  const root = document.getElementById('fetishes'); root.innerHTML = '';
+  const root = document.getElementById('fetishes');
+  root.innerHTML = '';
   state.fetishes = state.fetishes || [];
   state.fetishes.forEach((f, idx) => {
-    const row = document.createElement('div'); row.className = 'fetish-row';
-    row.innerHTML = `<input type="text" placeholder="Название" value="${(f.name||'').replace(/"/g,'&quot;')}"><label><input type="checkbox" ${f.bound?'checked':''}> Прив.</label><input type="number" placeholder="Ур." min="1" max="5" value="${f.level||''}"><input type="number" placeholder="Гн." min="1" max="10" value="${f.gnosis||''}">`;
-    row.querySelectorAll('input')[0].addEventListener('input', e => { state.fetishes[idx].name = e.target.value; save(); });
-    row.querySelectorAll('input')[1].addEventListener('change', e => { state.fetishes[idx].bound = e.target.checked; save(); });
-    row.querySelectorAll('input')[2].addEventListener('input', e => { state.fetishes[idx].level = e.target.value; save(); });
-    row.querySelectorAll('input')[3].addEventListener('input', e => { state.fetishes[idx].gnosis = e.target.value; save(); });
-    const rm = document.createElement('button'); rm.className = 'rm'; rm.type = 'button'; rm.textContent = '×';
-    rm.addEventListener('click', () => { state.fetishes.splice(idx, 1); renderFetishes(); save(); });
-    row.appendChild(rm); root.appendChild(row);
+    const card = document.createElement('div');
+    card.className = 'fetish-card';
+
+    // Верхняя строка: название + флаг + уровни + удалить
+    const head = document.createElement('div');
+    head.className = 'fetish-head';
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.placeholder = 'Название фетиша';
+    nameInput.value = f.name || '';
+    nameInput.addEventListener('input', () => { state.fetishes[idx].name = nameInput.value; save(); });
+
+    const boundLabel = document.createElement('label');
+    const boundCb = document.createElement('input');
+    boundCb.type = 'checkbox';
+    boundCb.checked = !!f.bound;
+    boundCb.addEventListener('change', () => { state.fetishes[idx].bound = boundCb.checked; save(); });
+    boundLabel.appendChild(boundCb);
+    boundLabel.appendChild(document.createTextNode(' Привязан'));
+
+    const levelInput = document.createElement('input');
+    levelInput.type = 'number';
+    levelInput.placeholder = 'Ур.';
+    levelInput.min = '1';
+    levelInput.max = '5';
+    levelInput.value = f.level || '';
+    levelInput.title = 'Уровень фетиша (1–5)';
+    levelInput.addEventListener('input', () => { state.fetishes[idx].level = levelInput.value; save(); });
+
+    const gnosisInput = document.createElement('input');
+    gnosisInput.type = 'number';
+    gnosisInput.placeholder = 'Гн.';
+    gnosisInput.min = '1';
+    gnosisInput.max = '10';
+    gnosisInput.value = f.gnosis || '';
+    gnosisInput.title = 'Гнозис фетиша — сложность активации';
+    gnosisInput.addEventListener('input', () => { state.fetishes[idx].gnosis = gnosisInput.value; save(); });
+
+    const rm = document.createElement('button');
+    rm.className = 'rm';
+    rm.type = 'button';
+    rm.textContent = '×';
+    rm.title = 'Удалить фетиш';
+    rm.addEventListener('click', () => {
+      if (!confirm('Удалить фетиш "' + (f.name || 'без названия') + '"?')) return;
+      state.fetishes.splice(idx, 1);
+      renderFetishes();
+      save();
+    });
+
+    head.appendChild(nameInput);
+    head.appendChild(boundLabel);
+    head.appendChild(levelInput);
+    head.appendChild(gnosisInput);
+    head.appendChild(rm);
+
+    // Поле описания
+    const desc = document.createElement('textarea');
+    desc.placeholder = 'Подробное описание: какой дух внутри, что делает фетиш, как активируется, откуда он у персонажа…';
+    desc.value = f.description || '';
+    desc.rows = 3;
+    desc.addEventListener('input', () => {
+      state.fetishes[idx].description = desc.value;
+      save();
+    });
+
+    card.appendChild(head);
+    card.appendChild(desc);
+    root.appendChild(card);
   });
 }
 function renderCombat() {
