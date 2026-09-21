@@ -2799,6 +2799,41 @@ function initRiteReference() {
   document.getElementById('rite-level-filter').addEventListener('change', renderRiteList);
   document.getElementById('rite-search').addEventListener('input', renderRiteList);
 }
+/* ---------- AUTO-RESIZE TEXTAREA ---------- */
+function autoResizeTextarea(el) {
+  if (!el || el.tagName !== 'TEXTAREA') return;
+  // Пропускаем, если элемент в скрытой вкладке (иначе scrollHeight = 0)
+  if (el.offsetParent === null && el.getClientRects().length === 0) {
+    el.dataset.needResize = '1';
+    return;
+  }
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight + 2) + 'px';
+  delete el.dataset.needResize;
+}
+
+window.autoResizeAll = function() {
+  document.querySelectorAll('textarea').forEach(autoResizeTextarea);
+};
+
+// Делегированный обработчик: любой ввод в textarea = пересчитать высоту
+document.addEventListener('input', e => {
+  if (e.target.tagName === 'TEXTAREA') autoResizeTextarea(e.target);
+});
+
+// Ловим динамически созданные textarea (фетиши, дополнения)
+const _textareaObserver = new MutationObserver(mutations => {
+  let needResize = false;
+  mutations.forEach(m => {
+    m.addedNodes.forEach(node => {
+      if (!node.querySelectorAll) return;
+      if (node.tagName === 'TEXTAREA' || node.querySelectorAll('textarea').length > 0) {
+        needResize = true;
+      }
+    });
+  });
+  if (needResize) setTimeout(() => window.autoResizeAll(), 30);
+});
 
 function flashToast(text, type='', duration=1800) {
   const t = document.getElementById('toast'); if (!t) return;
@@ -2851,7 +2886,12 @@ function init() {
   window.getActiveCharId = getActiveCharId;
   window.setActiveCharId = setActiveCharId;
   window.loadCharData = loadCharData;
-  window.saveCharData = saveCharData;
+ window.saveCharData = saveCharData;
+  // Запуск авто-размера для всех textarea
+  if (typeof window.autoResizeAll === 'function') window.autoResizeAll();
+  if (typeof _textareaObserver !== 'undefined') {
+    _textareaObserver.observe(document.body, { childList: true, subtree: true });
+  }
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
