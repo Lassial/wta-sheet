@@ -420,7 +420,9 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
     <button data-tab="page4">📖 Дары</button>
     <button data-tab="page6">📿 Обряды</button>
     <button data-tab="page7">🎲 Создание</button>
+    <button data-tab="page9">📝 Заметки</button>
     <button data-tab="page8">📚 Справочник</button>
+
     <button data-tab="page5">📋 Шпаргалки</button>
   </div>
   <span id="save-indicator">✓ Сохранено</span>
@@ -1241,6 +1243,55 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
             </table>
           </div>
         </div>
+      </div>
+    </section>
+  </div>
+
+ <!-- =================== PAGE 9: ЗАМЕТКИ =================== -->
+  <div class="page" id="page9">
+    <section class="panel">
+      <h2>Заметки</h2>
+      <p style="text-align:center; font-size:12px; color:var(--ink-soft); font-style:italic; margin-bottom:20px;">
+        Всё, что важно — автоматически сохраняется и синхронизируется вместе с этим персонажем
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:18px;">
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="color:var(--gold); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:600;">📌 Важное / Срочное</label>
+          <textarea id="notes_urgent" rows="3" placeholder="Что нужно сделать прямо сейчас, угрозы, дедлайны…"></textarea>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="color:var(--gold); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:600;">🎯 Цели персонажа</label>
+          <textarea id="notes_goals" rows="4" placeholder="Личные цели, мотивы, чего хочет достичь…"></textarea>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="color:var(--gold); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:600;">👥 NPC / Контакты / Союзники</label>
+          <textarea id="notes_npcs" rows="5" placeholder="Кого персонаж знает, кто друг, кто враг, у кого что можно попросить…"></textarea>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="color:var(--gold); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:600;">🗝️ Тайны и зацепки сюжета</label>
+          <textarea id="notes_secrets" rows="5" placeholder="Что персонаж узнал, но не должен рассказывать. Подозрения. Ниточки к разгадкам…"></textarea>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="color:var(--gold); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:600;">📖 Хроника — что случилось</label>
+          <textarea id="notes_journal" rows="8" placeholder="Дневник событий. Записывай после каждой сессии: где был, кого встретил, что сделал…"></textarea>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="color:var(--gold); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:600;">💭 Мысли и чувства</label>
+          <textarea id="notes_reflections" rows="4" placeholder="Что персонаж думает обо всём этом. Страхи, надежды, обиды…"></textarea>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="color:var(--gold); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:600;">✍️ Свободное поле</label>
+          <textarea id="notes_free" rows="6" placeholder="Всё остальное. Цитаты, стихи, планы, бред…"></textarea>
+        </div>
+
       </div>
     </section>
   </div>
