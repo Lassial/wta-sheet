@@ -3254,6 +3254,22 @@ function init() {
 /* =========================================================
    MASTER PANEL
    ========================================================= */
+/* ---------- Заметки мастера — глобальное хранилище ---------- */
+function loadMasterNotes() {
+  try { return JSON.parse(localStorage.getItem('wta_master_notes')) || {}; }
+  catch (e) { return {}; }
+}
+function saveMasterNotes(obj) {
+  localStorage.setItem('wta_master_notes', JSON.stringify(obj));
+}
+
+function loadMasterNpcNotes() {
+  try { return JSON.parse(localStorage.getItem('wta_master_npc_notes')) || {}; }
+  catch (e) { return {}; }
+}
+function saveMasterNpcNotes(obj) {
+  localStorage.setItem('wta_master_npc_notes', JSON.stringify(obj));
+}
 
 function saveMasterField(path, value) {
   // path = ['master_npcs', 0, 'name'] или ['master_pc_notes', 'charId']
@@ -3284,12 +3300,13 @@ function renderMasterPcSelect() {
     if (c.id === current) opt.selected = true;
     sel.appendChild(opt);
   });
-  const countEl = document.getElementById('master-pc-count');
+ const countEl = document.getElementById('master-pc-count');
   if (countEl) {
-    const notes = state.master_pc_notes || {};
+    const notes = loadMasterNotes();
     const filled = Object.keys(notes).filter(k => (notes[k] || '').trim().length > 0).length;
     countEl.textContent = filled + ' / ' + list.length;
   }
+
 }
 
 function loadMasterPcNotes(charId) {
@@ -3303,8 +3320,8 @@ function loadMasterPcNotes(charId) {
   }
   ta.disabled = false;
   ta.placeholder = 'Секретные заметки мастера об этом персонаже…';
-  state.master_pc_notes = state.master_pc_notes || {};
-  ta.value = state.master_pc_notes[charId] || '';
+  const notes = loadMasterNotes();
+  ta.value = notes[charId] || '';
 }
 
 function initMasterPcNotes() {
@@ -3319,17 +3336,17 @@ function initMasterPcNotes() {
   ta.addEventListener('input', () => {
     const id = sel.value;
     if (!id) return;
-    state.master_pc_notes = state.master_pc_notes || {};
-    state.master_pc_notes[id] = ta.value;
+    const notes = loadMasterNotes();
+    notes[id] = ta.value;
+    saveMasterNotes(notes);
     // счётчик
     const countEl = document.getElementById('master-pc-count');
     if (countEl) {
       const list = getCharList();
-      const notes = state.master_pc_notes || {};
       const filled = Object.keys(notes).filter(k => (notes[k] || '').trim().length > 0).length;
       countEl.textContent = filled + ' / ' + list.length;
     }
-    save();
+    save(); // вызовет syncToCloud через хук
   });
 
   // Старт
@@ -3615,15 +3632,46 @@ function setStatus(text, cls = '') {
 }
 
 function buildLocalSnapshot() {
+  // ---- PC (игроки) ----
   const list = window.getCharList();
   const characters = {};
   list.forEach(c => {
     characters[c.id] = window.loadCharData(c.id) || {};
   });
+
+  // ---- NPC мастера ----
+  let masterList = [];
+  try { masterList = JSON.parse(localStorage.getItem('wta_master_characters_list')) || []; }
+  catch (e) { masterList = []; }
+  const masterCharacters = {};
+  masterList.forEach(c => {
+    try {
+      masterCharacters[c.id] = JSON.parse(localStorage.getItem('wta_char_' + c.id)) || {};
+    } catch (e) {}
+  });
+  const masterActiveId = localStorage.getItem('wta_master_active_character') || null;
+
+  // ---- Заметки мастера по PC (глобальные) ----
+  let masterPcNotes = {};
+  try { masterPcNotes = JSON.parse(localStorage.getItem('wta_master_notes')) || {}; }
+  catch (e) { masterPcNotes = {}; }
+
+  // ---- Заметки мастера по NPC (глобальные) ----
+  let masterNpcNotes = {};
+  try { masterNpcNotes = JSON.parse(localStorage.getItem('wta_master_npc_notes')) || {}; }
+  catch (e) { masterNpcNotes = {}; }
+
   return {
+    // Игроки
     list,
     characters,
     activeId: window.getActiveCharId(),
+    // Мастер
+    masterList,
+    masterCharacters,
+    masterActiveId,
+    masterPcNotes,
+    masterNpcNotes,
     updatedAt: new Date().toISOString()
   };
 }
@@ -3631,13 +3679,39 @@ function buildLocalSnapshot() {
 function applyCloudSnapshot(cloud) {
   isApplyingCloud = true;
   try {
-    if (cloud.list && Array.isArray(cloud.list)) window.setCharList(cloud.list);
+    // ---- PC ----
+    if (cloud.list && Array.isArray(cloud.list)) {
+      localStorage.setItem('wta_characters_list', JSON.stringify(cloud.list));
+    }
     if (cloud.characters && typeof cloud.characters === 'object') {
       Object.keys(cloud.characters).forEach(id => {
-        window.saveCharData(id, cloud.characters[id]);
+        localStorage.setItem('wta_char_' + id, JSON.stringify(cloud.characters[id]));
       });
     }
-    if (cloud.activeId) window.setActiveCharId(cloud.activeId);
+    if (cloud.activeId) {
+      localStorage.setItem('wta_active_character', cloud.activeId);
+    }
+
+    // ---- NPC мастера ----
+    if (cloud.masterList && Array.isArray(cloud.masterList)) {
+      localStorage.setItem('wta_master_characters_list', JSON.stringify(cloud.masterList));
+    }
+    if (cloud.masterCharacters && typeof cloud.masterCharacters === 'object') {
+      Object.keys(cloud.masterCharacters).forEach(id => {
+        localStorage.setItem('wta_char_' + id, JSON.stringify(cloud.masterCharacters[id]));
+      });
+    }
+    if (cloud.masterActiveId) {
+      localStorage.setItem('wta_master_active_character', cloud.masterActiveId);
+    }
+
+    // ---- Заметки мастера ----
+    if (cloud.masterPcNotes && typeof cloud.masterPcNotes === 'object') {
+      localStorage.setItem('wta_master_notes', JSON.stringify(cloud.masterPcNotes));
+    }
+    if (cloud.masterNpcNotes && typeof cloud.masterNpcNotes === 'object') {
+      localStorage.setItem('wta_master_npc_notes', JSON.stringify(cloud.masterNpcNotes));
+    }
   } finally {
     isApplyingCloud = false;
   }
