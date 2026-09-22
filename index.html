@@ -49,8 +49,8 @@ button, input, textarea, select { font-family: inherit; }
 #save-indicator.show { opacity: 1; }
 
 .char-bar { position: sticky; top: 47px; z-index: 49; display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(15, 10, 6, 0.97); backdrop-filter: blur(8px); border-bottom: 1px solid #3a2a18; flex-wrap: wrap; color: #e8ddc9; }
-.char-bar .char-label { font-family: 'Cinzel', Georgia, serif; font-size: 11px; color: #c9a227; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; font-weight: 600; }
-.char-bar select { background: #221b14; border: 1px solid #3a2e21; color: #e8ddc9; padding: 5px 10px; border-radius: 3px; font-size: 12.5px; min-width: 220px; cursor: pointer; outline: none; }
+.char-bar .char-label { font-family: 'Cinzel', Georgia, serif; font-size: 11px; color: #f2cd52; letter-spacing: 1.5px; text-transform: uppercase; white-space: nowrap; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+.char-bar select { background: #1a130d; border: 1px solid #c9a227; color: #fff5d6; padding: 5px 10px; border-radius: 3px; font-size: 13px; font-weight: 600; min-width: 220px; cursor: pointer; outline: none; text-shadow: 0 1px 1px rgba(0,0,0,0.4); }
 .char-bar select:focus { border-color: #c9a227; }
 .char-btn { background: transparent; border: 1px solid #3a2e21; color: #968772; padding: 5px 11px; border-radius: 3px; cursor: pointer; font-size: 11px; letter-spacing: 0.5px; transition: all .15s; white-space: nowrap; }
 .char-btn:hover { border-color: #c9a227; color: #f2cd52; }
@@ -336,6 +336,245 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 .guide-step-body .hint-green { background: rgba(74, 107, 31, 0.08); border-left: 3px solid var(--green); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 0 3px 3px 0; }
 .guide-step-body .example { background: rgba(139, 100, 60, 0.06); border: 1px dashed var(--line); padding: 8px 12px; margin: 10px 0; font-size: 12px; border-radius: 3px; font-style: italic; color: var(--ink); }
 .guide-step-body .example strong { color: var(--gold); font-style: normal; font-family: 'Cinzel', Georgia, serif; letter-spacing: 0.5px; }
+/* ---------- MODE SWITCH ---------- */
+.mode-switch {
+  display: flex;
+  border: 1px solid #c9a227;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.mode-switch button {
+  background: transparent;
+  color: #968772;
+  border: none;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.mode-switch button:hover { color: #f2cd52; }
+.mode-switch button.active {
+  background: #c9a227;
+  color: #1a1209;
+}
+body.master-mode .mode-switch { border-color: #8b6bb0; }
+body.master-mode .mode-switch button.active {
+  background: #8b6bb0;
+  color: #f0e4ff;
+}
+body.master-mode .char-bar { border-bottom-color: #5c3b7a; }
+body.master-mode .char-bar .char-label { color: #c09be0; }
+body.master-mode .brand { color: #c09be0; }
+body.master-mode .auth-bar { border-bottom-color: #3d2a52; }
+
+/* ---------- MASTER PANEL ---------- */
+
+/* ---------- MASTER PANEL ---------- */
+.master-section {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: rgba(255, 250, 235, 0.4);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.master-section[data-open="true"] {
+  border-color: var(--border-ink);
+  background: rgba(255, 250, 235, 0.7);
+}
+.master-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+  cursor: pointer; user-select: none;
+  background: linear-gradient(180deg, rgba(92, 59, 122, 0.08), transparent);
+  transition: all .15s;
+}
+.master-header:hover { background: linear-gradient(180deg, rgba(92, 59, 122, 0.16), transparent); }
+.master-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 14px; font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.master-title .emoji { margin-right: 8px; font-size: 16px; }
+.master-count {
+  display: inline-block;
+  font-size: 10.5px;
+  color: var(--purple);
+  background: rgba(92, 59, 122, 0.12);
+  border: 1px solid var(--purple);
+  padding: 1px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+}
+.master-toggle { color: var(--ink-soft); font-size: 16px; transition: transform .2s; }
+.master-section[data-open="true"] .master-toggle { transform: rotate(90deg); color: var(--purple); }
+.master-body { display: none; padding: 8px 18px 18px 18px; }
+.master-section[data-open="true"] .master-body { display: block; }
+
+.master-hint {
+  font-size: 11.5px; color: var(--ink-faint);
+  font-style: italic;
+  margin: 0 0 12px;
+  padding: 6px 10px;
+  background: rgba(92, 59, 122, 0.06);
+  border-left: 3px solid var(--purple);
+  border-radius: 0 3px 3px 0;
+}
+
+/* Карточки NPC / духов / второстепенных */
+.master-card {
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--purple);
+  border-radius: 3px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: rgba(255, 250, 235, 0.5);
+  position: relative;
+}
+.master-card .card-remove {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  border-radius: 2px;
+  cursor: pointer;
+  width: 24px; height: 24px;
+  font-size: 14px; line-height: 1;
+  padding: 0;
+  transition: all .15s;
+}
+.master-card .card-remove:hover { border-color: var(--red); color: var(--red); background: rgba(139, 26, 26, 0.08); }
+
+.master-card .card-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 1px;
+  margin: 0 30px 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-ink);
+}
+
+.master-card .card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+  margin-bottom: 8px;
+}
+.master-card .card-grid.one-col { grid-template-columns: 1fr; }
+.master-card .card-grid > div { display: flex; flex-direction: column; gap: 2px; }
+.master-card label {
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 10.5px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.master-card input[type=text],
+.master-card input[type=number],
+.master-card textarea {
+  background: rgba(255, 250, 235, 0.4);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--ink);
+  padding: 5px 7px;
+  font-size: 12.5px;
+  font-family: inherit;
+  width: 100%;
+  outline: none;
+  transition: border-color .15s;
+}
+.master-card textarea {
+  resize: vertical;
+  min-height: 50px;
+  line-height: 1.45;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.master-card input:focus,
+.master-card textarea:focus {
+  border-color: var(--purple);
+  background: rgba(255, 250, 235, 0.85);
+}
+.master-card textarea::placeholder,
+.master-card input::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Заметки мастера по PC */
+.master-pc-selector {
+  display: flex; gap: 10px; align-items: center;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  background: rgba(92, 59, 122, 0.08);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+.master-pc-selector label {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 11px;
+  color: var(--purple);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.master-pc-selector select {
+  flex: 1;
+  background: rgba(255, 250, 235, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 5px 8px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+.master-pc-selector select:focus { border-color: var(--purple); }
+
+.master-add-btn {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 1px dashed var(--line);
+  color: var(--purple);
+  padding: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all .15s;
+  margin-top: 4px;
+}
+.master-add-btn:hover {
+  border-color: var(--purple);
+  background: rgba(92, 59, 122, 0.06);
+  color: var(--ink);
+}
+
+@media (max-width: 600px) {
+  .master-card .card-grid { grid-template-columns: 1fr; }
+  .master-pc-selector { flex-direction: column; align-items: stretch; }
+}
+
+/* ---------- RANK INFO ---------- */
 
 /* ---------- RANK INFO ---------- */
 .rank-info-btn { display: block; width: 100%; background: transparent; border: 1px solid var(--line); color: var(--ink); padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 11.5px; font-family: 'Cinzel', Georgia, serif; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; transition: all .15s; }
@@ -420,7 +659,8 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
     <button data-tab="page4">📖 Дары</button>
     <button data-tab="page6">📿 Обряды</button>
     <button data-tab="page7">🎲 Создание</button>
-    <button data-tab="page9">📝 Заметки</button>
+     <button data-tab="page9">📝 Заметки</button>
+<button data-tab="page10">🎭 Мастер</button>
     <button data-tab="page8">📚 Справочник</button>
 
     <button data-tab="page5">📋 Шпаргалки</button>
@@ -437,6 +677,10 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
 </div>
 
 <div class="char-bar">
+  <div class="mode-switch">
+    <button id="mode-player" class="mode-btn active">🎮 Игроки</button>
+    <button id="mode-master" class="mode-btn">🎭 Мастер</button>
+  </div>
   <span class="char-label">📚 Персонаж:</span>
   <select id="char-select"></select>
   <button id="btn-new-char" class="char-btn" title="Создать нового персонажа">+ Новый</button>
@@ -1296,6 +1540,75 @@ table.combat td input:focus { background: rgba(139, 100, 60, 0.1); }
     </section>
   </div>
 
+  <!-- =================== PAGE 10: МАСТЕР =================== -->
+  <div class="page" id="page10">
+    <section class="panel">
+      <h2>Панель Мастера</h2>
+      <p style="text-align:center; font-size:12px; color:var(--ink-soft); font-style:italic; margin-bottom:18px;">
+        Всё для ведения партии: заметки по игрокам, NPC, второстепенные и духи
+      </p>
+
+      <div class="cheat-accordion" id="master-accordion">
+
+        <!-- ===== ЗАМЕТКИ ПО PC ===== -->
+        <div class="master-section" data-open="true">
+          <div class="master-header">
+            <span class="master-title"><span class="emoji">📝</span>Заметки по персонажам игроков<span class="master-count" id="master-pc-count">0</span></span>
+            <span class="master-toggle">▶</span>
+          </div>
+          <div class="master-body">
+            <p class="master-hint">Тайные заметки мастера по каждому PC. Игроки их не видят. Можно записать пароли от листов, слабости, скрытые мотивы, планы на персонажа.</p>
+            <div class="master-pc-selector">
+              <label>Персонаж:</label>
+              <select id="master-pc-select"><option value="">— выбери персонажа —</option></select>
+            </div>
+            <textarea id="master-pc-notes" rows="8" placeholder="Секретные заметки мастера об этом персонаже…" style="width:100%; min-height:180px; padding:10px; border:1px solid var(--line); border-radius:2px; background:rgba(255,250,235,0.5); color:var(--ink); font-family:inherit; font-size:13px; line-height:1.5; resize:vertical; outline:none;"></textarea>
+          </div>
+        </div>
+
+        <!-- ===== NPC МАСТЕРА ===== -->
+        <div class="master-section" data-open="false">
+          <div class="master-header">
+            <span class="master-title"><span class="emoji">👤</span>Персонажи мастера (NPC)<span class="master-count" id="master-npc-count">0</span></span>
+            <span class="master-toggle">▶</span>
+          </div>
+          <div class="master-body">
+            <p class="master-hint">Ключевые NPC — союзники, враги, покровители. С полями для роли, фракции, мотивации, черт и заметок.</p>
+            <div id="master-npcs"></div>
+            <button class="master-add-btn" data-add="npc">+ Добавить NPC</button>
+          </div>
+        </div>
+
+        <!-- ===== ВТОРОСТЕПЕННЫЕ ===== -->
+        <div class="master-section" data-open="false">
+          <div class="master-header">
+            <span class="master-title"><span class="emoji">🎭</span>Второстепенные персонажи<span class="master-count" id="master-minor-count">0</span></span>
+            <span class="master-toggle">▶</span>
+          </div>
+          <div class="master-body">
+            <p class="master-hint">Эпизодические лица: бармен, продавец, случайный свидетель. Быстрая справка, чтобы не забыть.</p>
+            <div id="master-minor"></div>
+            <button class="master-add-btn" data-add="minor">+ Добавить второстепенного</button>
+          </div>
+        </div>
+
+        <!-- ===== ДУХИ ===== -->
+        <div class="master-section" data-open="false">
+          <div class="master-header">
+            <span class="master-title"><span class="emoji">🌫️</span>Духи<span class="master-count" id="master-spirit-count">0</span></span>
+            <span class="master-toggle">▶</span>
+          </div>
+          <div class="master-body">
+            <p class="master-hint">Духи, с которыми встречалась стая. С полями для типа, ранга, мощи (Эссенция), способностей и известных фактов.</p>
+            <div id="master-spirits"></div>
+            <button class="master-add-btn" data-add="spirit">+ Добавить духа</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
 </main>
 
 <div class="toast" id="toast"></div>
@@ -1865,10 +2178,34 @@ function updateAvailableHint() {
   hint.classList.add('ok');
 }
 
-function getCharList() { try { return JSON.parse(localStorage.getItem(CHAR_LIST_KEY)) || []; } catch (e) { return []; } }
-function setCharList(list) { localStorage.setItem(CHAR_LIST_KEY, JSON.stringify(list)); }
-function getActiveCharId() { return localStorage.getItem(ACTIVE_CHAR_KEY) || null; }
-function setActiveCharId(id) { localStorage.setItem(ACTIVE_CHAR_KEY, id); }
+const MODE_KEY = 'wta_mode';
+const MASTER_CHAR_LIST_KEY = 'wta_master_characters_list';
+const MASTER_ACTIVE_CHAR_KEY = 'wta_master_active_character';
+
+function getMode() {
+  return localStorage.getItem(MODE_KEY) || 'player';
+}
+function setMode(mode) {
+  localStorage.setItem(MODE_KEY, mode);
+}
+function isMasterMode() {
+  return getMode() === 'master';
+}
+function getCharListKey() {
+  return isMasterMode() ? MASTER_CHAR_LIST_KEY : CHAR_LIST_KEY;
+}
+function getActiveCharKey() {
+  return isMasterMode() ? MASTER_ACTIVE_CHAR_KEY : ACTIVE_CHAR_KEY;
+}
+
+function getCharList() {
+  try { return JSON.parse(localStorage.getItem(getCharListKey())) || []; }
+  catch (e) { return []; }
+}
+function setCharList(list) { localStorage.setItem(getCharListKey(), JSON.stringify(list)); }
+function getActiveCharId() { return localStorage.getItem(getActiveCharKey()) || null; }
+function setActiveCharId(id) { localStorage.setItem(getActiveCharKey(), id); }
+
 function genCharId() { return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function loadCharData(id) { try { return JSON.parse(localStorage.getItem(CHAR_PREFIX + id)) || {}; } catch (e) { return {}; } }
 function saveCharData(id, data) { localStorage.setItem(CHAR_PREFIX + id, JSON.stringify(data)); }
@@ -1989,6 +2326,25 @@ function duplicateCurrentCharacter() {
   setActiveCharId(newId);
   location.reload();
 }
+function switchMode(mode) {
+  if (getMode() === mode) return;
+  setMode(mode);
+  location.reload();
+}
+
+function initModeSwitch() {
+  const mode = getMode();
+  const btnP = document.getElementById('mode-player');
+  const btnM = document.getElementById('mode-master');
+  if (mode === 'master') {
+    document.body.classList.add('master-mode');
+    if (btnP) btnP.classList.remove('active');
+    if (btnM) btnM.classList.add('active');
+  }
+  if (btnP) btnP.addEventListener('click', () => switchMode('player'));
+  if (btnM) btnM.addEventListener('click', () => switchMode('master'));
+}
+
 function initCharBar() {
   document.getElementById('char-select').addEventListener('change', e => switchCharacter(e.target.value));
   document.getElementById('btn-new-char').addEventListener('click', () => {
@@ -2863,6 +3219,8 @@ function init() {
   state = loadCharData(getActiveCharId());
   if (!state || typeof state !== 'object') state = {};
 
+ initModeSwitch();
+ initModeSwitch();
   initCharBar();
   renderCharBar();
 
@@ -2893,7 +3251,335 @@ function init() {
     _textareaObserver.observe(document.body, { childList: true, subtree: true });
   }
 }
-document.addEventListener('DOMContentLoaded', init);
+/* =========================================================
+   MASTER PANEL
+   ========================================================= */
+
+function saveMasterField(path, value) {
+  // path = ['master_npcs', 0, 'name'] или ['master_pc_notes', 'charId']
+  if (!Array.isArray(path) || path.length === 0) return;
+  let obj = state;
+  for (let i = 0; i < path.length - 1; i++) {
+    const k = path[i];
+    if (obj[k] === undefined || obj[k] === null) {
+      obj[k] = typeof path[i + 1] === 'number' ? [] : {};
+    }
+    obj = obj[k];
+  }
+  obj[path[path.length - 1]] = value;
+  save();
+}
+
+/* ---------- Заметки по PC ---------- */
+function renderMasterPcSelect() {
+  const sel = document.getElementById('master-pc-select');
+  if (!sel) return;
+  const list = getCharList();
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— выбери персонажа —</option>';
+  list.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.name || 'Без имени';
+    if (c.id === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  const countEl = document.getElementById('master-pc-count');
+  if (countEl) {
+    const notes = state.master_pc_notes || {};
+    const filled = Object.keys(notes).filter(k => (notes[k] || '').trim().length > 0).length;
+    countEl.textContent = filled + ' / ' + list.length;
+  }
+}
+
+function loadMasterPcNotes(charId) {
+  const ta = document.getElementById('master-pc-notes');
+  if (!ta) return;
+  if (!charId) {
+    ta.value = '';
+    ta.disabled = true;
+    ta.placeholder = '— сначала выбери персонажа —';
+    return;
+  }
+  ta.disabled = false;
+  ta.placeholder = 'Секретные заметки мастера об этом персонаже…';
+  state.master_pc_notes = state.master_pc_notes || {};
+  ta.value = state.master_pc_notes[charId] || '';
+}
+
+function initMasterPcNotes() {
+  const sel = document.getElementById('master-pc-select');
+  const ta = document.getElementById('master-pc-notes');
+  if (!sel || !ta) return;
+
+  sel.addEventListener('change', () => {
+    loadMasterPcNotes(sel.value);
+  });
+
+  ta.addEventListener('input', () => {
+    const id = sel.value;
+    if (!id) return;
+    state.master_pc_notes = state.master_pc_notes || {};
+    state.master_pc_notes[id] = ta.value;
+    // счётчик
+    const countEl = document.getElementById('master-pc-count');
+    if (countEl) {
+      const list = getCharList();
+      const notes = state.master_pc_notes || {};
+      const filled = Object.keys(notes).filter(k => (notes[k] || '').trim().length > 0).length;
+      countEl.textContent = filled + ' / ' + list.length;
+    }
+    save();
+  });
+
+  // Старт
+  renderMasterPcSelect();
+  if (sel.value) loadMasterPcNotes(sel.value);
+  else loadMasterPcNotes('');
+}
+
+/* ---------- Общие функции для карточек ---------- */
+function createCardRemoveBtn(onClick) {
+  const btn = document.createElement('button');
+  btn.className = 'card-remove';
+  btn.type = 'button';
+  btn.textContent = '×';
+  btn.title = 'Удалить';
+  btn.addEventListener('click', onClick);
+  return btn;
+}
+
+function createCardField(labelText, value, onChange, opts = {}) {
+  const wrap = document.createElement('div');
+  const lbl = document.createElement('label');
+  lbl.textContent = labelText;
+  const input = document.createElement(opts.textarea ? 'textarea' : 'input');
+  if (!opts.textarea) input.type = opts.number ? 'number' : 'text';
+  if (opts.placeholder) input.placeholder = opts.placeholder;
+  if (opts.rows) input.rows = opts.rows;
+  input.value = value || '';
+  input.addEventListener('input', () => onChange(input.value));
+  wrap.appendChild(lbl);
+  wrap.appendChild(input);
+  return wrap;
+}
+
+function createCardTitle(text) {
+  const h = document.createElement('div');
+  h.className = 'card-title';
+  h.textContent = text;
+  return h;
+}
+
+/* ---------- NPC ---------- */
+function renderMasterNpcs() {
+  const root = document.getElementById('master-npcs');
+  if (!root) return;
+  root.innerHTML = '';
+  state.master_npcs = state.master_npcs || [];
+
+  state.master_npcs.forEach((npc, idx) => {
+    const card = document.createElement('div');
+    card.className = 'master-card';
+
+    card.appendChild(createCardRemoveBtn(() => {
+      if (!confirm('Удалить NPC "' + (npc.name || 'без имени') + '"?')) return;
+      state.master_npcs.splice(idx, 1);
+      renderMasterNpcs();
+      save();
+    }));
+
+    card.appendChild(createCardTitle(npc.name ? ('👤 ' + npc.name) : '👤 Новый NPC'));
+
+    const grid = document.createElement('div');
+    grid.className = 'card-grid';
+
+    grid.appendChild(createCardField('Имя', npc.name, v => { npc.name = v; saveMasterField(['master_npcs', idx, 'name'], v); updateNpcTitle(card, v); }));
+    grid.appendChild(createCardField('Роль / Титул', npc.role, v => saveMasterField(['master_npcs', idx, 'role'], v)));
+    grid.appendChild(createCardField('Фракция / Племя', npc.faction, v => saveMasterField(['master_npcs', idx, 'faction'], v)));
+    grid.appendChild(createCardField('Статус', npc.status, v => saveMasterField(['master_npcs', idx, 'status'], v), { placeholder: 'Друг / Враг / Нейтрал' }));
+    grid.appendChild(createCardField('Мотивация', npc.motivation, v => saveMasterField(['master_npcs', idx, 'motivation'], v)));
+    grid.appendChild(createCardField('Слабость / Тайна', npc.secret, v => saveMasterField(['master_npcs', idx, 'secret'], v)));
+
+    card.appendChild(grid);
+
+    const statsWrap = document.createElement('div');
+    statsWrap.style.marginTop = '6px';
+    statsWrap.appendChild(createCardField('Черты / Характеристики / Статы', npc.stats, v => saveMasterField(['master_npcs', idx, 'stats'], v), { textarea: true, rows: 3, placeholder: 'Сила 3, Ловкость 4… или свободные черты' }));
+    card.appendChild(statsWrap);
+
+    const notesWrap = document.createElement('div');
+    notesWrap.style.marginTop = '6px';
+    notesWrap.appendChild(createCardField('Заметки', npc.notes, v => saveMasterField(['master_npcs', idx, 'notes'], v), { textarea: true, rows: 3, placeholder: 'Связи, история, что известно партии…' }));
+    card.appendChild(notesWrap);
+
+    root.appendChild(card);
+  });
+
+  const countEl = document.getElementById('master-npc-count');
+  if (countEl) countEl.textContent = state.master_npcs.length;
+}
+
+function updateNpcTitle(card, name) {
+  const title = card.querySelector('.card-title');
+  if (title) title.textContent = name ? ('👤 ' + name) : '👤 Новый NPC';
+}
+
+/* ---------- Второстепенные ---------- */
+function renderMasterMinor() {
+  const root = document.getElementById('master-minor');
+  if (!root) return;
+  root.innerHTML = '';
+  state.master_minor = state.master_minor || [];
+
+  state.master_minor.forEach((m, idx) => {
+    const card = document.createElement('div');
+    card.className = 'master-card';
+    card.style.borderLeftColor = '#8a6b14';
+
+    card.appendChild(createCardRemoveBtn(() => {
+      if (!confirm('Удалить "' + (m.name || 'без имени') + '"?')) return;
+      state.master_minor.splice(idx, 1);
+      renderMasterMinor();
+      save();
+    }));
+
+    card.appendChild(createCardTitle(m.name ? ('🎭 ' + m.name) : '🎭 Новый второстепенный'));
+
+    const grid = document.createElement('div');
+    grid.className = 'card-grid';
+    grid.appendChild(createCardField('Имя', m.name, v => { m.name = v; saveMasterField(['master_minor', idx, 'name'], v); updateMinorTitle(card, v); }));
+    grid.appendChild(createCardField('Где встречался', m.where, v => saveMasterField(['master_minor', idx, 'where'], v), { placeholder: 'Таверна, рынок, порт…' }));
+
+    card.appendChild(grid);
+
+    const descWrap = document.createElement('div');
+    descWrap.style.marginTop = '6px';
+    descWrap.appendChild(createCardField('Краткое описание', m.desc, v => saveMasterField(['master_minor', idx, 'desc'], v), { textarea: true, rows: 2, placeholder: 'Внешность, манера речи, что известно…' }));
+    card.appendChild(descWrap);
+
+    root.appendChild(card);
+  });
+
+  const countEl = document.getElementById('master-minor-count');
+  if (countEl) countEl.textContent = state.master_minor.length;
+}
+
+function updateMinorTitle(card, name) {
+  const title = card.querySelector('.card-title');
+  if (title) title.textContent = name ? ('🎭 ' + name) : '🎭 Новый второстепенный';
+}
+
+/* ---------- Духи ---------- */
+function renderMasterSpirits() {
+  const root = document.getElementById('master-spirits');
+  if (!root) return;
+  root.innerHTML = '';
+  state.master_spirits = state.master_spirits || [];
+
+  state.master_spirits.forEach((s, idx) => {
+    const card = document.createElement('div');
+    card.className = 'master-card';
+    card.style.borderLeftColor = '#2a4d6b';
+
+    card.appendChild(createCardRemoveBtn(() => {
+      if (!confirm('Удалить духа "' + (s.name || 'без имени') + '"?')) return;
+      state.master_spirits.splice(idx, 1);
+      renderMasterSpirits();
+      save();
+    }));
+
+    card.appendChild(createCardTitle(s.name ? ('🌫️ ' + s.name) : '🌫️ Новый дух'));
+
+    const grid = document.createElement('div');
+    grid.className = 'card-grid';
+
+    grid.appendChild(createCardField('Имя духа', s.name, v => { s.name = v; saveMasterField(['master_spirits', idx, 'name'], v); updateSpiritTitle(card, v); }));
+    grid.appendChild(createCardField('Тип', s.type, v => saveMasterField(['master_spirits', idx, 'type'], v), { placeholder: 'Природный / Лунник / Гаффлинг / Бэйн…' }));
+    grid.appendChild(createCardField('Ранг / Класс', s.rank, v => saveMasterField(['master_spirits', idx, 'rank'], v), { placeholder: 'Гаффлинг / Джагглинг / Инкарна / Целестина' }));
+    grid.appendChild(createCardField('Мощь (Эссенция)', s.essence, v => saveMasterField(['master_spirits', idx, 'essence'], v), { number: true }));
+
+    card.appendChild(grid);
+
+    const powersWrap = document.createElement('div');
+    powersWrap.style.marginTop = '6px';
+    powersWrap.appendChild(createCardField('Силы / Чары / Способности', s.powers, v => saveMasterField(['master_spirits', idx, 'powers'], v), { textarea: true, rows: 3, placeholder: 'Например: Лечение, Слежка, Броня 3…' }));
+    card.appendChild(powersWrap);
+
+    const knownWrap = document.createElement('div');
+    knownWrap.style.marginTop = '6px';
+    knownWrap.appendChild(createCardField('Известные факты', s.known, v => saveMasterField(['master_spirits', idx, 'known'], v), { textarea: true, rows: 2, placeholder: 'Где встретился, что пообещал, чего хочет…' }));
+    card.appendChild(knownWrap);
+
+    root.appendChild(card);
+  });
+
+  const countEl = document.getElementById('master-spirit-count');
+  if (countEl) countEl.textContent = state.master_spirits.length;
+}
+
+function updateSpiritTitle(card, name) {
+  const title = card.querySelector('.card-title');
+  if (title) title.textContent = name ? ('🌫️ ' + name) : '🌫️ Новый дух';
+}
+
+/* ---------- Общая инициализация ---------- */
+function initMasterPanel() {
+  // Открытие/закрытие секций
+  document.querySelectorAll('.master-section').forEach(sec => {
+    const head = sec.querySelector('.master-header');
+    if (!head) return;
+    head.addEventListener('click', () => {
+      sec.dataset.open = (sec.dataset.open === 'true') ? 'false' : 'true';
+      setTimeout(() => { if (window.autoResizeAll) window.autoResizeAll(); }, 40);
+    });
+  });
+
+  // Кнопки добавления
+  document.querySelectorAll('.master-add-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.add;
+      if (key === 'npc') {
+        state.master_npcs = state.master_npcs || [];
+        state.master_npcs.push({ name:'', role:'', faction:'', status:'', motivation:'', secret:'', stats:'', notes:'' });
+        renderMasterNpcs();
+        save();
+      } else if (key === 'minor') {
+        state.master_minor = state.master_minor || [];
+        state.master_minor.push({ name:'', where:'', desc:'' });
+        renderMasterMinor();
+        save();
+      } else if (key === 'spirit') {
+        state.master_spirits = state.master_spirits || [];
+        state.master_spirits.push({ name:'', type:'', rank:'', essence:'', powers:'', known:'' });
+        renderMasterSpirits();
+        save();
+      }
+      setTimeout(() => { if (window.autoResizeAll) window.autoResizeAll(); }, 50);
+    });
+  });
+
+  // Заметки по PC
+  initMasterPcNotes();
+
+  // Рендеры
+  renderMasterNpcs();
+  renderMasterMinor();
+  renderMasterSpirits();
+
+  // Обновлять список PC, если переключили персонажа
+  const origRenderCharBar = window.renderCharBar;
+  window.renderCharBar = function() {
+    if (origRenderCharBar) origRenderCharBar.apply(this, arguments);
+    renderMasterPcSelect();
+  };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  // Запускаем панель мастера ПОСЛЕ init(), чтобы char_list был готов
+  setTimeout(() => { try { initMasterPanel(); } catch (e) { console.error('Master panel init:', e); } }, 100);
+});
 </script>
 
 <script type="module">
