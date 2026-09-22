@@ -1536,6 +1536,13 @@ body.master-mode .auth-bar { border-bottom-color: #3d2a52; }
           <textarea id="notes_free" rows="6" placeholder="Всё остальное. Цитаты, стихи, планы, бред…"></textarea>
         </div>
 
+        <!-- 🔒 ЗАМЕТКИ МАСТЕРА ПРО NPC (только в режиме мастера) -->
+        <div id="master-npc-notes-block" style="display:none; flex-direction:column; gap:6px; margin-top:18px; padding-top:16px; border-top:2px solid var(--purple);">
+          <label style="color:var(--purple); font-size:12px; letter-spacing:1.5px; border-bottom:1px dashed var(--border-ink); padding-bottom:4px; font-family:'Cinzel',Georgia,serif; font-weight:700;">🔒 Заметки мастера про этого NPC</label>
+          <p style="font-size:11px; color:var(--ink-faint); font-style:italic; margin:0 0 4px;">Секретно. Видно только в режиме мастера. Синхронизируется с облаком.</p>
+          <textarea id="master_npc_notes_current" rows="6" placeholder="Слабости NPC, тайные планы, что скрывает от игроков, зацепки…"></textarea>
+        </div>
+
       </div>
     </section>
   </div>
@@ -2344,6 +2351,44 @@ function initModeSwitch() {
   if (btnP) btnP.addEventListener('click', () => switchMode('player'));
   if (btnM) btnM.addEventListener('click', () => switchMode('master'));
 }
+function initMasterNpcNotesBlock() {
+  const block = document.getElementById('master-npc-notes-block');
+  const ta = document.getElementById('master_npc_notes_current');
+  if (!block || !ta) return;
+  if (typeof isMasterMode !== 'function' || !isMasterMode()) {
+    block.style.display = 'none';
+    return;
+  }
+  block.style.display = 'flex';
+  const id = typeof getActiveCharId === 'function' ? getActiveCharId() : null;
+  if (!id) {
+    ta.value = '';
+    ta.disabled = true;
+    ta.placeholder = '— сначала выбери NPC —';
+    return;
+  }
+  ta.disabled = false;
+  ta.placeholder = 'Слабости NPC, тайные планы, что скрывает от игроков, зацепки…';
+  let notes = {};
+  try { notes = JSON.parse(localStorage.getItem('wta_master_npc_notes')) || {}; }
+  catch (e) { notes = {}; }
+  ta.value = notes[id] || '';
+  if (ta.dataset.bound !== '1') {
+    ta.dataset.bound = '1';
+    ta.addEventListener('input', () => {
+      const currentId = getActiveCharId();
+      if (!currentId) return;
+      let all = {};
+      try { all = JSON.parse(localStorage.getItem('wta_master_npc_notes')) || {}; }
+      catch (e) { all = {}; }
+      all[currentId] = ta.value;
+      localStorage.setItem('wta_master_npc_notes', JSON.stringify(all));
+      if (typeof save === 'function') save();
+    });
+  }
+}
+
+function initCharBar() {
 
 function initCharBar() {
   document.getElementById('char-select').addEventListener('change', e => switchCharacter(e.target.value));
@@ -2748,6 +2793,7 @@ function initTextFields() {
     if (el.closest('.char-bar') || el.closest('.auth-bar')) return;
     if (el.type === 'file' || el.type === 'checkbox') return;
     if (el.id === 'f_rank_select') return;
+    if (el.id === 'master_npc_notes_current') return;
     const key = el.id; if (!key) return;
     if (state.text && state.text[key] !== undefined) el.value = state.text[key];
     el.addEventListener('input', () => {
@@ -3221,8 +3267,10 @@ function init() {
 
  initModeSwitch();
  initModeSwitch();
-  initCharBar();
-  renderCharBar();
+ initCharBar();
+renderCharBar();
+  initMasterNpcNotesBlock();
+
 
   buildStats(document.getElementById('attrs'), ATTRS);
   buildStats(document.getElementById('abilities'), ABILITIES);
